@@ -30,7 +30,7 @@
   --fh:'Bebas Neue',sans-serif;--fb:'Outfit',sans-serif;
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:17px;line-height:1.65;overflow-x:hidden;min-height:100vh}
 a{text-decoration:none;color:inherit;cursor:pointer}
 button{cursor:pointer}
 img{max-width:100%}
@@ -41,12 +41,15 @@ img{max-width:100%}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── TICKER ── */
-.ticker-bar{background:var(--red);overflow:hidden;height:34px;display:flex;align-items:center;flex-shrink:0}
-.ticker-label{background:#b01c25;color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 14px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;gap:6px}
+.ticker-bar{background:var(--red);overflow:hidden;min-height:40px;display:flex;align-items:center;flex-shrink:0}
+.ticker-label{background:#b01c25;color:#fff;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 16px;height:100%;min-height:40px;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;gap:6px;cursor:pointer;transition:background .2s,filter .2s;user-select:none}
+.ticker-label:hover,.ticker-label:focus-visible{background:#9a1820;outline:none}
 .ticker-of{overflow:hidden;flex:1}
 .ticker-track{display:flex;animation:tick 70s linear infinite;white-space:nowrap}
-.ticker-track span{padding:0 28px;font-size:12px;font-weight:500;color:#fff}
-.ticker-track span::before{content:'● ';font-size:7px;opacity:.7}
+.ticker-track .tck-item,.ticker-track .tck-empty{display:inline-block;padding:0 28px;font-size:14px;font-weight:500;color:#fff}
+.ticker-track .tck-item{cursor:pointer;transition:opacity .15s}
+.ticker-track .tck-item:hover{opacity:.88}
+.ticker-track .tck-item::before,.ticker-track .tck-empty::before{content:'● ';font-size:7px;opacity:.7}
 @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ── NAV ── */
@@ -96,8 +99,8 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 .hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:4px;margin-bottom:14px;animation:pbadge 2s ease-in-out infinite}
 .hero-badge::before{content:'●';font-size:7px}
 @keyframes pbadge{0%,100%{opacity:1}50%{opacity:.7}}
-.hero-title{font-family:var(--fh);font-size:48px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:14px}
-.hero-excerpt{color:var(--m2);font-size:14px;line-height:1.7;max-width:420px;margin-bottom:20px}
+.hero-title{font-family:var(--fh);font-size:54px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:14px}
+.hero-excerpt{color:var(--m2);font-size:16px;line-height:1.75;max-width:480px;margin-bottom:20px}
 .hero-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .author{font-size:12px;color:var(--m)}
 .cat-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(245,166,35,.15);color:var(--gold);text-transform:uppercase;letter-spacing:.5px}
@@ -108,17 +111,20 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 .stack-card:hover{border-color:var(--bh);background:var(--card-h);transform:translateX(4px)}
 .stag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .stag.anime{color:var(--gold)}.stag.sports{color:var(--red)}
-.stitle{font-size:13px;font-weight:600;line-height:1.4;color:var(--text)}
+.stitle{font-size:15px;font-weight:600;line-height:1.4;color:var(--text)}
 .stime{font-size:11px;color:var(--m);margin-top:5px}
 
 /* ── LIVE SCORES BAR ── */
-.scores-bar{background:var(--surface);border-top:1px solid var(--b);border-bottom:1px solid var(--b);overflow:hidden;height:44px;display:flex;align-items:center;margin-top:28px}
-.live-label{background:var(--red);color:#fff;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:0 16px;height:100%;display:flex;align-items:center;flex-shrink:0;gap:6px}
+.scores-bar{background:var(--surface);border-top:1px solid var(--b);border-bottom:1px solid var(--b);overflow:hidden;min-height:52px;display:flex;align-items:center;margin-top:28px}
+.live-label{background:var(--red);color:#fff;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:0 18px;min-height:52px;height:100%;display:flex;align-items:center;flex-shrink:0;gap:6px;cursor:pointer;transition:background .2s,filter .2s;user-select:none}
+.live-label:hover,.live-label:focus-visible{background:#c42a32;outline:none}
 .live-dot{width:7px;height:7px;background:#fff;border-radius:50%;animation:lp 1.4s ease-in-out infinite}
 @keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 .sof{overflow:hidden;flex:1}
 .st{display:flex;animation:ss 45s linear infinite;white-space:nowrap}
-.si{padding:0 20px;font-size:12px;font-weight:500;color:var(--text);border-right:1px solid var(--b);height:44px;display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+.si{padding:0 22px;font-size:14px;font-weight:500;color:var(--text);border-right:1px solid var(--b);min-height:52px;height:52px;display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+.si[data-ev]{cursor:pointer;transition:background .15s}
+.si[data-ev]:hover{background:rgba(232,50,60,.12)}
 .sv{font-weight:700;color:var(--gold)}
 .slive{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;text-transform:uppercase}
 .sfin{background:rgba(255,255,255,.1);color:var(--m2);font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px}
@@ -128,9 +134,9 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 /* ── SCORE CARDS ── */
 .sec{max-width:1200px;margin:36px auto 0;padding:0 24px}
 .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-.sec-head h2{font-family:var(--fh);font-size:26px;letter-spacing:1px;color:var(--text)}
+.sec-head h2{font-family:var(--fh);font-size:30px;letter-spacing:1px;color:var(--text)}
 .sec-head::before{content:'';width:4px;height:26px;background:var(--red);border-radius:2px;flex-shrink:0}
-.scores-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.scores-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .sc{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:14px;transition:border-color .25s,transform .2s,box-shadow .2s;cursor:pointer}
 .sc.islive{border-color:rgba(232,50,60,.3)}
 .sc:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.4);border-color:var(--bh)}
@@ -148,14 +154,14 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 .tabs{display:flex;border-bottom:1px solid var(--b);margin-bottom:24px}
 .tab{padding:12px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--m);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;background:none;border-left:none;border-right:none;border-top:none;font-family:var(--fb)}
 .tab:hover{color:var(--text)}.tab.active{color:var(--red);border-bottom-color:var(--red)}
-.ag{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
 .ac{background:var(--card);border:1px solid var(--b);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s,opacity .3s}
 .ac:hover{border-color:var(--bh);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-3px)}
-.ct{height:100px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface);border-bottom:1px solid var(--b)}
+.ct{height:112px;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--surface);border-bottom:1px solid var(--b)}
 .cb{padding:14px}
 .ctag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .ts{color:var(--red)}.ta{color:var(--gold)}.tr{color:var(--blue)}
-.ctitle{font-size:13px;font-weight:600;line-height:1.4;color:var(--text);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ctitle{font-size:15px;font-weight:600;line-height:1.45;color:var(--text);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .cf{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--m)}
 
 /* ── SIDEBAR ── */
@@ -170,13 +176,13 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 .tm{font-size:10px;color:var(--m);margin-top:2px}
 
 /* ── ANIME GRID ── */
-.anime-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.anime-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
 .anc{background:var(--card);border:1px solid var(--b);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s}
 .anc:hover{border-color:rgba(245,166,35,.4);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-3px)}
-.animg{width:100%;height:140px;object-fit:cover;display:block}
-.anph{width:100%;height:140px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px}
+.animg{width:100%;height:168px;object-fit:cover;display:block}
+.anph{width:100%;height:168px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:44px}
 .anb{padding:12px}
-.antitle{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.antitle{font-size:14px;font-weight:600;color:var(--text);line-height:1.35;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .anmeta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--m)}
 .anscore{color:var(--gold);font-weight:600}
 
@@ -196,7 +202,7 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 .ap-read{font-size:12px;color:var(--m);display:flex;align-items:center;gap:5px}
 .ap-hero-img{width:100%;height:320px;background:var(--card);border-radius:16px;border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:72px;margin-bottom:32px;position:relative;overflow:hidden}
 .ap-hero-img::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(232,50,60,.08) 0%,transparent 70%)}
-.ap-body{font-size:16px;line-height:1.85;color:var(--m2)}
+.ap-body{font-size:18px;line-height:1.9;color:var(--m2)}
 .ap-body h3{font-family:var(--fh);font-size:28px;letter-spacing:.5px;color:var(--text);margin:36px 0 14px}
 .ap-body p{margin-bottom:20px}
 .ap-body strong{color:var(--text);font-weight:600}
@@ -229,13 +235,14 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 .game-info-card{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:18px;text-align:center}
 .game-info-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--m);margin-bottom:6px}
 .game-info-val{font-family:var(--fh);font-size:28px;color:var(--text);letter-spacing:.5px}
+.game-summary{font-size:17px;line-height:1.88;color:var(--m2)}
 
 /* ── INNER PAGES ── */
 .inner-page{max-width:800px;margin:0 auto;padding:48px 24px}
 .inner-page h1{font-family:var(--fh);font-size:52px;letter-spacing:1px;color:var(--text);margin-bottom:12px}
 .inner-page .subtitle{font-size:16px;color:var(--m2);margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--b)}
 .inner-page h2{font-family:var(--fh);font-size:28px;letter-spacing:.5px;color:var(--text);margin:36px 0 14px}
-.inner-page p{font-size:15px;color:var(--m2);line-height:1.8;margin-bottom:18px}
+.inner-page p{font-size:17px;color:var(--m2);line-height:1.85;margin-bottom:18px}
 .inner-page ul{padding-left:20px;margin-bottom:20px}
 .inner-page ul li{font-size:15px;color:var(--m2);line-height:1.8;margin-bottom:8px}
 .contact-form{display:flex;flex-direction:column;gap:16px;margin-top:28px}
@@ -297,8 +304,24 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
 .reveal.vis{opacity:1;transform:translateY(0)}
 
 /* ── RESPONSIVE ── */
+/* ── THEME MODAL (replaces alert) ── */
+.nz-modal{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .28s ease,visibility .28s ease}
+.nz-modal.open{opacity:1;visibility:visible}
+.nz-modal-backdrop{position:absolute;inset:0;background:rgba(5,5,8,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.nz-modal-box{position:relative;background:var(--card);border:1px solid var(--bh);border-radius:18px;padding:32px 36px 28px;max-width:440px;width:100%;box-shadow:0 28px 80px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.04) inset;text-align:center;animation:nzPop .35s ease}
+@keyframes nzPop{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.nz-modal-accent{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--red),#ff5a62);border-radius:18px 18px 0 0}
+.nz-modal-icon{font-size:52px;line-height:1;margin-bottom:14px;filter:drop-shadow(0 4px 12px rgba(232,50,60,.35))}
+.nz-modal-text{font-size:17px;color:var(--m2);line-height:1.7;margin-bottom:26px}
+.nz-modal-text strong{color:var(--text)}
+.nz-modal-btn{background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 36px;font-family:var(--fb);font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s}
+.nz-modal-btn:hover{opacity:.9;transform:translateY(-1px)}
+.search-title{font-family:var(--fh);font-size:clamp(2.2rem,5vw,3.5rem);letter-spacing:1px;color:var(--text)}
+.search-count{font-size:17px;color:var(--m2);margin-bottom:24px}
+.live-page-intro{font-size:17px;color:var(--m2);line-height:1.75;margin-bottom:8px;max-width:720px}
+
 @media(max-width:900px){
-  .hero{grid-template-columns:1fr}.hero-title{font-size:36px}
+  .hero{grid-template-columns:1fr}.hero-title{font-size:38px}
   .content-layout{grid-template-columns:1fr}
   .ag,.anime-grid{grid-template-columns:repeat(2,1fr)}
   .scores-grid{grid-template-columns:repeat(2,1fr)}
@@ -331,13 +354,24 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
 </head>
 <body>
 
+<!-- ════ THEME MODAL (replaces browser alert) ════ -->
+<div id="nzModal" class="nz-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="nzModalMsg">
+  <div class="nz-modal-backdrop" onclick="nzCloseModal()" aria-hidden="true"></div>
+  <div class="nz-modal-box">
+    <div class="nz-modal-accent"></div>
+    <div class="nz-modal-icon" id="nzModalIcon" aria-hidden="true">ℹ</div>
+    <p class="nz-modal-text" id="nzModalMsg"></p>
+    <button type="button" class="nz-modal-btn" onclick="nzCloseModal()">OK</button>
+  </div>
+</div>
+
 <!-- ════ BREAKING TICKER (always visible) ════ -->
 <div class="ticker-bar">
-  <div class="ticker-label">🔴 Breaking</div>
-  <div class="ticker-of">
+  <div class="ticker-label" role="button" tabindex="0" title="View all live scores" onclick="nav('live')" onkeydown="if(event.key==='Enter'||event.key===' ')nav('live')">🔴 Breaking</div>
+  <div class="ticker-of" id="tickerHost">
     <div class="ticker-track" id="tickerTrack">
-      <span>Loading live headlines...</span>
-      <span>Loading live headlines...</span>
+      <span class="tck-empty">Loading live headlines...</span>
+      <span class="tck-empty">Loading live headlines...</span>
     </div>
   </div>
 </div>
@@ -348,6 +382,7 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
     <span class="logo" onclick="nav('home')">Nex<span>Zone</span></span>
     <ul class="nav-links">
       <li><button id="nl-home" class="active" onclick="nav('home')">Home</button></li>
+      <li><button id="nl-live" onclick="nav('live')">Live</button></li>
       <li><button id="nl-sports" onclick="nav('sports')">Sports</button></li>
       <li><button id="nl-anime" onclick="nav('anime')">Anime</button></li>
       <li><button id="nl-articles" onclick="nav('articles')">Articles</button></li>
@@ -370,6 +405,7 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
              onkeyup="if(event.key==='Enter') { executeSearch(this.value); document.getElementById('mMenu').classList.remove('open'); }">
     </div>
     <button onclick="nav('home');document.getElementById('mMenu').classList.remove('open')">Home</button>
+    <button onclick="nav('live');document.getElementById('mMenu').classList.remove('open')">Live Scores</button>
     <button onclick="nav('sports');document.getElementById('mMenu').classList.remove('open')">Sports</button>
     <button onclick="nav('anime');document.getElementById('mMenu').classList.remove('open')">Anime</button>
     <button onclick="nav('articles');document.getElementById('mMenu').classList.remove('open')">Articles</button>
@@ -418,8 +454,8 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
 
   <!-- LIVE SCORES BAR -->
   <div class="scores-bar">
-    <div class="live-label"><div class="live-dot"></div>Live Scores</div>
-    <div class="sof"><div class="st" id="scoresBar"><div class="si">⏳ Loading...</div><div class="si">⏳ Loading...</div></div></div>
+    <div class="live-label" role="button" tabindex="0" title="Open full live scores page" onclick="nav('live')" onkeydown="if(event.key==='Enter'||event.key===' ')nav('live')"><div class="live-dot"></div>Live Scores</div>
+    <div class="sof scores-bar-host" id="scoresBarHost"><div class="st" id="scoresBar"><div class="si">⏳ Loading...</div><div class="si">⏳ Loading...</div></div></div>
   </div>
 
   <!-- SCORES GRID -->
@@ -465,12 +501,14 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
   <div class="sec reveal" id="sec-anime" style="margin-top:40px;">
     <div class="sec-head"><h2>Top Airing Anime <span class="apibadge">Live via MyAnimeList</span></h2></div>
     <div class="anime-grid" id="animeGrid">
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
     </div>
   </div>
 
@@ -536,7 +574,7 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
     <div class="game-info-grid" id="gameInfoGrid"></div>
     <div class="ad-slot inline">📢 AdSense In-Game Ad</div>
     <div class="sec-head" style="margin-top:32px;"><h2>Game Summary</h2></div>
-    <div id="gameSummary" style="color:var(--m2);font-size:15px;line-height:1.8;"></div>
+    <div id="gameSummary" class="game-summary"></div>
     <div class="ap-related" style="margin-top:36px;">
       <h3>More Games</h3>
       <div class="scores-grid" id="moreGamesGrid"></div>
@@ -570,12 +608,14 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
     <div class="sec-head"><h2>Anime — Top Airing <span class="apibadge">Live via MyAnimeList</span></h2></div>
     <div class="ad-slot inline" style="margin-bottom:24px;">📢 AdSense Banner</div>
     <div class="anime-grid" id="animePageGrid">
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
-      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk anc" style="height:240px;"></div>
     </div>
     <div class="sec-head" style="margin-top:40px;"><h2>Anime Articles</h2></div>
     <div class="ag" id="animeArticlesGrid"></div>
@@ -777,13 +817,34 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
 </div>
 
 <!-- ════════════════════════════════════════
+     PAGE: LIVE SCORES (full list)
+════════════════════════════════════════ -->
+<div id="page-live" class="page">
+  <div class="sec" style="padding-top:28px;">
+    <div class="sec-head"><h2>Live Scores Hub</h2></div>
+    <p class="live-page-intro">NBA and Premier League matchups for today. Click any ticker line or score row for the full game page. Updates every 90 seconds.</p>
+    <div class="scores-bar" style="margin-top:12px;">
+      <div class="live-label" role="button" tabindex="0" title="Back to home" onclick="nav('home')" onkeydown="if(event.key==='Enter'||event.key===' ')nav('home')"><div class="live-dot"></div>Home</div>
+      <div class="sof scores-bar-host" id="scoresBarHostLive"><div class="st" id="liveScoresBar"></div></div>
+    </div>
+    <div class="sec-head" style="margin-top:36px;"><h2>All games today</h2></div>
+    <div class="scores-grid" id="liveScoresGrid">
+      <div class="sk" style="height:120px;border-radius:12px;"></div>
+      <div class="sk" style="height:120px;border-radius:12px;"></div>
+      <div class="sk" style="height:120px;border-radius:12px;"></div>
+      <div class="sk" style="height:120px;border-radius:12px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
      PAGE: Search
 ════════════════════════════════════════ -->
 <div id="page-search" class="page">
   <div class="inner-page">
-     <h1 id="search-title" style="color:var(--red); font-family:'Bebas Neue'; font-size:3rem;">Search Results</h1>
-    <p id="search-count" style="color:var(--m2); margin-bottom:20px;"></p>
-    <div id="search-results-grid" class="ag">
+    <h1 id="search-title" class="search-title">Search Results</h1>
+    <p id="search-count" class="search-count"></p>
+    <div id="search-results-grid" class="ag"></div>
   </div>
 </div>
 
@@ -800,6 +861,7 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
       <div class="fcol">
         <h4>Sports</h4>
         <ul>
+          <li><button onclick="nav('live')">Live Scores</button></li>
           <li><button onclick="nav('sports')">NBA</button></li>
           <li><button onclick="nav('sports')">Soccer / EPL</button></li>
           <li><button onclick="nav('sports')">NFL</button></li>
@@ -829,22 +891,13 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
       </div>
     </div>
     <div class="fbot">
-      <span>© 2025 NexZone Media. All rights reserved.</span>
+      <span>© 2026 NexZone Media. All rights reserved.</span>
       <span>Live data: ESPN API · Jikan / MyAnimeList</span>
     </div>
   </div>
 </footer>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  NEXZONE — COMPLETE SITE ENGINE
-//  • SPA hash router
-//  • Live APIs: ESPN (NBA + EPL) + Jikan (MyAnimeList)
-//  • Articles data store
-//  • Full navigation
-//  • Auto-refresh every 90s
-// ═══════════════════════════════════════════════════════
-
 // ═══════════════════════════════════════════════════════
 //  NEXZONE — COMPLETE SITE ENGINE
 //  • SPA hash router
@@ -1054,6 +1107,60 @@ let currentGameData = null;
 let allSportsData = [];
 let allAnimeData = [];
 let heroArticleId = null;
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+function escapeAttr(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+}
+function nzAlert(msg, type) {
+  const modal = document.getElementById('nzModal');
+  const iconEl = document.getElementById('nzModalIcon');
+  const msgEl = document.getElementById('nzModalMsg');
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  iconEl.textContent = icons[type] || icons.info;
+  msgEl.textContent = msg;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+}
+function nzCloseModal() {
+  const modal = document.getElementById('nzModal');
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') nzCloseModal(); });
+
+function onTickerHostClick(e) {
+  const g = e.target.closest('.tck-game');
+  if (g) {
+    const id = g.dataset.ev;
+    const found = allSportsData.find(x => x.ev.id === id);
+    if (found) nav('game', found);
+    return;
+  }
+  const an = e.target.closest('.tck-anime');
+  if (an) {
+    const u = an.dataset.url;
+    if (u) window.open(u, '_blank', 'noopener');
+    else nav('anime');
+  }
+}
+function onScoresBarHostClick(e) {
+  const si = e.target.closest('.si[data-ev]');
+  if (!si) return;
+  const id = si.dataset.ev;
+  const found = allSportsData.find(x => x.ev.id === id);
+  if (found) nav('game', found);
+}
+function setupLiveInteractions() {
+  if (setupLiveInteractions._done) return;
+  setupLiveInteractions._done = true;
+  document.getElementById('tickerHost')?.addEventListener('click', onTickerHostClick);
+  document.querySelectorAll('.scores-bar-host').forEach(el => el.addEventListener('click', onScoresBarHostClick));
+}
 
 // ══════════════════════
 //  ROUTER
@@ -1276,14 +1383,6 @@ function filterAll(cat, btn) {
   populateAllArticles(cat);
 }
 
-function doSearch(v) {
-  const q = v.toLowerCase();
-  if (!q) { document.querySelectorAll('.ac').forEach(c => c.style.opacity = '1'); return; }
-  document.querySelectorAll('.ac').forEach(c => {
-    c.style.opacity = (c.dataset.title || '').includes(q) ? '1' : '0.15';
-  });
-}
-
 // ══════════════════════
 //  GAME STATUS HELPER
 // ══════════════════════
@@ -1337,43 +1436,59 @@ async function fetchEPL() {
 // ══════════════════════
 //  RENDER SPORTS
 // ══════════════════════
+function buildScoreCardsHTML(data, max) {
+  const slice = max != null ? data.slice(0, max) : data;
+  return slice.map(({ emoji, sport, ev }) => {
+    const comp = ev.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    const st = gameStatus(ev);
+    const hs = parseInt(home?.score) || 0, as = parseInt(away?.score) || 0;
+    const hwins = st.cls === 'final' && hs > as, awins = st.cls === 'final' && as > hs;
+    const gId = ev.id;
+    return `<div class="sc ${st.cls === 'live' ? 'islive' : ''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
+      <div class="sc-lg">${emoji} ${sport} ${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px">● LIVE</span>' : ''}</div>
+      <div class="sc-teams">
+        <div class="sc-team ${hwins ? 'win' : ''}"><span>${home?.team?.shortDisplayName || home?.team?.abbreviation || 'Home'}</span><span class="pts">${home?.score ?? '—'}</span></div>
+        <div class="sc-team ${awins ? 'win' : ''}"><span>${away?.team?.shortDisplayName || away?.team?.abbreviation || 'Away'}</span><span class="pts">${away?.score ?? '—'}</span></div>
+      </div>
+      <div class="sc-st ${st.cls === 'live' ? 'lv' : ''}">${st.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildScoresBarHTML(data) {
+  return data.map(({ emoji, ev }) => {
+    const comp = ev.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    const st = gameStatus(ev);
+    return `<div class="si" data-ev="${ev.id}" role="button" tabindex="0" title="Open full game">${emoji} ${home?.team?.abbreviation ?? '?'} vs ${away?.team?.abbreviation ?? '?'} <span class="sv">${home?.score ?? '?'}–${away?.score ?? '?'}</span> <span class="${st.cls === 'live' ? 'slive' : st.cls === 'final' ? 'sfin' : 'ssoon'}">${st.label}</span></div>`;
+  }).join('');
+}
+
 function renderSports(data) {
   allSportsData = data;
   const grid = document.getElementById('scoresGrid');
-  const bar  = document.getElementById('scoresBar');
+  const bar = document.getElementById('scoresBar');
+  const liveGrid = document.getElementById('liveScoresGrid');
+  const liveBar = document.getElementById('liveScoresBar');
 
   if (!data.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--m);">No games scheduled today. Check back later!</div>`;
-    bar.innerHTML = `<div class="si">No games today</div><div class="si">Check back later!</div>`;
+    const empty = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:var(--m);font-size:17px;">No games scheduled today. Check back later!</div>`;
+    const barEmpty = `<div class="si">No games today</div><div class="si">Check back later!</div>`;
+    if (grid) grid.innerHTML = empty;
+    if (liveGrid) liveGrid.innerHTML = empty;
+    if (bar) bar.innerHTML = barEmpty;
+    if (liveBar) liveBar.innerHTML = barEmpty;
+    updateTicker('<span class="tck-empty">No live games scheduled right now.</span>');
     return;
   }
 
-  // Score cards
-  grid.innerHTML = data.slice(0, 8).map(({ emoji, sport, ev }) => {
-    const comp = ev.competitions?.[0];
-    const [home, away] = comp?.competitors || [];
-    const st = gameStatus(ev);
-    const hs = parseInt(home?.score)||0, as = parseInt(away?.score)||0;
-    const hwins = st.cls==='final' && hs>as, awins = st.cls==='final' && as>hs;
-    const gId = ev.id;
-    return `<div class="sc ${st.cls==='live'?'islive':''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
-      <div class="sc-lg">${emoji} ${sport} ${st.cls==='live'?'<span style="color:var(--red);font-size:9px">● LIVE</span>':''}</div>
-      <div class="sc-teams">
-        <div class="sc-team ${hwins?'win':''}"><span>${home?.team?.shortDisplayName||home?.team?.abbreviation||'Home'}</span><span class="pts">${home?.score??'—'}</span></div>
-        <div class="sc-team ${awins?'win':''}"><span>${away?.team?.shortDisplayName||away?.team?.abbreviation||'Away'}</span><span class="pts">${away?.score??'—'}</span></div>
-      </div>
-      <div class="sc-st ${st.cls==='live'?'lv':''}">${st.label}</div>
-    </div>`;
-  }).join('');
+  if (grid) grid.innerHTML = buildScoreCardsHTML(data, 12);
+  if (liveGrid) liveGrid.innerHTML = buildScoreCardsHTML(data, null);
 
-  // Scores bar
-  const barHTML = data.map(({ emoji, ev }) => {
-    const comp = ev.competitions?.[0];
-    const [home, away] = comp?.competitors || [];
-    const st = gameStatus(ev);
-    return `<div class="si">${emoji} ${home?.team?.abbreviation??'?'} vs ${away?.team?.abbreviation??'?'} <span class="sv">${home?.score??'?'}–${away?.score??'?'}</span> <span class="${st.cls==='live'?'slive':st.cls==='final'?'sfin':'ssoon'}">${st.label}</span></div>`;
-  }).join('');
-  bar.innerHTML = barHTML + barHTML;
+  const barHTML = buildScoresBarHTML(data);
+  if (bar) bar.innerHTML = barHTML + barHTML;
+  if (liveBar) liveBar.innerHTML = barHTML + barHTML;
 
   // Hero — pick live game or first game
   const live = data.find(x => gameStatus(x.ev).cls === 'live') || data[0];
@@ -1402,12 +1517,12 @@ function renderSports(data) {
     </div>`;
   }).join('');
 
-  // Ticker
   const tickerItems = data.map(({ emoji, ev }) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
-    return `<span>${emoji} ${home?.team?.name??'?'} vs ${away?.team?.name??'?'}: ${home?.score??'?'}–${away?.score??'?'} (${st.label})</span>`;
+    const gid = ev.id;
+    return `<span class="tck-item tck-game" data-ev="${gid}" title="Click for full game">${emoji} ${escapeHtml(home?.team?.name ?? '?')} vs ${escapeHtml(away?.team?.name ?? '?')}: ${home?.score ?? '?'}–${away?.score ?? '?'} (${st.label})</span>`;
   }).join('');
   updateTicker(tickerItems);
 }
@@ -1418,7 +1533,7 @@ function renderSports(data) {
 async function fetchAnime() {
   pill('pill-anime','ld','<span class="spin"></span> Anime...');
   try {
-    const r = await fetch('https://api.jikan.moe/v4/top/anime?limit=6&filter=airing');
+    const r = await fetch('https://api.jikan.moe/v4/top/anime?limit=20&filter=airing');
     const d = await r.json();
     const items = d.data || [];
     if (!items.length) throw new Error('empty');
@@ -1429,16 +1544,15 @@ async function fetchAnime() {
 
     // Hero stack
     const stack = document.getElementById('heroStack');
-    stack.innerHTML = items.slice(0,3).map(a =>
+    stack.innerHTML = items.slice(0, 3).map(a =>
       `<div class="stack-card" onclick="nav('article',ARTICLES.find(x=>x.cat==='anime')||ARTICLES[2])">
         <div class="stag anime">Anime</div>
-        <div class="stitle">${a.title}</div>
-        <div class="stime">⭐ ${a.score??'N/A'} · ${a.episodes??'?'} eps</div>
+        <div class="stitle">${escapeHtml(a.title)}</div>
+        <div class="stime">⭐ ${a.score ?? 'N/A'} · ${a.episodes ?? '?'} eps</div>
       </div>`).join('');
 
-    // Append anime to ticker
-    const animeTick = items.slice(0,4).map(a =>
-      `<span>🎌 ${a.title} — Score: ${a.score??'N/A'} | Rank #${a.rank??'?'}</span>`).join('');
+    const animeTick = items.slice(0, 10).map(a =>
+      `<span class="tck-item tck-anime" data-mal="${a.mal_id}" data-url="${escapeAttr(a.url)}" title="Open MyAnimeList page">🎌 ${escapeHtml(a.title)} — ⭐ ${a.score ?? 'N/A'} | Rank #${a.rank ?? '?'}</span>`).join('');
     updateTicker(null, animeTick);
 
   } catch {
@@ -1454,13 +1568,13 @@ function renderAnime(items, gridId) {
   const grid = document.getElementById(gridId);
   if (!grid) return;
   grid.innerHTML = items.map(a => `
-    <div class="anc" onclick="window.open('${a.url}','_blank')">
+    <div class="anc" onclick="window.open(${JSON.stringify(a.url)},'_blank','noopener')">
       ${a.images?.jpg?.image_url
-        ? `<img class="animg" src="${a.images.jpg.image_url}" alt="${a.title}" loading="lazy" onerror="this.outerHTML='<div class=anph>🎌</div>'">`
+        ? `<img class="animg" src="${String(a.images.jpg.image_url).replace(/"/g, '&quot;')}" alt="${escapeAttr(a.title)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'anph',innerHTML:'🎌'}))">`
         : `<div class="anph">🎌</div>`}
       <div class="anb">
-        <div class="antitle">${a.title}</div>
-        <div class="anmeta"><span>${a.type??'TV'} · ${a.episodes??'?'} eps</span><span class="anscore">⭐ ${a.score??'N/A'}</span></div>
+        <div class="antitle">${escapeHtml(a.title)}</div>
+        <div class="anmeta"><span>${escapeHtml(a.type ?? 'TV')} · ${a.episodes ?? '?'} eps</span><span class="anscore">⭐ ${a.score ?? 'N/A'}</span></div>
       </div>
     </div>`).join('');
 }
@@ -1472,7 +1586,7 @@ let tickerSports = '', tickerAnime = '';
 function updateTicker(sports, anime) {
   if (sports !== null && sports !== undefined) tickerSports = sports;
   if (anime !== null && anime !== undefined) tickerAnime = anime;
-  const combined = (tickerSports + tickerAnime) || '<span>Loading live headlines...</span>';
+  const combined = (tickerSports + tickerAnime) || '<span class="tck-empty">Loading live headlines...</span>';
   const t = document.getElementById('tickerTrack');
   if (t) t.innerHTML = combined + combined;
 }
@@ -1482,14 +1596,14 @@ function updateTicker(sports, anime) {
 // ══════════════════════
 function subscribe() {
   const v = document.getElementById('nlEmail')?.value;
-  if (!v || !v.includes('@')) { alert('Please enter a valid email address!'); return; }
+  if (!v || !v.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
   nav('subscribed');
 }
 
 function submitSubscribe() {
   const name = document.getElementById('subName')?.value;
   const email = document.getElementById('subEmail')?.value;
-  if (!email || !email.includes('@')) { alert('Please enter a valid email!'); return; }
+  if (!email || !email.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
   nav('subscribed');
 }
 
@@ -1497,9 +1611,9 @@ function submitContact() {
   const name = document.getElementById('cName')?.value;
   const email = document.getElementById('cEmail')?.value;
   const msg = document.getElementById('cMessage')?.value;
-  if (!email || !email.includes('@')) { alert('Please enter a valid email!'); return; }
-  if (!msg) { alert('Please write a message!'); return; }
-  alert(`✅ Message sent! We'll get back to you at ${email} within 2 business days.`);
+  if (!email || !email.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
+  if (!msg) { nzAlert('Please write a message before sending.', 'error'); return; }
+  nzAlert(`Message sent! We'll get back to you at ${email} within 2 business days.`, 'success');
   document.getElementById('cName').value = '';
   document.getElementById('cEmail').value = '';
   document.getElementById('cMessage').value = '';
@@ -1513,7 +1627,7 @@ function shareArticle(platform) {
   const url = window.location.href;
   if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, '_blank');
   else if (platform === 'reddit') window.open(`https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
-  else { navigator.clipboard?.writeText(url).then(() => alert('Link copied!')).catch(() => alert('Link: ' + url)); }
+  else { navigator.clipboard?.writeText(url).then(() => nzAlert('Link copied to your clipboard.', 'success')).catch(() => nzAlert('Copy this link: ' + url, 'info')); }
 }
 
 // ══════════════════════
@@ -1529,82 +1643,41 @@ window.addEventListener('scroll', () =>
   document.getElementById('mainNav').classList.toggle('scrolled', scrollY > 40));
 
 // ══════════════════════
-//  SEARCH ENGINE
-// ══════════════════════
-function doSearch(val) {
-  const query = val.toLowerCase().trim();
-  // Selects all your content cards
-  const allCards = document.querySelectorAll('.ac, .anc, .sc, .stack-card');
-
-  allCards.forEach(card => {
-    const text = card.innerText.toLowerCase();
-    // Only show cards that match the search word
-    if (text.includes(query)) {
-      card.style.display = "";
-      card.style.opacity = "1";
-    } else {
-      card.style.display = "none";
-    }
-  });
-
-  // If the user clears the search, show everything again
-  if (query === "") {
-    allCards.forEach(c => {
-      c.style.display = "";
-    });
-  }
-}
-
-// ══════════════════════
-//  SEARCH ENGINE
+//  SEARCH
 // ══════════════════════
 function executeSearch(query) {
-  if (!query || query.trim() === "") return;
+  if (!query || query.trim() === '') return;
   const q = query.toLowerCase().trim();
-  
-  // 1. Switch to the Search Page
-  // 1. Move to the search page
   nav('search');
-  
-  // 2. Update Titles
-  document.getElementById('search-title').innerText = `Results for: "${query}"`;
-  // 2. Clear old results
-  const grid = document.getElementById('search-results-grid');
-  grid.innerHTML = ""; // Clear old results
 
-  // 3. Find all content across the entire site
-  grid.innerHTML = "";
-  
-  // 3. Find all cards (Sports, Anime, News)
+  const titleEl = document.getElementById('search-title');
+  const countEl = document.getElementById('search-count');
+  const grid = document.getElementById('search-results-grid');
+  if (!grid || !titleEl || !countEl) return;
+
+  titleEl.textContent = `Results for: "${query}"`;
+  grid.innerHTML = '';
+
   const allContent = document.querySelectorAll('.ac, .anc, .sc, .stack-card');
   let foundCount = 0;
-  let count = 0;
 
   allContent.forEach(item => {
     if (item.innerText.toLowerCase().includes(q)) {
-      // Clone the card so we don't move the original from its home page
       const clone = item.cloneNode(true);
-      clone.style.display = "block"; // Ensure it's visible
-      clone.style.display = "block";
-      clone.style.opacity = "1";
+      clone.style.display = '';
+      clone.style.opacity = '1';
       grid.appendChild(clone);
       foundCount++;
-      count++;
     }
   });
 
-  document.getElementById('search-count').innerText = `${foundCount} matches found in Sports, Anime, and News.`;
-  document.getElementById('search-count').innerText = `Found ${count} items for "${query}"`;
-  
-  if(foundCount === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--m2);">
-                        No results found for "${query}". Try searching "NBA" or "Anime".
-                      </div>`;
-  if (count === 0) {
-    grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:50px;">No results found. Try "NBA" or "Anime".</p>`;
+  countEl.textContent = `Found ${foundCount} match${foundCount !== 1 ? 'es' : ''} in articles, scores, and anime.`;
+
+  if (foundCount === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m2);font-size:17px;">No results for "${escapeHtml(query)}". Try keywords like NBA, EPL, or a show title.</div>`;
   }
 }
-     
+
 // ══════════════════════
 //  INIT + AUTO-REFRESH
 // ══════════════════════
@@ -1615,13 +1688,14 @@ async function init() {
   const [nba, epl] = await Promise.all([fetchNBA(), fetchEPL()]);
   renderSports([...nba, ...epl]);
 
-  setTimeout(fetchAnime, 900); // Jikan rate limit buffer
+  setTimeout(fetchAnime, 900);
 
   if (luEl) setTimeout(() => {
-    luEl.textContent = `✅ Updated ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+    luEl.textContent = `✅ Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   }, 3000);
 }
 
+setupLiveInteractions();
 init();
 setInterval(init, 90000);
 window.addEventListener('resize', () => {
