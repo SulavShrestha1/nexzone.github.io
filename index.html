@@ -259,13 +259,6 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 .plan-features li::before{content:'✓';color:var(--green);font-weight:700;font-size:12px}
 .plan-btn{width:100%;padding:10px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;border:1px solid var(--b);background:transparent;color:var(--text);transition:all .2s}
 .plan-btn:hover{background:var(--red);border-color:var(--red);color:#fff}
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: #fff !important;
-  -webkit-box-shadow: 0 0 0px 1000px var(--surface) inset !important;
-  transition: background-color 5000s ease-in-out 0s;
-}
 
 /* ── NEWSLETTER ── */
 .nl-section{max-width:1200px;margin:36px auto;padding:0 24px}
@@ -280,12 +273,6 @@ input:-webkit-autofill:focus {
 .nl-form button{background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s;white-space:nowrap}
 .nl-form button:hover{opacity:.85;transform:translateY(-1px)}
 
-/* ── CUSTOM ALERT ── */
-.c-alert { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(5px); }
-.c-alert-content { background: var(--surface); padding: 30px; border-radius: 15px; border: 1px solid var(--red); text-align: center; max-width: 400px; width: 90%; }
-#c-alert-msg { font-family: 'Outfit', sans-serif; margin-bottom: 20px; font-size: 1.1rem; }
-.c-alert-content button { background: var(--red); color: white; border: none; padding: 10px 30px; border-radius: 5px; cursor: pointer; font-family: 'Bebas Neue'; letter-spacing: 1px; }
-     
 /* ── SUCCESS PAGE ── */
 .success-page{max-width:560px;margin:80px auto;padding:0 24px;text-align:center}
 .success-icon{font-size:64px;margin-bottom:24px;animation:bounce .6s ease}
@@ -797,16 +784,6 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
 </div>
 
 <!-- ════════════════════════════════════════
-     PAGE: Custom Alert
-════════════════════════════════════════ -->
-<div id="custom-alert" class="c-alert">
-  <div class="c-alert-content">
-    <div id="c-alert-msg">Message goes here</div>
-    <button onclick="closeAlert()">Dismiss</button>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════
      FOOTER (always visible)
 ════════════════════════════════════════ -->
 <footer>
@@ -1307,11 +1284,12 @@ function doSearch(v) {
 //  GAME STATUS HELPER
 // ══════════════════════
 function gameStatus(ev) {
-  const status = ev.status.type.name;
-  const detail = ev.status.type.shortDetail;
-  if (status === 'STATUS_SCHEDULED') return { cls: 'soon', label: detail };
-  if (status === 'STATUS_FINAL') return { cls: 'final', label: 'Final' };
-  return { cls: 'live', label: detail }; // For LIVE games
+  const s = ev?.status?.type;
+  if (!s) return { label:'TBD', cls:'soon' };
+  if (s.state === 'in') return { label: s.shortDetail || 'Live', cls:'live' };
+  if (s.state === 'post') return { label:'Final', cls:'final' };
+  if (ev.date) return { label: new Date(ev.date).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), cls:'soon' };
+  return { label:'Upcoming', cls:'soon' };
 }
 
 // ══════════════════════
@@ -1328,69 +1306,28 @@ function pill(id, state, txt) {
 //  FETCH NBA
 // ══════════════════════
 async function fetchNBA() {
-  pill('pill-nba', 'ld', '<span class="spin"></span> NBA...');
+  pill('pill-nba','ld','<span class="spin"></span> NBA...');
   try {
     const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard');
     const d = await r.json();
     const evs = d.events || [];
-    pill('pill-nba', 'ok', `NBA — ${evs.length} game${evs.length !== 1 ? 's' : ''}`);
-    
-    return evs.map(ev => {
-      const comp = ev.competitions[0];
-      const home = comp.competitors.find(c => c.homeAway === 'home');
-      const away = comp.competitors.find(c => c.homeAway === 'away');
-      // Get the ESPN Gamecast link
-      const gameLink = ev.links[0]?.href || 'https://www.espn.com/nba';
-
-      return {
-        id: ev.id,
-        status: ev.status.type.shortDetail,
-        homeTeam: home.team.displayName,
-        homeScore: home.score,
-        awayTeam: away.team.displayName,
-        awayScore: away.score,
-        link: gameLink
-      };
-    });
-  } catch { 
-    pill('pill-nba', 'er', 'NBA offline'); 
-    return []; 
-  }
+    pill('pill-nba','ok',`NBA — ${evs.length} game${evs.length!==1?'s':''}`);
+    return evs.map(ev => ({ emoji:'🏀', sport:'NBA', ev }));
+  } catch { pill('pill-nba','er','NBA offline'); return []; }
 }
-     
+
 // ══════════════════════
 //  FETCH EPL
 // ══════════════════════
 async function fetchEPL() {
-  pill('pill-epl', 'ld', '<span class="spin"></span> EPL...');
+  pill('pill-epl','ld','<span class="spin"></span> EPL...');
   try {
     const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard');
     const d = await r.json();
     const evs = d.events || [];
-    pill('pill-epl', 'ok', `EPL — ${evs.length} match${evs.length !== 1 ? 'es' : ''}`);
-    
-    return evs.map(ev => {
-      const comp = ev.competitions[0];
-      const home = comp.competitors.find(c => c.homeAway === 'home');
-      const away = comp.competitors.find(c => c.homeAway === 'away');
-      // Link to the match summary/commentary
-      const matchLink = ev.links[0]?.href || 'https://www.espn.com/soccer/league/_/name/eng.1';
-
-      return {
-        emoji: '⚽',
-        sport: 'EPL',
-        status: ev.status.type.shortDetail,
-        homeTeam: home.team.shortDisplayName || home.team.displayName,
-        homeScore: home.score,
-        awayTeam: away.team.shortDisplayName || away.team.displayName,
-        awayScore: away.score,
-        link: matchLink
-      };
-    });
-  } catch { 
-    pill('pill-epl', 'er', 'EPL offline'); 
-    return []; 
-  }
+    pill('pill-epl','ok',`EPL — ${evs.length} match${evs.length!==1?'es':''}`);
+    return evs.map(ev => ({ emoji:'⚽', sport:'EPL', ev }));
+  } catch { pill('pill-epl','er','EPL offline'); return []; }
 }
 
 // ══════════════════════
@@ -1399,7 +1336,7 @@ async function fetchEPL() {
 function renderSports(data) {
   allSportsData = data;
   const grid = document.getElementById('scoresGrid');
-  const bar = document.getElementById('scoresBar');
+  const bar  = document.getElementById('scoresBar');
 
   if (!data.length) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--m);">No games scheduled today. Check back later!</div>`;
@@ -1407,94 +1344,66 @@ function renderSports(data) {
     return;
   }
 
-  // 1. Score cards (Clickable to ESPN)
+  // Score cards
   grid.innerHTML = data.slice(0, 8).map(({ emoji, sport, ev }) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
-    const hs = parseInt(home?.score) || 0, as = parseInt(away?.score) || 0;
-    const hwins = st.cls === 'final' && hs > as, awins = st.cls === 'final' && as > hs;
-    
-    // Get the actual ESPN link for this specific game
-    const gameLink = ev.links?.[0]?.href || "https://www.espn.com/scores";
-
-// Replace the return inside grid.innerHTML.map in your file:
-return `
-<a href="${ev.links?.[0]?.href || '#'}" target="_blank" class="sc ${st.cls==='live'?'islive':''}" style="text-decoration:none; color:inherit;">
-  <div class="sc-lg">${emoji} ${sport} ${st.cls==='live'?'<span style="color:var(--red);font-size:9px">● LIVE</span>':''}</div>
-  <div class="sc-teams">
-    <div class="sc-team ${hwins?'win':''}"><span>${home?.team?.shortDisplayName||'Home'}</span><span class="pts">${home?.score??'—'}</span></div>
-    <div class="sc-team ${awins?'win':''}"><span>${away?.team?.shortDisplayName||'Away'}</span><span class="pts">${away?.score??'—'}</span></div>
-  </div>
-  <div class="sc-st ${st.cls==='live'?'lv':''}">${st.label}</div>
-</a>`;
+    const hs = parseInt(home?.score)||0, as = parseInt(away?.score)||0;
+    const hwins = st.cls==='final' && hs>as, awins = st.cls==='final' && as>hs;
+    const gId = ev.id;
+    return `<div class="sc ${st.cls==='live'?'islive':''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
+      <div class="sc-lg">${emoji} ${sport} ${st.cls==='live'?'<span style="color:var(--red);font-size:9px">● LIVE</span>':''}</div>
+      <div class="sc-teams">
+        <div class="sc-team ${hwins?'win':''}"><span>${home?.team?.shortDisplayName||home?.team?.abbreviation||'Home'}</span><span class="pts">${home?.score??'—'}</span></div>
+        <div class="sc-team ${awins?'win':''}"><span>${away?.team?.shortDisplayName||away?.team?.abbreviation||'Away'}</span><span class="pts">${away?.score??'—'}</span></div>
+      </div>
+      <div class="sc-st ${st.cls==='live'?'lv':''}">${st.label}</div>
+    </div>`;
   }).join('');
 
-  // 2. Scores bar (Ticker at the top)
+  // Scores bar
   const barHTML = data.map(({ emoji, ev }) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
-    const link = ev.links?.[0]?.href || "#";
-// Replace the return inside grid.innerHTML.map in your file:
-return `
-<a href="${ev.links?.[0]?.href || '#'}" target="_blank" class="sc ${st.cls==='live'?'islive':''}" style="text-decoration:none; color:inherit;">
-  <div class="sc-lg">${emoji} ${sport} ${st.cls==='live'?'<span style="color:var(--red);font-size:9px">● LIVE</span>':''}</div>
-  <div class="sc-teams">
-    <div class="sc-team ${hwins?'win':''}"><span>${home?.team?.shortDisplayName||'Home'}</span><span class="pts">${home?.score??'—'}</span></div>
-    <div class="sc-team ${awins?'win':''}"><span>${away?.team?.shortDisplayName||'Away'}</span><span class="pts">${away?.score??'—'}</span></div>
-  </div>
-  <div class="sc-st ${st.cls==='live'?'lv':''}">${st.label}</div>
-</a>`;
+    return `<div class="si">${emoji} ${home?.team?.abbreviation??'?'} vs ${away?.team?.abbreviation??'?'} <span class="sv">${home?.score??'?'}–${away?.score??'?'}</span> <span class="${st.cls==='live'?'slive':st.cls==='final'?'sfin':'ssoon'}">${st.label}</span></div>`;
   }).join('');
   bar.innerHTML = barHTML + barHTML;
 
-  // 3. Hero — make the "Read More" button go to ESPN
+  // Hero — pick live game or first game
   const live = data.find(x => gameStatus(x.ev).cls === 'live') || data[0];
   if (live) {
     const comp = live.ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(live.ev);
-    const link = live.ev.links?.[0]?.href || "#";
-
-    document.getElementById('heroTitle').textContent = `${live.emoji} ${home?.team?.name ?? ''} vs ${away?.team?.name ?? ''}`;
-    document.getElementById('heroExcerpt').textContent = `Score: ${home?.score ?? '?'} – ${away?.score ?? '?'}. ${st.cls === 'live' ? 'Game is LIVE right now!' : 'Game time: ' + st.label} Follow live updates, stats, and analysis on NexZone.`;
-    document.getElementById('heroCat').textContent = st.cls === 'live' ? 'Live Now' : live.sport;
-    
-    // Update the hero button to be an external link
-    const heroBtn = document.querySelector('.hero-btn');
-    if (heroBtn) {
-       heroBtn.onclick = () => window.open(link, '_blank');
-       heroBtn.innerText = "View Live Stats";
-    }
+    document.getElementById('heroTitle').textContent = `${live.emoji} ${home?.team?.name??''} vs ${away?.team?.name??''}`;
+    document.getElementById('heroExcerpt').textContent = `Score: ${home?.score??'?'} – ${away?.score??'?'}. ${st.cls==='live'?'Game is LIVE right now!':'Game time: '+st.label} Follow live updates, stats, and analysis on NexZone.`;
+    document.getElementById('heroCat').textContent = st.cls==='live'?'Live Now':live.sport;
+    document.getElementById('heroAuthor').textContent = `${live.sport} · NexZone Sports Desk`;
+    heroArticleId = null; // hero is a game, not an article
   }
 
-  // 4. Trending sidebar (Clickable)
+  // Trending sidebar
   const trendEl = document.getElementById('trendingList');
-  trendEl.innerHTML = data.slice(0, 5).map(({ emoji, ev }, i) => {
+  trendEl.innerHTML = data.slice(0,5).map(({ emoji, ev }, i) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
-    const link = ev.links?.[0]?.href || "#";
-    return `
-    <a href="${link}" target="_blank" class="ti" style="text-decoration:none; color:inherit;">
-      <div class="tn">${i + 1}</div>
-      <div>
-        <div class="tt">${home?.team?.name ?? '?'} vs ${away?.team?.name ?? '?'}</div>
-        <div class="tm">${emoji} ${st.cls === 'live' ? '● Live now' : st.label}</div>
-      </div>
-    </a>`;
+    const gId = ev.id;
+    return `<div class="ti" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
+      <div class="tn">${i+1}</div>
+      <div><div class="tt">${home?.team?.name??'?'} vs ${away?.team?.name??'?'}</div>
+      <div class="tm">${emoji} ${st.cls==='live'?'● Live now':st.label}</div></div>
+    </div>`;
   }).join('');
 
-  // 5. Breaking News Ticker (Update with actual links)
+  // Ticker
   const tickerItems = data.map(({ emoji, ev }) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
-    const link = ev.links?.[0]?.href || "#";
-    return `<a href="${link}" target="_blank" style="color:white; text-decoration:none; margin-right:40px;">
-              ${emoji} ${home?.team?.name ?? '?'} vs ${away?.team?.name ?? '?'}: ${home?.score ?? '?'}–${away?.score ?? '?'} (${st.label})
-            </a>`;
+    return `<span>${emoji} ${home?.team?.name??'?'} vs ${away?.team?.name??'?'}: ${home?.score??'?'}–${away?.score??'?'} (${st.label})</span>`;
   }).join('');
   updateTicker(tickerItems);
 }
@@ -1563,31 +1472,20 @@ function updateTicker(sports, anime) {
   const t = document.getElementById('tickerTrack');
   if (t) t.innerHTML = combined + combined;
 }
-     
-// ══════════════════════
-//  CUSTOM ALERT
-// ══════════════════════
-function showAlert(msg) {
-  document.getElementById('c-alert-msg').innerText = msg;
-  document.getElementById('custom-alert').style.display = 'flex';
-}
-function closeAlert() {
-  document.getElementById('custom-alert').style.display = 'none';
-}
-     
+
 // ══════════════════════
 //  SUBSCRIBE
 // ══════════════════════
 function subscribe() {
   const v = document.getElementById('nlEmail')?.value;
-  if (!v || !v.includes('@')) { showAlert('Please enter a valid email address!'); return; }
+  if (!v || !v.includes('@')) { alert('Please enter a valid email address!'); return; }
   nav('subscribed');
 }
 
 function submitSubscribe() {
   const name = document.getElementById('subName')?.value;
   const email = document.getElementById('subEmail')?.value;
-  if (!email || !email.includes('@')) { showAlert('Please enter a valid email!'); return; }
+  if (!email || !email.includes('@')) { alert('Please enter a valid email!'); return; }
   nav('subscribed');
 }
 
@@ -1595,9 +1493,9 @@ function submitContact() {
   const name = document.getElementById('cName')?.value;
   const email = document.getElementById('cEmail')?.value;
   const msg = document.getElementById('cMessage')?.value;
-  if (!email || !email.includes('@')) { showAlert('Please enter a valid email!'); return; }
-  if (!msg) { showAlert('Please write a message!'); return; }
-  showAlert(`✅ Message sent! We'll get back to you at ${email} within 2 business days.`);
+  if (!email || !email.includes('@')) { alert('Please enter a valid email!'); return; }
+  if (!msg) { alert('Please write a message!'); return; }
+  alert(`✅ Message sent! We'll get back to you at ${email} within 2 business days.`);
   document.getElementById('cName').value = '';
   document.getElementById('cEmail').value = '';
   document.getElementById('cMessage').value = '';
@@ -1611,7 +1509,7 @@ function shareArticle(platform) {
   const url = window.location.href;
   if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, '_blank');
   else if (platform === 'reddit') window.open(`https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
-  else { navigator.clipboard?.writeText(url).then(() => showAlert('Link copied!')).catch(() => showAlert('Link: ' + url)); }
+  else { navigator.clipboard?.writeText(url).then(() => alert('Link copied!')).catch(() => alert('Link: ' + url)); }
 }
 
 // ══════════════════════
