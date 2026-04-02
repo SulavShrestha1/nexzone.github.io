@@ -282,6 +282,37 @@ function nav(page, data) {
   if (page === 'articles') populateAllArticles();
 }
 
+function nav(pageId, data = null) {
+  // 1. Reset Pagination as requested
+  pageHomeSports = 1;
+  pageLiveSports = 1;
+  pageHomeAnime = 1;
+  pageAnimeGrid = 1;
+  pageNews = 1;
+
+  // 2. Handle Special Detail Pages (like Anime Details)
+  if (pageId === 'animeDetail' && data) {
+    showAnimeDetailPage(data, true);
+    return;
+  }
+
+  // 3. UI Page Switching
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const targetPage = document.getElementById('page-' + pageId);
+  
+  if (targetPage) {
+    targetPage.classList.add('active');
+    currentPage = pageId;
+    window.scrollTo(0, 0); // Scroll to top on page change
+  } else {
+    console.error(`Page ID "page-${pageId}" not found in HTML.`);
+  }
+
+  // 4. Close Mobile Menu (if you have one open)
+  const navLinks = document.getElementById('navLinks');
+  if (navLinks) navLinks.classList.remove('active');
+}
+
 window.addEventListener('hashchange', () => {
   const h = window.location.hash.slice(1);
   if (h.startsWith('anime-')) {
@@ -674,37 +705,33 @@ function setHeroFromNews(articles) {
   }
 }
 
-function buildScoreCardsHTML(data, max) {
-  const slice = max != null ? data.slice(0, max) : data;
-  return slice.map(({ emoji, sport, ev }) => {
-    const comp = ev.competitions?.[0];
-    const [home, away] = comp?.competitors || [];
-    const st = gameStatus(ev);
-    const hs = parseInt(home?.score) || 0, as = parseInt(away?.score) || 0;
-    const hwins = st.cls === 'final' && hs > as, awins = st.cls === 'final' && as > hs;
-    const gId = ev.id;
-    const hl = logoUrl(home?.team);
-    const al = logoUrl(away?.team);
-    return `<div class="sc ${st.cls === 'live' ? 'islive' : ''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
-      <div class="sc-lg">${emoji} ${sport} ${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px">● LIVE</span>' : ''}</div>
-      <div class="sc-teams">
-        <div class="sc-team ${hwins ? 'win' : ''}">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
-            ${hl ? `<img class="team-logo" src="${escapeAttr(hl)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${home?.team?.shortDisplayName || home?.team?.abbreviation || 'Home'}</span>
-          </div>
-          <span class="pts">${home?.score ?? '—'}</span>
+function buildScoreCardsHTML(items) {
+  return items.map(x => {
+    const ev = x.ev;
+    const home = ev.competitions[0].competitors.find(c => c.side === 'home');
+    const away = ev.competitions[0].competitors.find(c => c.side === 'away');
+    const status = ev.status.type.shortDetail; // e.g., "Final", "Q3 - 2:00"
+
+    return `
+      <div class="si" data-ev="${ev.id}">
+        <div class="si-header">
+          <span class="si-league">${x.league.toUpperCase()}</span>
+          <span class="si-status">${status}</span>
         </div>
-        <div class="sc-team ${awins ? 'win' : ''}">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
-            ${al ? `<img class="team-logo" src="${escapeAttr(al)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${away?.team?.shortDisplayName || away?.team?.abbreviation || 'Away'}</span>
+        <div class="si-teams">
+          <div class="si-team">
+            <img src="${logoUrl(away.team)}" alt="${away.team.abbreviation}">
+            <span class="si-name">${away.team.displayName}</span>
+            <span class="si-score">${away.score}</span>
           </div>
-          <span class="pts">${away?.score ?? '—'}</span>
+          <div class="si-team">
+            <img src="${logoUrl(home.team)}" alt="${home.team.abbreviation}">
+            <span class="si-name">${home.team.displayName}</span>
+            <span class="si-score">${home.score}</span>
+          </div>
         </div>
       </div>
-      <div class="sc-st ${st.cls === 'live' ? 'lv' : ''}">${st.label}</div>
-    </div>`;
+    `;
   }).join('');
 }
 
