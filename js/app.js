@@ -3,7 +3,105 @@
  */
 /* global ARTICLES, fetchESPNNews, fetchGameSummary, fetchJikanAnimeFull, fetchJikanEpisodesAll, fetchJikanGenres, fetchJikanAnimeList, fetchTopAiringAnime, fetchAniListByMalId */
 
-const NZ_MAIL_URL = 'https://script.google.com/macros/s/AKfycbxuoAxSmZxLziZgr4u38BMPy5esn-rPxi_G_YmlMjuYVJylzAvWIBlQA7kXOzZHqSTh/exec'; 
+const NZ_MAIL_URL = 'function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  const type = data.type;
+  const adminEmail = 'shresthasulav027@gmail.com';
+  
+  // NexZone Design Tokens
+  const theme = {
+    red: '#e8323c',
+    green: '#50c878',
+    bg: '#0a0a0c',
+    card: '#16161f',
+    text: '#f0eff5',
+    muted: '#9299a8',
+    border: 'rgba(255,255,255,0.08)'
+  };
+
+  // The Master UI Wrapper
+  const wrapEmail = (content, accentColor) => `
+    <div style="background-color: ${theme.bg}; padding: 30px 10px; font-family: 'Outfit', sans-serif; color: ${theme.text};">
+      <div style="max-width: 500px; margin: 0 auto; background: ${theme.card}; border-radius: 20px; border: 1px solid ${theme.border}; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+        <div style="background: ${accentColor}; padding: 20px; text-align: center;">
+          <h1 style="margin: 0; font-size: 28px; color: #ffffff; letter-spacing: 2px; font-family: Arial, sans-serif;">NEXZONE</h1>
+        </div>
+        <div style="padding: 30px;">
+          ${content}
+        </div>
+        <div style="background: rgba(0,0,0,0.2); padding: 15px; text-align: center; border-top: 1px solid ${theme.border};">
+          <p style="margin: 0; font-size: 10px; color: #444; letter-spacing: 1px; text-transform: uppercase;">NexZone Intelligence Unit • 2026</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  if (type === 'contact') {
+    const adminContactBody = `
+      <h2 style="color: ${theme.red}; font-size: 18px; margin-bottom: 20px;">NEW SUPPORT TICKET</h2>
+      <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 15px; border: 1px solid ${theme.border}; margin-bottom: 20px;">
+        <p style="margin: 5px 0; font-size: 14px;"><span style="color: ${theme.muted};">FROM:</span> <strong>${data.name}</strong></p>
+        <p style="margin: 5px 0; font-size: 14px;"><span style="color: ${theme.muted};">EMAIL:</span> <span style="color: ${theme.red}">${data.email}</span></p>
+      </div>
+      <div style="font-size: 15px; line-height: 1.6; color: #d1d1d6; border-left: 3px solid ${theme.red}; padding-left: 15px;">
+        ${data.message.replace(/\n/g, '<br>')}
+      </div>
+    `;
+
+    MailApp.sendEmail({
+      to: adminEmail,
+      subject: `🚨 NexZone Inquiry: ${data.name}`,
+      htmlBody: wrapEmail(adminContactBody, theme.red) // Red for Support
+    });
+  }
+
+  if (type === 'subscribe') {
+    // 1. WHAT YOU GET (ADMIN NOTIFICATION)
+    const adminSubBody = `
+      <div style="text-align: center; margin-bottom: 20px;">
+        <span style="background: rgba(80, 200, 120, 0.1); color: ${theme.green}; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; border: 1px solid ${theme.green};">NEW GROWTH</span>
+      </div>
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid ${theme.border}; border-radius: 15px; padding: 20px;">
+        <p style="margin: 0; color: ${theme.muted}; font-size: 11px; text-transform: uppercase;">User</p>
+        <p style="margin: 4px 0 15px 0; font-size: 17px; font-weight: 600; color: #fff;">${data.name || 'Anonymous'}</p>
+        
+        <p style="margin: 0; color: ${theme.muted}; font-size: 11px; text-transform: uppercase;">Email</p>
+        <p style="margin: 4px 0 15px 0; font-size: 15px; color: ${theme.green}; font-weight: 500;">${data.email}</p>
+        
+        <p style="margin: 0; color: ${theme.muted}; font-size: 11px; text-transform: uppercase;">Interest</p>
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #fff; background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 5px; display: inline-block;">
+          ${data.interest}
+        </p>
+      </div>
+    `;
+
+    MailApp.sendEmail({
+      to: adminEmail,
+      subject: `📈 New Subscriber: ${data.email}`,
+      htmlBody: wrapEmail(adminSubBody, theme.green) // Green for Growth
+    });
+
+    // 2. WHAT THE USER GETS (WELCOME EMAIL)
+    const userWelcomeBody = `
+      <div style="text-align: center;">
+        <h2 style="font-size: 24px; margin: 0; color: #fff;">WELCOME TO THE <span style="color:${theme.red}">ZONE</span></h2>
+        <p style="color: ${theme.muted}; font-size: 15px; margin: 20px 0; line-height: 1.5;">
+          Your subscription for <strong>${data.interest}</strong> is confirmed. Daily scores and anime news are headed your way.
+        </p>
+        <a href="https://nexzone.com" style="background: ${theme.red}; color: #fff; padding: 14px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">ENTER NEXZONE</a>
+      </div>
+    `;
+
+    MailApp.sendEmail({
+      to: data.email,
+      subject: 'Welcome to the NexZone Pipeline 🏀🎌',
+      htmlBody: wrapEmail(userWelcomeBody, theme.red)
+    });
+  }
+
+  return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}'; 
 const NZ_PAGE_SIZE = 6;
 let currentPage = 'home';
 let currentArticleId = null;
