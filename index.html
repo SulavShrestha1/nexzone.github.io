@@ -346,15 +346,20 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
       <li><button id="nl-articles" onclick="nav('articles')">Articles</button></li>
       <li><button class="nav-cta" onclick="nav('subscribe')">Subscribe</button></li>
     </ul>
-    <div class="nav-search">
-      <span style="cursor:pointer" onclick="document.getElementById('searchInput').focus()">🔍</span>
-      <input type="text" placeholder="Search..." id="searchInput" oninput="doSearch(this.value)">
-    </div>
+     <div class="nav-search">
+       <span style="cursor:pointer" onclick="document.getElementById('searchInput').focus()">🔍</span>
+       <input type="text" placeholder="Search..." id="searchInput" oninput="doSearch(this.value)">
+     </div>
     <button class="hamburger" onclick="document.getElementById('mMenu').classList.toggle('open')">
       <span></span><span></span><span></span>
     </button>
   </div>
   <div class="mobile-menu" id="mMenu">
+       <div style="padding: 10px 0; border-bottom: 1px solid var(--b);">
+          <input type="text" placeholder="Search NexZone..." 
+                 style="width:100%; background:var(--bg); border:1px solid var(--red); color:#fff; padding:10px; border-radius:8px;" 
+                 oninput="doSearch(this.value)">
+       </div>
     <button onclick="nav('home');document.getElementById('mMenu').classList.remove('open')">Home</button>
     <button onclick="nav('sports');document.getElementById('mMenu').classList.remove('open')">Sports</button>
     <button onclick="nav('anime');document.getElementById('mMenu').classList.remove('open')">Anime</button>
