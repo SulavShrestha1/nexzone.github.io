@@ -316,6 +316,13 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
   .nav-search { display: none !important; } 
   .mobile-search-wrap { display: block; padding: 10px 0; }
 }
+     
+/* Mobile Menu - Hide on desktop even if 'open' class is still there */
+@media(min-width:901px) {
+  .mobile-menu { display: none !important; }
+  .nav-search { display: flex !important; }
+}
+     
 @media(max-width:560px){
   .ag,.anime-grid,.scores-grid{grid-template-columns:1fr}
   .hero-title{font-size:28px}
@@ -776,9 +783,9 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
 ════════════════════════════════════════ -->
 <div id="page-search" class="page">
   <div class="inner-page">
-    <h1 id="search-title">Search Results</h1>
-    <p id="search-count" class="subtitle">Searching for your content...</p>
-     <div id="search-results-grid" class="ag">
+     <h1 id="search-title" style="color:var(--red); font-family:'Bebas Neue'; font-size:3rem;">Search Results</h1>
+    <p id="search-count" style="color:var(--m2); margin-bottom:20px;"></p>
+    <div id="search-results-grid" class="ag">
       </div>
   </div>
 </div>
@@ -1549,35 +1556,31 @@ function executeSearch(query) {
   if (!query || query.trim() === "") return;
   const q = query.toLowerCase().trim();
   
-  // 1. Switch to the Search Page
+  // 1. Move to the search page
   nav('search');
   
-  // 2. Update Titles
-  document.getElementById('search-title').innerText = `Results for: "${query}"`;
+  // 2. Clear old results
   const grid = document.getElementById('search-results-grid');
-  grid.innerHTML = ""; // Clear old results
-
-  // 3. Find all content across the entire site
+  grid.innerHTML = "";
+  
+  // 3. Find all cards (Sports, Anime, News)
   const allContent = document.querySelectorAll('.ac, .anc, .sc, .stack-card');
-  let foundCount = 0;
+  let count = 0;
 
   allContent.forEach(item => {
     if (item.innerText.toLowerCase().includes(q)) {
-      // Clone the card so we don't move the original from its home page
       const clone = item.cloneNode(true);
-      clone.style.display = "block"; // Ensure it's visible
+      clone.style.display = "block";
       clone.style.opacity = "1";
       grid.appendChild(clone);
-      foundCount++;
+      count++;
     }
   });
 
-  document.getElementById('search-count').innerText = `${foundCount} matches found in Sports, Anime, and News.`;
+  document.getElementById('search-count').innerText = `Found ${count} items for "${query}"`;
   
-  if(foundCount === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--m2);">
-                        No results found for "${query}". Try searching "NBA" or "Anime".
-                      </div>`;
+  if (count === 0) {
+    grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:50px;">No results found. Try "NBA" or "Anime".</p>`;
   }
 }
      
@@ -1600,6 +1603,12 @@ async function init() {
 
 init();
 setInterval(init, 90000);
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 900) {
+    const mMenu = document.getElementById('mMenu');
+    if (mMenu) mMenu.classList.remove('open');
+  }
+});
 </script>
 </body>
 </html>
