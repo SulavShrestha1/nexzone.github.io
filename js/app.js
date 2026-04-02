@@ -3,6 +3,7 @@
  */
 /* global ARTICLES, fetchESPNNews, fetchGameSummary, fetchJikanAnimeFull, fetchJikanEpisodesAll, fetchJikanGenres, fetchJikanAnimeList, fetchTopAiringAnime, fetchAniListByMalId */
 
+const NZ_MAIL_URL = 'https://script.google.com/macros/s/AKfycbzZY-FN6ZfIGDhz_7cXyunqMVGwXCDaJ6ICV4NuoMMibmIVGSZ3_52BZ7zpiBdzc1OI/exec'; 
 const NZ_PAGE_SIZE = 6;
 let currentPage = 'home';
 let currentArticleId = null;
@@ -129,7 +130,7 @@ function setupApiPills() {
   const an = document.getElementById('pill-anime');
   if (nba) {
     nba.classList.add('api-click');
-    nba.title = 'Toggle NBA-only games (click again for all leagues)';
+    nba.title = '🏀 Click to filter NBA-only · Click again to show all';
     nba.onclick = () => {
       sportsLeagueFilter = sportsLeagueFilter === 'nba' ? 'all' : 'nba';
       pageHomeSports = 1;
@@ -139,7 +140,7 @@ function setupApiPills() {
   }
   if (epl) {
     epl.classList.add('api-click');
-    epl.title = 'Toggle EPL-only matches (click again for all)';
+    epl.title = '⚽ Click to filter EPL-only · Click again to show all';  
     epl.onclick = () => {
       sportsLeagueFilter = sportsLeagueFilter === 'epl' ? 'all' : 'epl';
       pageHomeSports = 1;
@@ -147,9 +148,9 @@ function setupApiPills() {
       renderSports(allSportsData);
     };
   }
-  if (an) {
+if (an) {
     an.classList.add('api-click');
-    an.title = 'Open Anime hub';
+    an.title = 'Click to open the Anime hub';
     an.onclick = () => nav('anime');
   }
 }
@@ -1037,27 +1038,54 @@ function updateTicker(sports, anime) {
   if (t) t.innerHTML = combined + combined;
 }
 
-function subscribe() {
+async function subscribe() {
   const v = document.getElementById('nlEmail')?.value;
   if (!v || !v.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
+  try {
+    await fetch(NZ_MAIL_URL, {
+      method: 'POST',
+      body: JSON.stringify({ type: 'subscribe', name: 'Subscriber', email: v, interest: 'Sports + Anime (Everything)' })
+    });
+  } catch (_) {}
+  document.getElementById('nlEmail').value = '';
   nav('subscribed');
 }
 
-function submitSubscribe() {
+async function submitSubscribe() {
+  const name = document.getElementById('subName')?.value;
   const email = document.getElementById('subEmail')?.value;
+  const interest = document.getElementById('subInterest')?.value;
   if (!email || !email.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
+  try {
+    await fetch(NZ_MAIL_URL, {
+      method: 'POST',
+      body: JSON.stringify({ type: 'subscribe', name, email, interest })
+    });
+  } catch (_) {}
+  document.getElementById('subName').value = '';
+  document.getElementById('subEmail').value = '';
+  document.getElementById('subInterest').selectedIndex = 0;
   nav('subscribed');
 }
 
-function submitContact() {
+async function submitContact() {
+  const name = document.getElementById('cName')?.value || 'Anonymous';
   const email = document.getElementById('cEmail')?.value;
+  const subject = document.getElementById('cSubject')?.value || 'General Inquiry';
   const msg = document.getElementById('cMessage')?.value;
   if (!email || !email.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
   if (!msg) { nzAlert('Please write a message before sending.', 'error'); return; }
+  try {
+    await fetch(NZ_MAIL_URL, {
+      method: 'POST',
+      body: JSON.stringify({ type: 'contact', name, email, subject, message: msg })
+    });
+  } catch (_) {}
   nzAlert(`Message sent! We'll get back to you at ${email} within 2 business days.`, 'success');
   document.getElementById('cName').value = '';
   document.getElementById('cEmail').value = '';
   document.getElementById('cMessage').value = '';
+  document.getElementById('cSubject').selectedIndex = 0;
 }
 
 function shareArticle(platform) {

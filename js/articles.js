@@ -78,7 +78,7 @@ const ARTICLES = [
     title:'Spring 2025 Anime Season: Complete Guide to Every New Show',
     excerpt:"The spring season is here with over 40 new shows. We break down every series you need to watch and what to skip.",
     date:'Yesterday', views:'9.7k', author:'NexZone Anime Team', readTime:'6 min read',
-    coverImage:'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=900&q=85',
+coverImage:'https://images.unsplash.com/photo-1614583224978-f05ce51ef5fa?w=900&q=85',
     externalReadUrl:'https://www.crunchyroll.com/news',
     content:`
       <h3>Spring 2025 Preview</h3>
@@ -125,7 +125,7 @@ const ARTICLES = [
     title:'Jujutsu Kaisen Final Arc Review: Does It Stick the Landing?',
     excerpt:"After years of build-up, hype, and some of anime's most outrageous power escalation, does JJK's final arc deliver?",
     date:'3d ago', views:'15.2k', author:'NexZone Anime Team', readTime:'7 min read',
-    coverImage:'https://images.unsplash.com/photo-1612178537253-bccd437b730e?w=900&q=85',
+    coverImage:'https://images.unsplash.com/photo-1535016120720-40c646be5580?w=900&q=85',
     externalReadUrl:'https://myanimelist.net/anime/40748/',
     content:`
       <h3>The Build-Up Was Real</h3>

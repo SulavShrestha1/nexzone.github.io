@@ -135,7 +135,7 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 .ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
 .ac{background:var(--card);border:1px solid var(--b);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s,opacity .3s}
 .ac:hover{border-color:var(--bh);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-3px)}
-.ct{height:112px;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--surface);border-bottom:1px solid var(--b)}
+.ct{height:175px;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--surface);border-bottom:1px solid var(--b)}
 .cb{padding:14px}
 .ctag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .ts{color:var(--red)}.ta{color:var(--gold)}.tr{color:var(--blue)}
@@ -170,7 +170,7 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 
 /* ── ARTICLE PAGE ── */
 .article-page{max-width:800px;margin:0 auto;padding:32px 24px}
-.ap-back{display:inline-flex;align-items:center;gap:8px;color:var(--m2);font-size:13px;font-weight:500;margin-bottom:28px;padding:8px 14px;border-radius:8px;border:1px solid var(--b);transition:all .2s;background:none;font-family:var(--fb)}
+.ap-back{display:inline-flex;align-items:center;gap:8px;color:var(--m2);font-size:13px;font-weight:500;margin-bottom:28px;padding:8px 14px;border-radius:8px;border:1px solid var(--b);transition:all .2s;background:none;font-family:var(--fb);line-height:1}
 .ap-back:hover{color:var(--text);border-color:var(--bh);background:rgba(255,255,255,.04)}
 .ap-cat{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
 .ap-title{font-family:var(--fh);font-size:52px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:18px}
@@ -286,7 +286,7 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
 .nz-modal{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .28s ease,visibility .28s ease}
 .nz-modal.open{opacity:1;visibility:visible}
 .nz-modal-backdrop{position:absolute;inset:0;background:rgba(5,5,8,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.nz-modal-box{position:relative;background:var(--card);border:1px solid var(--bh);border-radius:18px;padding:32px 36px 28px;max-width:440px;width:100%;box-shadow:0 28px 80px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.04) inset;text-align:center;animation:nzPop .35s ease}
+.nz-modal-box{position:relative;background:var(--card);border:1px solid var(--bh);border-radius:18px;padding:32px 36px 28px;max-width:440px;width:100%;box-shadow:0 28px 80px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.04) inset;text-align:center;animation:nzPop .35s ease;overflow:hidden}
 @keyframes nzPop{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .nz-modal-accent{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--red),#ff5a62);border-radius:18px 18px 0 0}
 .nz-modal-icon{font-size:52px;line-height:1;margin-bottom:14px;filter:drop-shadow(0 4px 12px rgba(232,50,60,.35))}
@@ -407,7 +407,17 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
 /* ── API PILLS (clickable) ── */
 .api-pill.api-click{cursor:pointer;transition:transform .15s,border-color .2s,box-shadow .2s}
 .api-pill.api-click:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.35)}
-.api-pill.is-filter{border-color:rgba(80,200,120,.55);box-shadow:0 0 0 1px rgba(80,200,120,.2)}
-
+.api-pill.is-filter{background:rgba(80,200,120,.15);border-color:rgba(80,200,120,.6);color:var(--green)!important;box-shadow:0 0 8px rgba(80,200,120,.2)}
+.api-pill.is-filter .api-dot{background:var(--green)}
 .news-detail-meta-line{color:var(--m);font-size:15px;margin-bottom:8px}
 .ap-external a{color:var(--gold);font-weight:600}
+/* ── AUTOFILL FIX ── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  caret-color: var(--text) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
