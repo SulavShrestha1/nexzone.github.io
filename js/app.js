@@ -3,7 +3,7 @@
  */
 /* global ARTICLES, fetchESPNNews, fetchGameSummary, fetchJikanAnimeFull, fetchJikanEpisodesAll, fetchJikanGenres, fetchJikanAnimeList, fetchTopAiringAnime, fetchAniListByMalId */
 
-const NZ_MAIL_URL = 'https://script.google.com/macros/s/AKfycbwmD0GPGjx_XiDcrxIKJTe6sstGxYCrwl3kwSoSetTnAGq1_yFEMKKPj4ibOwto4R1b/exec'; 
+const NZ_MAIL_URL = 'https://script.google.com/macros/s/AKfycbxLRrw3eASGWYJDKRoFM4z9a55OhHamL5_c6uVM6x81mDkJ8EsaR0XuINNFfHQkINzx/exec'; 
 const NZ_PAGE_SIZE = 6;
 let currentPage = 'home';
 let currentArticleId = null;
