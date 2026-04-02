@@ -5,6 +5,8 @@ const ARTICLES = [
     title:'NBA Playoffs 2025: Full Breakdown of Every Matchup',
     excerpt:'Full breakdown of every playoff matchup, star performances, and our expert predictions heading into the conference finals.',
     date:'Today', views:'8.1k', author:'NexZone Sports Desk', readTime:'5 min read',
+    coverImage:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=85',
+    externalReadUrl:'https://www.espn.com/nba/',
     content:`
       <h3>The Road to the Finals</h3>
       <p>The 2025 NBA Playoffs have delivered some of the most thrilling basketball we've seen in years. From Steph Curry's vintage performances to the incredible defensive battles in the East, this postseason has it all.</p>
@@ -28,6 +30,8 @@ const ARTICLES = [
     title:'EPL Week 36 Top Goals: Who Was Best This Week?',
     excerpt:'A stunning week of Premier League action with hat-tricks, last-minute winners, and a title race tighter than ever.',
     date:'2h ago', views:'4.2k', author:'NexZone Soccer Desk', readTime:'3 min read',
+    coverImage:'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=85',
+    externalReadUrl:'https://www.espn.com/soccer/league/_/name/eng.1',
     content:`
       <h3>Goal of the Week</h3>
       <p>This week's Premier League action produced some stunning moments, none more impressive than the audacious 40-yard lobbed goal at Anfield that sent the home crowd wild. A moment of pure genius that will be replayed for years.</p>
@@ -48,6 +52,8 @@ const ARTICLES = [
     title:'Attack on Titan: The 10 Greatest Moments in the Entire Series',
     excerpt:'From the breach of Wall Maria to the final chapter, we rank the most iconic, emotional and jaw-dropping moments in AOT history.',
     date:'Yesterday', views:'12.3k', author:'NexZone Anime Team', readTime:'8 min read',
+    coverImage:'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/16498/',
     content:`
       <h3>A Legendary Series</h3>
       <p>Attack on Titan is widely considered one of the greatest anime and manga series of all time. Hajime Isayama's masterpiece delivered years of shocking twists, emotional gut-punches, and some of the most stunning animation ever put to screen.</p>
@@ -72,6 +78,8 @@ const ARTICLES = [
     title:'Spring 2025 Anime Season: Complete Guide to Every New Show',
     excerpt:"The spring season is here with over 40 new shows. We break down every series you need to watch and what to skip.",
     date:'Yesterday', views:'9.7k', author:'NexZone Anime Team', readTime:'6 min read',
+    coverImage:'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=900&q=85',
+    externalReadUrl:'https://www.crunchyroll.com/news',
     content:`
       <h3>Spring 2025 Preview</h3>
       <p>Spring anime seasons are historically some of the strongest of the year, and 2025 is no exception. With returning fan favorites and promising newcomers, your watchlist is about to get very full.</p>
@@ -96,6 +104,8 @@ const ARTICLES = [
     title:'UFC 300 Full Fight Card: Every Matchup Analyzed',
     excerpt:"UFC 300 is here and the card is absolutely stacked. We break down every main card fight and give our predictions.",
     date:'2d ago', views:'6.5k', author:'NexZone MMA Desk', readTime:'5 min read',
+    coverImage:'https://images.unsplash.com/photo-1549719386-74dfcbf7a31e?w=900&q=85',
+    externalReadUrl:'https://www.espn.com/mma/',
     content:`
       <h3>A Historic Event</h3>
       <p>UFC 300 is a landmark event for the promotion, and they have assembled one of the most stacked cards in the history of the sport. Multiple championship bouts, legendary fighters, and incredible matchups top to bottom.</p>
@@ -115,6 +125,8 @@ const ARTICLES = [
     title:'Jujutsu Kaisen Final Arc Review: Does It Stick the Landing?',
     excerpt:"After years of build-up, hype, and some of anime's most outrageous power escalation, does JJK's final arc deliver?",
     date:'3d ago', views:'15.2k', author:'NexZone Anime Team', readTime:'7 min read',
+    coverImage:'https://images.unsplash.com/photo-1612178537253-bccd437b730e?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/40748/',
     content:`
       <h3>The Build-Up Was Real</h3>
       <p>Jujutsu Kaisen became a phenomenon almost overnight. Gojo Satoru's introduction, the Shibuya Incident, the Prison Realm — each arc raised the stakes higher and kept fans absolutely hooked. The question was always: can it stick the landing?</p>
@@ -132,6 +144,8 @@ const ARTICLES = [
     title:'2025 NFL Draft: Top 10 Picks and What They Mean',
     excerpt:"The 2025 NFL Draft is here. We analyze every top-10 pick, what each team needed, and who won and lost draft day.",
     date:'3d ago', views:'7.8k', author:'NexZone NFL Desk', readTime:'5 min read',
+    coverImage:'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=900&q=85',
+    externalReadUrl:'https://www.espn.com/nfl/',
     content:`
       <h3>Draft Day Breakdown</h3>
       <p>The 2025 NFL Draft saw several franchises make bold moves to reshape their futures. Quarterback talent was at a premium, and multiple teams traded up aggressively to secure their guy.</p>
@@ -150,6 +164,8 @@ const ARTICLES = [
     title:'Blue Lock Season 2: Release Date, Story & What to Expect',
     excerpt:"Blue Lock Season 2 is officially confirmed. Here's everything we know: premiere date, story arcs, and returning characters.",
     date:'4d ago', views:'18.4k', author:'NexZone Anime Team', readTime:'4 min read',
+    coverImage:'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/49596/',
     content:`
       <h3>The Most Anticipated Sports Anime of the Year</h3>
       <p>Blue Lock Season 1 took the anime world by storm, combining the intensity of a sports anime with a psychological thriller that kept fans on the edge of their seats. Season 2 has now been officially confirmed, and the fandom is absolutely electric.</p>
@@ -170,6 +186,8 @@ const ARTICLES = [
     title:'MLB 2025 Season Preview: Who Are the Real Contenders?',
     excerpt:"From the Dodgers dynasty to surprise dark horses, we break down every division and pick our World Series winner.",
     date:'5d ago', views:'5.1k', author:'NexZone Baseball Desk', readTime:'5 min read',
+    coverImage:'https://images.unsplash.com/photo-1471295253337-3ceaaed6b2ca?w=900&q=85',
+    externalReadUrl:'https://www.espn.com/mlb/',
     content:`
       <h3>The 2025 MLB Season in Focus</h3>
       <p>The Los Angeles Dodgers enter 2025 as the prohibitive favorites after their World Series triumph, armed with what many are calling the greatest roster ever assembled in baseball history. But baseball has a way of humbling even the mightiest.</p>

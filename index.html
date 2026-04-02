@@ -131,6 +131,7 @@
       <div class="sk" style="height:180px;border-radius:14px;"></div>
       <div class="sk" style="height:180px;border-radius:14px;"></div>
     </div>
+    <div class="nz-pager-wrap" id="newsPager" aria-label="News pages"></div>
   </div>
 
   <!-- LIVE SCORES BAR -->
@@ -148,6 +149,7 @@
       <div class="sk" style="height:110px;border-radius:12px;"></div>
       <div class="sk" style="height:110px;border-radius:12px;"></div>
     </div>
+    <div class="nz-pager-wrap" id="homeSportsPager" aria-label="Scores pages"></div>
   </div>
 
   <!-- ARTICLES + SIDEBAR -->
@@ -191,6 +193,7 @@
       <div class="sk anc" style="height:240px;"></div>
       <div class="sk anc" style="height:240px;"></div>
     </div>
+    <div class="nz-pager-wrap" id="homeAnimePager" aria-label="Anime pages"></div>
   </div>
 
   <!-- NEWSLETTER -->
@@ -209,6 +212,21 @@
 </div><!-- end page-home -->
 
 <!-- ════════════════════════════════════════
+     PAGE: ESPN NEWS (synopsis → read full)
+════════════════════════════════════════ -->
+<div id="page-news-detail" class="page">
+  <div class="inner-page news-detail-wrap">
+    <button class="ap-back" onclick="nav('home')">← Back to Home</button>
+    <div id="newsDetailTag" class="news-card-tag" style="margin-bottom:12px;"></div>
+    <h1 class="ap-title" id="newsDetailTitle" style="font-size:clamp(1.8rem,4vw,2.8rem);"></h1>
+    <p id="newsDetailMeta" class="news-detail-meta-line"></p>
+    <img id="newsDetailImg" class="news-detail-hero-img" alt="" style="display:none;width:100%;max-height:420px;object-fit:cover;border-radius:16px;border:1px solid var(--b);margin:20px 0;">
+    <div id="newsDetailSynopsis" class="anime-synopsis"></div>
+    <a class="read-btn" id="newsDetailReadFull" href="#" target="_blank" rel="noopener">Read full story on ESPN →</a>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
      PAGE: ARTICLE
 ════════════════════════════════════════ -->
 <div id="page-article" class="page">
@@ -222,6 +240,7 @@
       <span class="ap-read" id="ap-read">📖 5 min read</span>
     </div>
     <div class="ap-hero-img" id="ap-img">🏆</div>
+    <div id="ap-external-wrap" class="ap-external" style="display:none;max-width:800px;margin:0 auto 20px;padding:16px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:12px;font-size:15px;color:var(--m2);"></div>
 
     <!-- ADSENSE IN-ARTICLE -->
     <div class="ad-slot inline">📢 AdSense In-Article Ad — Paste code here</div>
@@ -307,6 +326,7 @@
       <div class="sk anc" style="height:240px;"></div>
       <div class="sk anc" style="height:240px;"></div>
     </div>
+    <div class="nz-pager-wrap" id="animePagePager" aria-label="Anime grid pages"></div>
     <div class="sec-head" style="margin-top:40px;"><h2>Anime Articles</h2></div>
     <div class="ag" id="animeArticlesGrid"></div>
   </div>
@@ -546,6 +566,7 @@
       <div class="sk" style="height:120px;border-radius:12px;"></div>
       <div class="sk" style="height:120px;border-radius:12px;"></div>
     </div>
+    <div class="nz-pager-wrap" id="liveSportsPager" aria-label="All games pages"></div>
   </div>
 </div>
 

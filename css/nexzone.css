@@ -391,3 +391,23 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
 .stream-card .t{padding:10px 12px;font-size:13px;font-weight:600;line-height:1.35}
 .external-mal{display:inline-flex;margin-top:24px}
 .animg,.anime-detail-banner{image-rendering:auto}
+
+/* ── PAGINATION ── */
+.nz-pager-wrap{margin-top:20px;margin-bottom:8px}
+.nz-pager{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.nz-pager-btn{background:var(--card);border:1px solid var(--b);color:var(--text);padding:10px 20px;border-radius:10px;font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s}
+.nz-pager-btn:hover:not(:disabled){border-color:var(--bh);background:var(--card-h)}
+.nz-pager-btn:disabled{opacity:.35;cursor:not-allowed}
+.nz-pager-info{font-size:14px;color:var(--m2);min-width:120px;text-align:center}
+
+/* ── ARTICLE CARD IMAGES ── */
+.ct.ct-img{padding:0;overflow:hidden;background:var(--surface)}
+.ct.ct-img img{width:100%;height:100%;min-height:100px;object-fit:cover;display:block}
+
+/* ── API PILLS (clickable) ── */
+.api-pill.api-click{cursor:pointer;transition:transform .15s,border-color .2s,box-shadow .2s}
+.api-pill.api-click:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.35)}
+.api-pill.is-filter{border-color:rgba(80,200,120,.55);box-shadow:0 0 0 1px rgba(80,200,120,.2)}
+
+.news-detail-meta-line{color:var(--m);font-size:15px;margin-bottom:8px}
+.ap-external a{color:var(--gold);font-weight:600}

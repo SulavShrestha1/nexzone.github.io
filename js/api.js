@@ -29,6 +29,23 @@
     return r.json();
   };
 
+  /** Fetches all episode pages (Jikan paginates ~20 per page). */
+  global.fetchJikanEpisodesAll = async function fetchJikanEpisodesAll(malId, maxPages = 10) {
+    let page = 1;
+    const all = [];
+    while (page <= maxPages) {
+      const r = await fetch(`https://api.jikan.moe/v4/anime/${malId}/episodes?page=${page}`);
+      if (!r.ok) break;
+      const d = await r.json();
+      const chunk = d.data || [];
+      all.push(...chunk);
+      if (!d.pagination?.has_next_page) break;
+      page += 1;
+      await new Promise(res => setTimeout(res, 400));
+    }
+    return all;
+  };
+
   global.fetchJikanGenres = async function fetchJikanGenres() {
     const r = await fetch('https://api.jikan.moe/v4/genres/anime');
     if (!r.ok) return [];

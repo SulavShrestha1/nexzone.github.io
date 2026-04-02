@@ -1,8 +1,9 @@
 /**
  * NexZone — SPA router, UI, ESPN + Jikan + AniList
  */
-/* global ARTICLES, fetchESPNNews, fetchGameSummary, fetchJikanAnimeFull, fetchJikanEpisodes, fetchJikanGenres, fetchJikanAnimeList, fetchTopAiringAnime, fetchAniListByMalId */
+/* global ARTICLES, fetchESPNNews, fetchGameSummary, fetchJikanAnimeFull, fetchJikanEpisodesAll, fetchJikanGenres, fetchJikanAnimeList, fetchTopAiringAnime, fetchAniListByMalId */
 
+const NZ_PAGE_SIZE = 6;
 let currentPage = 'home';
 let currentArticleId = null;
 let currentGameData = null;
@@ -12,6 +13,12 @@ let allEspnNews = [];
 let heroArticleId = null;
 let lastAnimeMalId = null;
 let animeGenreCache = [];
+let sportsLeagueFilter = 'all';
+let pageHomeSports = 1;
+let pageLiveSports = 1;
+let pageHomeAnime = 1;
+let pageAnimeGrid = 1;
+let pageNews = 1;
 
 function escapeHtml(s) {
   if (s == null) return '';
@@ -74,6 +81,174 @@ function setupLiveInteractions() {
   document.querySelectorAll('.scores-bar-host').forEach(el => el.addEventListener('click', onScoresBarHostClick));
 }
 
+function getFilteredSports() {
+  if (sportsLeagueFilter === 'nba') return allSportsData.filter(x => x.league === 'nba');
+  if (sportsLeagueFilter === 'epl') return allSportsData.filter(x => x.league === 'epl');
+  return allSportsData;
+}
+
+function renderPager(wrapId, page, totalPages, onPage) {
+  const w = document.getElementById(wrapId);
+  if (!w) return;
+  if (totalPages <= 1) {
+    w.innerHTML = '';
+    return;
+  }
+  w.innerHTML = `<div class="nz-pager">
+    <button type="button" class="nz-pager-btn" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
+    <span class="nz-pager-info">Page ${page} / ${totalPages}</span>
+    <button type="button" class="nz-pager-btn" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
+  </div>`;
+  const btns = w.querySelectorAll('.nz-pager-btn');
+  btns[0].onclick = () => { if (page > 1) onPage(page - 1); };
+  btns[1].onclick = () => { if (page < totalPages) onPage(page + 1); };
+}
+
+function paintScoresOnly() {
+  const filtered = getFilteredSports();
+  const grid = document.getElementById('scoresGrid');
+  const liveGrid = document.getElementById('liveScoresGrid');
+  if (!filtered.length) return;
+  const total = Math.max(1, Math.ceil(filtered.length / NZ_PAGE_SIZE));
+  pageHomeSports = Math.min(pageHomeSports, total);
+  pageLiveSports = Math.min(pageLiveSports, total);
+  const hs = filtered.slice((pageHomeSports - 1) * NZ_PAGE_SIZE, pageHomeSports * NZ_PAGE_SIZE);
+  const ls = filtered.slice((pageLiveSports - 1) * NZ_PAGE_SIZE, pageLiveSports * NZ_PAGE_SIZE);
+  if (grid) grid.innerHTML = buildScoreCardsHTML(hs, null);
+  if (liveGrid) liveGrid.innerHTML = buildScoreCardsHTML(ls, null);
+  renderPager('homeSportsPager', pageHomeSports, total, p => { pageHomeSports = p; paintScoresOnly(); });
+  renderPager('liveSportsPager', pageLiveSports, total, p => { pageLiveSports = p; paintScoresOnly(); });
+}
+
+let apiPillsBound = false;
+function setupApiPills() {
+  if (apiPillsBound) return;
+  apiPillsBound = true;
+  const nba = document.getElementById('pill-nba');
+  const epl = document.getElementById('pill-epl');
+  const an = document.getElementById('pill-anime');
+  if (nba) {
+    nba.classList.add('api-click');
+    nba.title = 'Toggle NBA-only games (click again for all leagues)';
+    nba.onclick = () => {
+      sportsLeagueFilter = sportsLeagueFilter === 'nba' ? 'all' : 'nba';
+      pageHomeSports = 1;
+      pageLiveSports = 1;
+      renderSports(allSportsData);
+    };
+  }
+  if (epl) {
+    epl.classList.add('api-click');
+    epl.title = 'Toggle EPL-only matches (click again for all)';
+    epl.onclick = () => {
+      sportsLeagueFilter = sportsLeagueFilter === 'epl' ? 'all' : 'epl';
+      pageHomeSports = 1;
+      pageLiveSports = 1;
+      renderSports(allSportsData);
+    };
+  }
+  if (an) {
+    an.classList.add('api-click');
+    an.title = 'Open Anime hub';
+    an.onclick = () => nav('anime');
+  }
+}
+
+function updatePillFilterClass() {
+  const nba = document.getElementById('pill-nba');
+  const epl = document.getElementById('pill-epl');
+  if (nba) nba.classList.toggle('is-filter', sportsLeagueFilter === 'nba');
+  if (epl) epl.classList.toggle('is-filter', sportsLeagueFilter === 'epl');
+}
+
+window.openNewsDetail = function (idx) {
+  const a = allEspnNews[idx];
+  if (!a) return;
+  try {
+    sessionStorage.setItem('nzNewsArticle', JSON.stringify(a));
+  } catch (_) {}
+  showNewsDetailPage(a);
+};
+
+function showNewsDetailPage(a, setHash = true) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-news-detail').classList.add('active');
+  currentPage = 'newsDetail';
+  if (setHash) window.location.hash = 'news-detail';
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById('nl-home')?.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const tag = a?.category?.description || a?.categories?.[0]?.description || 'ESPN';
+  const pub = a.published ? new Date(a.published).toLocaleString() : '';
+  const img = newsImage(a);
+  const link = a?.links?.web?.href || a?.links?.mobile?.href || '#';
+  const synopsis = (a.description || a.headline || '').trim();
+
+  document.getElementById('newsDetailTag').textContent = tag;
+  document.getElementById('newsDetailTitle').textContent = a.headline || 'Story';
+  document.getElementById('newsDetailMeta').textContent = `${pub} · Source: ESPN`;
+  const imEl = document.getElementById('newsDetailImg');
+  if (img) {
+    imEl.src = img;
+    imEl.style.display = 'block';
+  } else {
+    imEl.style.display = 'none';
+  }
+  document.getElementById('newsDetailSynopsis').innerHTML = '<p>' + escapeHtml(synopsis).replace(/\n+/g, '</p><p>') + '</p>';
+  const r = document.getElementById('newsDetailReadFull');
+  r.href = link;
+  document.title = `${(a.headline || 'News').slice(0, 48)} — NexZone`;
+}
+
+function buildAnimeCardsHTML(items) {
+  return items.map(a => {
+    const img = bestAnimeImage(a);
+    return `
+    <div class="anc" onclick="showAnimeDetailPage(${a.mal_id},true)">
+      ${img
+        ? `<img class="animg" src="${escapeAttr(img)}" alt="${escapeAttr(a.title)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'anph',innerHTML:'🎌'}))">`
+        : `<div class="anph">🎌</div>`}
+      <div class="anb">
+        <div class="antitle">${escapeHtml(a.title)}</div>
+        <div class="anmeta"><span>${escapeHtml(a.type ?? 'TV')} · ${a.episodes ?? '?'} eps</span><span class="anscore">⭐ ${a.score ?? 'N/A'}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function paintHomeAnime() {
+  const items = allAnimeData;
+  const grid = document.getElementById('animeGrid');
+  if (!grid) return;
+  if (!items.length) {
+    grid.innerHTML = '';
+    renderPager('homeAnimePager', 1, 1, () => {});
+    return;
+  }
+  const total = Math.max(1, Math.ceil(items.length / NZ_PAGE_SIZE));
+  pageHomeAnime = Math.min(pageHomeAnime, total);
+  const slice = items.slice((pageHomeAnime - 1) * NZ_PAGE_SIZE, pageHomeAnime * NZ_PAGE_SIZE);
+  grid.innerHTML = buildAnimeCardsHTML(slice);
+  renderPager('homeAnimePager', pageHomeAnime, total, p => { pageHomeAnime = p; paintHomeAnime(); });
+}
+
+function paintAnimePageGrid() {
+  const items = allAnimeData;
+  const grid = document.getElementById('animePageGrid');
+  if (!grid) return;
+  if (!items.length) {
+    grid.innerHTML = '';
+    renderPager('animePagePager', 1, 1, () => {});
+    return;
+  }
+  const total = Math.max(1, Math.ceil(items.length / NZ_PAGE_SIZE));
+  pageAnimeGrid = Math.min(pageAnimeGrid, total);
+  const slice = items.slice((pageAnimeGrid - 1) * NZ_PAGE_SIZE, pageAnimeGrid * NZ_PAGE_SIZE);
+  grid.innerHTML = buildAnimeCardsHTML(slice);
+  renderPager('animePagePager', pageAnimeGrid, total, p => { pageAnimeGrid = p; paintAnimePageGrid(); });
+}
+
 function nav(page, data) {
   if (page === 'animeDetail' && data != null) {
     showAnimeDetailPage(data, true);
@@ -110,6 +285,17 @@ window.addEventListener('hashchange', () => {
     }
     return;
   }
+  if (h === 'news-detail') {
+    try {
+      const raw = sessionStorage.getItem('nzNewsArticle');
+      if (raw) {
+        showNewsDetailPage(JSON.parse(raw), false);
+        return;
+      }
+    } catch (_) {}
+    nav('home');
+    return;
+  }
   if (h && document.getElementById('page-' + h)) nav(h);
 });
 
@@ -118,6 +304,14 @@ window.addEventListener('load', () => {
   if (h.startsWith('anime-')) {
     const id = parseInt(h.slice(6), 10);
     if (id && !Number.isNaN(id)) showAnimeDetailPage(id, false);
+  } else if (h === 'news-detail') {
+    try {
+      const raw = sessionStorage.getItem('nzNewsArticle');
+      if (raw) showNewsDetailPage(JSON.parse(raw), false);
+      else nav('home');
+    } catch (_) {
+      nav('home');
+    }
   } else if (h && document.getElementById('page-' + h)) nav(h);
   buildArticlesGrid();
 });
@@ -127,8 +321,11 @@ function makeCard(a, clickFn) {
   d.className = 'ac';
   d.dataset.cat = a.cat;
   d.dataset.title = a.title.toLowerCase();
+  const top = a.coverImage
+    ? `<div class="ct ct-img"><img src="${escapeAttr(a.coverImage)}" alt="" loading="lazy"></div>`
+    : `<div class="ct">${a.emoji}</div>`;
   d.innerHTML = `
-    <div class="ct">${a.emoji}</div>
+    ${top}
     <div class="cb">
       <div class="ctag ${a.tagCls}">${a.tag}</div>
       <div class="ctitle">${a.title}</div>
@@ -167,14 +364,16 @@ function populateSportsPage() {
   grid.innerHTML = '';
   ARTICLES.filter(a => a.cat === 'sports').forEach(a => grid.appendChild(makeCard(a)));
   const sg = document.getElementById('sportScoresGrid');
-  const src = document.getElementById('scoresGrid');
-  if (sg && src) sg.innerHTML = src.innerHTML;
+  if (sg) {
+    const filtered = getFilteredSports();
+    sg.innerHTML = filtered.length
+      ? buildScoreCardsHTML(filtered, null)
+      : '<div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--m);">No games for current filter.</div>';
+  }
 }
 
 function populateAnimePage() {
-  const ag = document.getElementById('animePageGrid');
-  const src = document.getElementById('animeGrid');
-  if (ag && src) ag.innerHTML = src.innerHTML;
+  paintAnimePageGrid();
   const grid = document.getElementById('animeArticlesGrid');
   if (!grid) return;
   grid.innerHTML = '';
@@ -189,7 +388,20 @@ function openArticle(a) {
   document.getElementById('ap-author').textContent = a.author || 'NexZone Team';
   document.getElementById('ap-date').textContent = a.date;
   document.getElementById('ap-read').innerHTML = `📖 ${a.readTime}`;
-  document.getElementById('ap-img').innerHTML = `<span style="font-size:80px">${a.emoji}</span>`;
+  const apImg = document.getElementById('ap-img');
+  const extWrap = document.getElementById('ap-external-wrap');
+  if (a.coverImage) {
+    apImg.innerHTML = `<img src="${escapeAttr(a.coverImage)}" alt="" style="width:100%;max-height:380px;object-fit:cover;border-radius:12px;display:block;border:1px solid var(--b);" loading="eager">`;
+  } else {
+    apImg.innerHTML = `<span style="font-size:80px">${a.emoji}</span>`;
+  }
+  if (a.externalReadUrl) {
+    extWrap.style.display = 'block';
+    extWrap.innerHTML = `<p style="margin:0 0 10px;"><strong>More on this story</strong> — read expanded coverage on our partner site.</p><a href="${escapeAttr(a.externalReadUrl)}" target="_blank" rel="noopener" class="read-btn">Read full story on external site →</a>`;
+  } else {
+    extWrap.style.display = 'none';
+    extWrap.innerHTML = '';
+  }
   document.getElementById('ap-body').innerHTML = a.content;
   document.title = `${a.title} — NexZone`;
   const related = ARTICLES.filter(x => x.cat === a.cat && x.id !== a.id).slice(0, 3);
@@ -404,7 +616,7 @@ async function fetchEPL() {
 function mergeEspnNews(nbaList, eplList) {
   const m = [...(nbaList || []), ...(eplList || [])];
   m.sort((a, b) => new Date(b.published || 0) - new Date(a.published || 0));
-  return m.slice(0, 28);
+  return m.slice(0, 60);
 }
 
 function newsImage(article) {
@@ -416,23 +628,31 @@ function renderEspnNews(articles) {
   const el = document.getElementById('espnNewsFeed');
   if (!el || !articles?.length) {
     if (el) el.innerHTML = '<p style="color:var(--m);grid-column:1/-1;">No headlines available right now.</p>';
+    renderPager('newsPager', 1, 1, () => {});
     return;
   }
-  el.innerHTML = articles.map(a => {
+  const total = Math.max(1, Math.ceil(articles.length / NZ_PAGE_SIZE));
+  pageNews = Math.min(pageNews, total);
+  const start = (pageNews - 1) * NZ_PAGE_SIZE;
+  const pageSlice = articles.slice(start, start + NZ_PAGE_SIZE);
+
+  el.innerHTML = pageSlice.map((a, i) => {
+    const globalIdx = start + i;
     const img = newsImage(a);
     const tag = a?.category?.description || a?.categories?.[0]?.description || 'ESPN';
     const pub = a.published ? new Date(a.published).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
-    const link = a?.links?.web?.href || a?.links?.mobile?.href || '#';
     return `
-      <article class="news-card" onclick="window.open('${escapeAttr(link)}','_blank','noopener')">
+      <article class="news-card" onclick="openNewsDetail(${globalIdx})">
         ${img ? `<img class="news-card-img" src="${escapeAttr(img)}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div class="news-card-img" style="display:flex;align-items:center;justify-content:center;font-size:42px;background:var(--surface);">📰</div>'}
         <div class="news-card-body">
           <div class="news-card-tag">${escapeHtml(tag)}</div>
           <h3 class="news-card-title">${escapeHtml(a.headline || 'Headline')}</h3>
-          <div class="news-card-meta">${escapeHtml(pub)} · ESPN</div>
+          <div class="news-card-meta">${escapeHtml(pub)} · ESPN · Tap for synopsis</div>
         </div>
       </article>`;
   }).join('');
+
+  renderPager('newsPager', pageNews, total, p => { pageNews = p; renderEspnNews(allEspnNews); });
 }
 
 function setHeroFromNews(articles) {
@@ -492,6 +712,10 @@ function buildScoresBarHTML(data) {
 
 function renderSports(data) {
   allSportsData = data;
+  setupApiPills();
+  updatePillFilterClass();
+
+  const filtered = getFilteredSports();
   const grid = document.getElementById('scoresGrid');
   const bar = document.getElementById('scoresBar');
   const liveGrid = document.getElementById('liveScoresGrid');
@@ -504,19 +728,32 @@ function renderSports(data) {
     if (liveGrid) liveGrid.innerHTML = empty;
     if (bar) bar.innerHTML = barEmpty;
     if (liveBar) liveBar.innerHTML = barEmpty;
+    renderPager('homeSportsPager', 1, 1, () => {});
+    renderPager('liveSportsPager', 1, 1, () => {});
     updateTicker('<span class="tck-empty">No live games right now — scroll for ESPN headlines.</span>');
     heroFromNewsOrStatic();
     return;
   }
 
-  if (grid) grid.innerHTML = buildScoreCardsHTML(data, 12);
-  if (liveGrid) liveGrid.innerHTML = buildScoreCardsHTML(data, null);
+  if (!filtered.length) {
+    const msg = `<div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--m);font-size:17px;">No ${sportsLeagueFilter === 'nba' ? 'NBA' : 'EPL'} games in this window. Click the API pill again to show all leagues.</div>`;
+    if (grid) grid.innerHTML = msg;
+    if (liveGrid) liveGrid.innerHTML = msg;
+    if (bar) bar.innerHTML = `<div class="si">No games</div>`;
+    if (liveBar) liveBar.innerHTML = `<div class="si">No games</div>`;
+    renderPager('homeSportsPager', 1, 1, () => {});
+    renderPager('liveSportsPager', 1, 1, () => {});
+    updateTicker('<span class="tck-empty">No games for current filter.</span>');
+    return;
+  }
 
-  const barHTML = buildScoresBarHTML(data);
+  const barHTML = buildScoresBarHTML(filtered);
   if (bar) bar.innerHTML = barHTML + barHTML;
   if (liveBar) liveBar.innerHTML = barHTML + barHTML;
 
-  const live = data.find(x => gameStatus(x.ev).cls === 'live') || data[0];
+  paintScoresOnly();
+
+  const live = filtered.find(x => gameStatus(x.ev).cls === 'live') || filtered[0];
   if (live) {
     const comp = live.ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
@@ -536,7 +773,7 @@ function renderSports(data) {
   }
 
   const trendEl = document.getElementById('trendingList');
-  trendEl.innerHTML = data.slice(0, 5).map(({ emoji, ev }, i) => {
+  trendEl.innerHTML = filtered.slice(0, 5).map(({ emoji, ev }, i) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
@@ -548,7 +785,7 @@ function renderSports(data) {
     </div>`;
   }).join('');
 
-  const tickerItems = data.map(({ emoji, ev }) => {
+  const tickerItems = filtered.map(({ emoji, ev }) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
@@ -578,8 +815,10 @@ async function fetchAnime() {
     if (!items.length) throw new Error('empty');
     allAnimeData = items;
     pill('pill-anime', 'ok', `Anime — ${items.length} airing`);
-    renderAnime(items, 'animeGrid');
-    renderAnime(items, 'animePageGrid');
+    pageHomeAnime = 1;
+    pageAnimeGrid = 1;
+    paintHomeAnime();
+    paintAnimePageGrid();
 
     const stack = document.getElementById('heroStack');
     stack.innerHTML = items.slice(0, 3).map(a =>
@@ -605,24 +844,6 @@ function bestAnimeImage(a) {
   const jpg = a.images?.jpg;
   const webp = a.images?.webp;
   return webp?.large_image_url || webp?.image_url || jpg?.large_image_url || jpg?.image_url || '';
-}
-
-function renderAnime(items, gridId) {
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
-  grid.innerHTML = items.map(a => {
-    const img = bestAnimeImage(a);
-    return `
-    <div class="anc" onclick="showAnimeDetailPage(${a.mal_id},true)">
-      ${img
-        ? `<img class="animg" src="${escapeAttr(img)}" alt="${escapeAttr(a.title)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'anph',innerHTML:'🎌'}))">`
-        : `<div class="anph">🎌</div>`}
-      <div class="anb">
-        <div class="antitle">${escapeHtml(a.title)}</div>
-        <div class="anmeta"><span>${escapeHtml(a.type ?? 'TV')} · ${a.episodes ?? '?'} eps</span><span class="anscore">⭐ ${a.score ?? 'N/A'}</span></div>
-      </div>
-    </div>`;
-  }).join('');
 }
 
 function showAnimeDetailPage(malId, setHash) {
@@ -651,10 +872,9 @@ async function loadAnimeDetail(malId) {
   metaEl.innerHTML = '';
   malLink.href = `https://myanimelist.net/anime/${malId}`;
 
-  const [fullRes, ani, epRes] = await Promise.all([
+  const [fullRes, ani] = await Promise.all([
     fetchJikanAnimeFull(malId),
-    fetchAniListByMalId(malId),
-    fetchJikanEpisodes(malId, 1)
+    fetchAniListByMalId(malId)
   ]);
 
   const anime = fullRes?.data;
@@ -663,6 +883,8 @@ async function loadAnimeDetail(malId) {
     epEl.innerHTML = '';
     return;
   }
+
+  const epData = await fetchJikanEpisodesAll(malId);
 
   const banner = ani?.bannerImage || bestAnimeImage(anime) || '';
   const title = ani?.title?.english || ani?.title?.romaji || anime.title || 'Anime';
@@ -685,8 +907,16 @@ async function loadAnimeDetail(malId) {
   const eps = ani?.episodes ?? anime.episodes ?? '?';
   const nextEp = ani?.nextAiringEpisode;
   let nextStr = '';
-  if (nextEp?.airingAt) {
-    nextStr = `Next ep ${nextEp.episode}: ${new Date(nextEp.airingAt * 1000).toLocaleString()}`;
+  if (nextEp?.episode != null) {
+    if (nextEp.airingAt) {
+      nextStr = `Next ep ${nextEp.episode}: ${new Date(nextEp.airingAt * 1000).toLocaleString()}`;
+    } else if (nextEp.timeUntilAiring != null && nextEp.timeUntilAiring > 0) {
+      const hr = Math.floor(nextEp.timeUntilAiring / 3600);
+      const mn = Math.floor((nextEp.timeUntilAiring % 3600) / 60);
+      nextStr = `Next ep ${nextEp.episode}: in ${hr > 0 ? hr + 'h ' : ''}${mn}m`;
+    } else {
+      nextStr = `Next: episode ${nextEp.episode}`;
+    }
   }
 
   metaEl.innerHTML = `
@@ -703,14 +933,37 @@ async function loadAnimeDetail(malId) {
     ? '<p>' + escapeHtml(anime.synopsis).replace(/\n+/g, '</p><p>') + '</p>'
     : '<p>No synopsis on file.</p>';
 
-  const epData = epRes?.data || [];
+  function epNum(e, i) {
+    const n = e?.episode ?? e?.episode_number;
+    if (n != null && n !== '') return n;
+    return i + 1;
+  }
+  function epAired(e) {
+    const raw = e?.aired;
+    if (!raw) return '—';
+    if (typeof raw === 'object' && raw !== null) {
+      const s = raw.string || raw.date || '';
+      if (s) return String(s).split('T')[0];
+    }
+    const s = String(raw);
+    return s.includes('T') ? s.split('T')[0] : s.slice(0, 10);
+  }
+
   if (epData.length) {
     epEl.innerHTML = `<table class="ep-table"><thead><tr><th>#</th><th>Title</th><th>Aired</th></tr></thead><tbody>
-      ${epData.map(e => `<tr><td>${e.episode ?? '—'}</td><td>${escapeHtml(e.title || '—')}</td><td>${escapeHtml((e.aired && String(e.aired).split('T')[0]) || '—')}</td></tr>`).join('')}
+      ${epData.map((e, i) => `<tr><td>${epNum(e, i)}</td><td>${escapeHtml(e.title || '—')}</td><td>${escapeHtml(epAired(e))}</td></tr>`).join('')}
     </tbody></table>`;
   } else {
-    const airedEps = anime.episodes;
-    epEl.innerHTML = `<p style="color:var(--m2);font-size:16px;">Jikan has no per-episode list yet for this run (common for some simulcasts). Total episodes planned: <strong>${airedEps ?? 'TBA'}</strong>. Check AniList below for streaming episode titles when available.</p>`;
+    const total = typeof anime.episodes === 'number' ? anime.episodes : (typeof ani?.episodes === 'number' ? ani.episodes : null);
+    if (total && total > 0) {
+      const cap = Math.min(total, 48);
+      const rows = Array.from({ length: cap }, (_, i) =>
+        `<tr><td>${i + 1}</td><td>Episode ${i + 1} — list pending on Jikan</td><td>—</td></tr>`).join('');
+      const more = total > cap ? `<p style="color:var(--m2);margin-top:10px;font-size:14px;">Showing ${cap} of ${total} planned episodes. Open MAL for full list.</p>` : '';
+      epEl.innerHTML = `<p style="color:var(--m2);font-size:14px;margin-bottom:10px;">Jikan did not return titles yet; episode numbers below match the planned count (${total}).</p><table class="ep-table"><thead><tr><th>#</th><th>Title</th><th>Aired</th></tr></thead><tbody>${rows}</tbody></table>${more}`;
+    } else {
+      epEl.innerHTML = `<p style="color:var(--m2);font-size:16px;">No per-episode list from Jikan yet. Total episodes: <strong>TBA</strong>. Try again later or check MyAnimeList.</p>`;
+    }
   }
 
   const streams = ani?.streamingEpisodes || [];
@@ -760,8 +1013,10 @@ window.applyAnimeGenreFilter = async function (genreId, btn) {
     }
     const items = d.data || [];
     allAnimeData = items;
-    renderAnime(items, 'animeGrid');
-    renderAnime(items, 'animePageGrid');
+    pageHomeAnime = 1;
+    pageAnimeGrid = 1;
+    paintHomeAnime();
+    paintAnimePageGrid();
     pill('pill-anime', 'ok', `Anime — ${items.length} shows`);
   } catch {
     pill('pill-anime', 'er', 'Filter failed');
