@@ -1221,15 +1221,6 @@ function openGame(g) {
     </div>`;
   }).join('') : '<p style="color:var(--m);font-size:13px;">No other games today</p>';
 }
-
-  // 2. Special case: If search is empty, show everything again
-  if (q === "") {
-    cards.forEach(card => {
-      card.style.display = "";
-      card.style.opacity = "1";
-    });
-  }
-}
      
 // ══════════════════════
 //  FILTERS
