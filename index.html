@@ -347,7 +347,7 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
       <li><button class="nav-cta" onclick="nav('subscribe')">Subscribe</button></li>
     </ul>
     <div class="nav-search">
-      <span>🔍</span>
+      <span style="cursor:pointer" onclick="document.getElementById('searchInput').focus()">🔍</span>
       <input type="text" placeholder="Search..." id="searchInput" oninput="doSearch(this.value)">
     </div>
     <button class="hamburger" onclick="document.getElementById('mMenu').classList.toggle('open')">
@@ -1222,6 +1222,37 @@ function openGame(g) {
   }).join('') : '<p style="color:var(--m);font-size:13px;">No other games today</p>';
 }
 
+// ══════════════════════
+//  SEARCH LOGIC
+// ══════════════════════
+function doSearch(query) {
+  const q = query.toLowerCase().trim();
+  
+  // 1. If user is on a specific page, we search everything or just that page
+  // For a "Universal Search", we'll filter all cards globally:
+  const cards = document.querySelectorAll('.ac, .anc, .sc, .stack-card');
+
+  cards.forEach(card => {
+    // Get all text inside the card to see if it matches the query
+    const text = card.innerText.toLowerCase();
+    
+    if (text.includes(q)) {
+      card.style.display = ""; // Show
+      card.style.opacity = "1";
+    } else {
+      card.style.display = "none"; // Hide
+    }
+  });
+
+  // 2. Special case: If search is empty, show everything again
+  if (q === "") {
+    cards.forEach(card => {
+      card.style.display = "";
+      card.style.opacity = "1";
+    });
+  }
+}
+     
 // ══════════════════════
 //  FILTERS
 // ══════════════════════
