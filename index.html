@@ -8,732 +8,209 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0c;--surface:#111118;--card:#16161f;--card-hover:#1c1c28;
+  --border:rgba(255,255,255,0.07);--border-hover:rgba(232,50,60,0.4);
+  --red:#e8323c;--red-glow:rgba(232,50,60,0.15);--gold:#f5a623;
+  --text:#f0eff5;--muted:#6b7080;--muted2:#9299a8;
+  --fh:'Bebas Neue',sans-serif;--fb:'Outfit',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.6;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
 
-  :root {
-    --bg: #0a0a0c;
-    --surface: #111118;
-    --card: #16161f;
-    --card-hover: #1c1c28;
-    --border: rgba(255,255,255,0.07);
-    --border-hover: rgba(232,50,60,0.4);
-    --red: #e8323c;
-    --red-glow: rgba(232,50,60,0.15);
-    --gold: #f5a623;
-    --text: #f0eff5;
-    --muted: #6b7080;
-    --muted2: #9299a8;
-    --font-head: 'Bebas Neue', sans-serif;
-    --font-body: 'Outfit', sans-serif;
-  }
+/* TICKER */
+.ticker-bar{background:var(--red);overflow:hidden;height:34px;display:flex;align-items:center}
+.ticker-label{background:#b01c25;color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 14px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;gap:6px}
+.ticker-overflow{overflow:hidden;flex:1}
+.ticker-track{display:flex;animation:ticker 70s linear infinite;white-space:nowrap}
+.ticker-track span{padding:0 28px;font-size:12px;font-weight:500;color:#fff}
+.ticker-track span::before{content:'● ';font-size:7px;opacity:.7}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-  html { scroll-behavior: smooth; }
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,10,12,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.6)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{font-family:var(--fh);font-size:30px;letter-spacing:3px;color:var(--text);flex-shrink:0}
+.logo span{color:var(--red)}
+.nav-links{display:flex;gap:6px;list-style:none}
+.nav-links a{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);padding:6px 12px;border-radius:6px;transition:color .2s,background .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.06)}
+.nav-links a.active{color:var(--red)}
+.nav-cta{background:var(--red)!important;color:#fff!important}
+.nav-search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;flex-shrink:0}
+.nav-search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--fb);font-size:13px;width:150px}
+.nav-search input::placeholder{color:var(--muted)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px}
+.mobile-menu{display:none;flex-direction:column;background:var(--surface);border-top:1px solid var(--border);padding:16px 24px;gap:4px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:10px 0;font-size:14px;font-weight:500;color:var(--muted2);border-bottom:1px solid var(--border)}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 15px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
+/* AD */
+.ad-banner{max-width:1200px;margin:16px auto 0;padding:0 24px}
+.ad-slot{border:1px dashed rgba(255,255,255,.1);border-radius:8px;background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:500}
+.ad-slot.leaderboard{height:90px}
+.ad-slot.medium-rect{height:250px;width:100%}
 
-  a { text-decoration: none; color: inherit; }
+/* API STATUS */
+.api-status-bar{max-width:1200px;margin:12px auto 0;padding:0 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.api-pill{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;border:1px solid var(--border);color:var(--muted2)}
+.api-pill.loading{border-color:rgba(245,166,35,.3);color:var(--gold)}
+.api-pill.ok{border-color:rgba(80,200,120,.3);color:#50c878}
+.api-pill.err{border-color:rgba(232,50,60,.3);color:var(--red)}
+.api-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.last-updated{font-size:11px;color:var(--muted);margin-left:auto;display:flex;align-items:center;gap:6px}
 
-  /* ── TICKER ── */
-  .ticker-bar {
-    background: var(--red);
-    overflow: hidden;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    position: relative;
-  }
-  .ticker-label {
-    background: #b01c25;
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 0 14px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    z-index: 2;
-    flex-shrink: 0;
-  }
-  .ticker-track {
-    display: flex;
-    animation: ticker 40s linear infinite;
-    white-space: nowrap;
-  }
-  .ticker-track span {
-    padding: 0 32px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #fff;
-    opacity: 0.95;
-  }
-  .ticker-track span::before {
-    content: '●';
-    margin-right: 10px;
-    font-size: 7px;
-    opacity: 0.7;
-  }
-  @keyframes ticker {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
+/* HERO */
+.hero{max-width:1200px;margin:24px auto 0;padding:0 24px;display:grid;grid-template-columns:1fr 340px;gap:16px}
+.hero-main{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:36px 36px 28px;position:relative;overflow:hidden;transition:border-color .3s,box-shadow .3s;cursor:pointer;animation:fadeUp .7s ease .1s both}
+.hero-main::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 10% 80%,rgba(232,50,60,.1) 0%,transparent 60%);pointer-events:none}
+.hero-main:hover{border-color:var(--border-hover);box-shadow:0 0 40px var(--red-glow)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:4px;margin-bottom:14px;animation:pulse-badge 2s ease-in-out infinite}
+.hero-badge::before{content:'●';font-size:7px}
+@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.7}}
+.hero-title{font-family:var(--fh);font-size:48px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:14px}
+.hero-excerpt{color:var(--muted2);font-size:14px;line-height:1.7;max-width:420px;margin-bottom:20px}
+.hero-meta{display:flex;align-items:center;gap:16px}
+.author{font-size:12px;color:var(--muted)}
+.cat-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(245,166,35,.15);color:var(--gold);text-transform:uppercase;letter-spacing:.5px}
+.read-btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;transition:opacity .2s,transform .2s;margin-top:20px}
+.read-btn:hover{opacity:.85;transform:translateY(-1px)}
+.hero-stack{display:flex;flex-direction:column;gap:12px;animation:fadeUp .7s ease .2s both}
+.stack-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;cursor:pointer;transition:border-color .25s,background .25s,transform .2s;flex:1}
+.stack-card:hover{border-color:var(--border-hover);background:var(--card-hover);transform:translateX(3px)}
+.stack-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.stack-tag.anime{color:var(--gold)}.stack-tag.sports{color:var(--red)}
+.stack-title{font-size:13px;font-weight:600;line-height:1.4;color:var(--text)}
+.stack-time{font-size:11px;color:var(--muted);margin-top:5px}
 
-  /* ── NAV ── */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(10,10,12,0.88);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    transition: box-shadow 0.3s;
-  }
-  nav.scrolled { box-shadow: 0 4px 40px rgba(0,0,0,0.6); }
-  .nav-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-  }
-  .logo {
-    font-family: var(--font-head);
-    font-size: 30px;
-    letter-spacing: 3px;
-    color: var(--text);
-    flex-shrink: 0;
-  }
-  .logo span { color: var(--red); }
-  .nav-links {
-    display: flex;
-    gap: 6px;
-    list-style: none;
-  }
-  .nav-links a {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    color: var(--muted2);
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: color 0.2s, background 0.2s;
-  }
-  .nav-links a:hover, .nav-links a.active {
-    color: var(--text);
-    background: rgba(255,255,255,0.06);
-  }
-  .nav-links a.active { color: var(--red); }
-  .nav-cta {
-    background: var(--red);
-    color: #fff !important;
-    border-radius: 6px;
-    padding: 7px 16px !important;
-    transition: opacity 0.2s !important;
-    background: var(--red) !important;
-  }
-  .nav-cta:hover { opacity: 0.85; background: var(--red) !important; }
-  .nav-search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 12px;
-    flex-shrink: 0;
-  }
-  .nav-search input {
-    background: none;
-    border: none;
-    outline: none;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 13px;
-    width: 160px;
-  }
-  .nav-search input::placeholder { color: var(--muted); }
-  .search-icon { color: var(--muted); font-size: 14px; }
-  .hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    padding: 4px;
-  }
-  .hamburger span {
-    width: 22px; height: 2px;
-    background: var(--text);
-    border-radius: 2px;
-    transition: all 0.3s;
-  }
+/* LIVE SCORES BAR */
+.live-scores-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;height:44px;display:flex;align-items:center;margin-top:28px}
+.live-label{background:var(--red);color:#fff;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:0 16px;height:100%;display:flex;align-items:center;flex-shrink:0;gap:6px}
+.live-dot-anim{width:7px;height:7px;background:#fff;border-radius:50%;animation:live-pulse 1.4s ease-in-out infinite}
+@keyframes live-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.scores-overflow{overflow:hidden;flex:1}
+.scores-track{display:flex;animation:scores-scroll 45s linear infinite;white-space:nowrap}
+.score-item{padding:0 20px;font-size:12px;font-weight:500;color:var(--text);border-right:1px solid var(--border);height:44px;display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+.score-val{font-weight:700;color:var(--gold)}
+.s-live{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;text-transform:uppercase}
+.s-final{background:rgba(255,255,255,.1);color:var(--muted2);font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;text-transform:uppercase}
+.s-soon{background:rgba(245,166,35,.2);color:var(--gold);font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;text-transform:uppercase}
+@keyframes scores-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-  /* ── AD BANNER ── */
-  .ad-banner {
-    max-width: 1200px;
-    margin: 16px auto 0;
-    padding: 0 24px;
-  }
-  .ad-slot {
-    border: 1px dashed rgba(255,255,255,0.1);
-    border-radius: 8px;
-    background: rgba(255,255,255,0.02);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--muted);
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-  .ad-slot.leaderboard { height: 90px; }
-  .ad-slot.medium-rect { height: 250px; width: 300px; }
-  .ad-slot.wide { height: 90px; }
+/* SCORE CARDS */
+.scores-section{max-width:1200px;margin:36px auto 0;padding:0 24px}
+.scores-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.score-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;transition:border-color .25s,transform .2s}
+.score-card.is-live{border-color:rgba(232,50,60,.3)}
+.score-card:hover{transform:translateY(-2px)}
+.sc-league{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.sc-teams{display:flex;flex-direction:column;gap:6px}
+.sc-team{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:500}
+.sc-team .pts{font-family:var(--fh);font-size:20px;color:var(--text)}
+.sc-team.winner .pts{color:var(--gold)}
+.sc-status{font-size:10px;color:var(--muted);margin-top:8px;text-align:center;padding-top:8px;border-top:1px solid var(--border)}
+.sc-status.live-st{color:var(--red);font-weight:600}
 
-  /* ── HERO ── */
-  .hero {
-    max-width: 1200px;
-    margin: 24px auto 0;
-    padding: 0 24px;
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 16px;
-  }
-  .hero-main {
-    background: var(--card);
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    padding: 36px 36px 28px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-  }
-  .hero-main::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 10% 80%, rgba(232,50,60,0.12) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .hero-main:hover {
-    border-color: var(--border-hover);
-    box-shadow: 0 0 40px var(--red-glow);
-  }
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--red);
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 4px;
-    margin-bottom: 14px;
-    animation: pulse-badge 2s ease-in-out infinite;
-  }
-  @keyframes pulse-badge {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.75; }
-  }
-  .hero-badge::before { content: '●'; font-size: 7px; }
-  .hero-title {
-    font-family: var(--font-head);
-    font-size: 52px;
-    line-height: 1.05;
-    letter-spacing: 1px;
-    color: var(--text);
-    margin-bottom: 14px;
-  }
-  .hero-excerpt {
-    color: var(--muted2);
-    font-size: 14px;
-    line-height: 1.7;
-    max-width: 420px;
-    margin-bottom: 20px;
-  }
-  .hero-meta {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .hero-meta .author { font-size: 12px; color: var(--muted); }
-  .hero-meta .cat-tag {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: rgba(245,166,35,0.15);
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .read-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--red);
-    color: #fff;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: opacity 0.2s, transform 0.2s;
-    margin-top: 20px;
-  }
-  .read-btn:hover { opacity: 0.85; transform: translateY(-1px); }
-  .hero-stack { display: flex; flex-direction: column; gap: 12px; }
-  .stack-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 18px;
-    cursor: pointer;
-    transition: border-color 0.25s, background 0.25s, transform 0.2s;
-    flex: 1;
-  }
-  .stack-card:hover {
-    border-color: var(--border-hover);
-    background: var(--card-hover);
-    transform: translateX(3px);
-  }
-  .stack-tag {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-  .stack-tag.anime { color: var(--gold); }
-  .stack-tag.sports { color: var(--red); }
-  .stack-title { font-size: 13px; font-weight: 600; line-height: 1.4; color: var(--text); }
-  .stack-time { font-size: 11px; color: var(--muted); margin-top: 5px; }
+/* SECTION */
+.section-wrap{max-width:1200px;margin:36px auto 0;padding:0 24px}
+.tabs-row{display:flex;align-items:center;border-bottom:1px solid var(--border);margin-bottom:24px}
+.tab-btn{padding:12px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;background:none;border-left:none;border-right:none;border-top:none;font-family:var(--fb)}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--red);border-bottom-color:var(--red)}
+.content-layout{display:grid;grid-template-columns:1fr 300px;gap:28px}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.section-head h2{font-family:var(--fh);font-size:26px;letter-spacing:1px;color:var(--text)}
+.section-head::before{content:'';width:4px;height:26px;background:var(--red);border-radius:2px;flex-shrink:0}
 
-  /* ── CATEGORY TABS ── */
-  .section-wrap { max-width: 1200px; margin: 36px auto 0; padding: 0 24px; }
-  .tabs-row {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
-  }
-  .tab-btn {
-    padding: 12px 20px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    transition: color 0.2s, border-color 0.2s;
-    background: none;
-    border-left: none;
-    border-right: none;
-    border-top: none;
-    font-family: var(--font-body);
-  }
-  .tab-btn:hover { color: var(--text); }
-  .tab-btn.active { color: var(--red); border-bottom-color: var(--red); }
+/* ARTICLE CARDS */
+.articles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.article-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s,opacity .3s}
+.article-card:hover{border-color:var(--border-hover);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-3px)}
+.card-thumb{height:100px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface);border-bottom:1px solid var(--border)}
+.card-body{padding:14px}
+.card-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.tag-sports{color:var(--red)}.tag-anime{color:var(--gold)}.tag-review{color:#7eb8f7}
+.card-title{font-size:13px;font-weight:600;line-height:1.4;color:var(--text);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-footer{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}
+.api-badge{font-size:9px;background:rgba(80,200,120,.1);color:#50c878;border:1px solid rgba(80,200,120,.2);padding:1px 6px;border-radius:10px;font-weight:600;font-family:var(--fb)}
 
-  /* ── CONTENT GRID ── */
-  .content-layout {
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 28px;
-  }
-  .section-head {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-  .section-head h2 {
-    font-family: var(--font-head);
-    font-size: 26px;
-    letter-spacing: 1px;
-    color: var(--text);
-  }
-  .section-head::before {
-    content: '';
-    width: 4px;
-    height: 26px;
-    background: var(--red);
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:20px}
+.sidebar-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
+.sidebar-box h3{font-family:var(--fh);font-size:20px;letter-spacing:1px;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.trend-list{display:flex;flex-direction:column;gap:8px}
+.trend-item{display:flex;align-items:flex-start;gap:10px;padding:9px;border-radius:8px;cursor:pointer;transition:background .2s}
+.trend-item:hover{background:rgba(255,255,255,.04)}
+.trend-num{font-family:var(--fh);font-size:26px;color:var(--red);line-height:1;min-width:26px}
+.trend-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.trend-meta{font-size:10px;color:var(--muted);margin-top:2px}
 
-  .articles-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-  .article-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
-  }
-  .article-card:hover {
-    border-color: var(--border-hover);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    transform: translateY(-3px);
-  }
-  .card-thumb {
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-  .card-thumb .thumb-glow {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .article-card:hover .thumb-glow { opacity: 1; }
-  .thumb-sports { background: linear-gradient(135deg, #1a0810 0%, #16161f 100%); }
-  .thumb-anime { background: linear-gradient(135deg, #0e0e1a 0%, #16161f 100%); }
-  .card-body { padding: 14px; }
-  .card-tag {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-  .tag-sports { color: var(--red); }
-  .tag-anime { color: var(--gold); }
-  .tag-review { color: #7eb8f7; }
-  .card-title {
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1.4;
-    color: var(--text);
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .card-views { display: flex; align-items: center; gap: 4px; }
+/* ANIME */
+.anime-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.anime-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s}
+.anime-card:hover{border-color:rgba(245,166,35,.4);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-3px)}
+.anime-img{width:100%;height:140px;object-fit:cover;display:block}
+.anime-img-ph{width:100%;height:140px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px}
+.anime-body{padding:12px}
+.anime-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.anime-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}
+.anime-score{color:var(--gold);font-weight:600}
 
-  /* ── SIDEBAR ── */
-  .sidebar { display: flex; flex-direction: column; gap: 20px; }
-  .sidebar-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px;
-  }
-  .sidebar-box h3 {
-    font-family: var(--font-head);
-    font-size: 20px;
-    letter-spacing: 1px;
-    color: var(--text);
-    margin-bottom: 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-  .trend-list { display: flex; flex-direction: column; gap: 10px; }
-  .trend-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .trend-item:hover { background: rgba(255,255,255,0.04); }
-  .trend-num {
-    font-family: var(--font-head);
-    font-size: 28px;
-    color: var(--red);
-    line-height: 1;
-    min-width: 28px;
-  }
-  .trend-text { flex: 1; }
-  .trend-title { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
-  .trend-meta { font-size: 10px; color: var(--muted); margin-top: 3px; }
+/* SKELETON */
+.skeleton{background:var(--surface);border-radius:8px;animation:shimmer 1.5s ease-in-out infinite}
+@keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
 
-  /* ── LIVE SCORES BAR ── */
-  .live-scores-bar {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    margin-top: 36px;
-  }
-  .live-label {
-    background: var(--red);
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 0 16px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    gap: 6px;
-  }
-  .live-dot-anim {
-    width: 7px; height: 7px;
-    background: #fff;
-    border-radius: 50%;
-    animation: live-pulse 1.4s ease-in-out infinite;
-  }
-  @keyframes live-pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.7); }
-  }
-  .scores-track {
-    display: flex;
-    animation: scores-scroll 30s linear infinite;
-    white-space: nowrap;
-    gap: 0;
-  }
-  .score-item {
-    padding: 0 24px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text);
-    border-right: 1px solid var(--border);
-    height: 44px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-  .score-item .score-val { font-weight: 700; color: var(--gold); }
-  .score-item .live-tag {
-    background: var(--red);
-    color: #fff;
-    font-size: 9px;
-    font-weight: 700;
-    padding: 2px 5px;
-    border-radius: 3px;
-    text-transform: uppercase;
-  }
-  @keyframes scores-scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
+/* NEWSLETTER */
+.newsletter-section{max-width:1200px;margin:36px auto;padding:0 24px}
+.newsletter-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;position:relative;overflow:hidden}
+.newsletter-box::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(232,50,60,.08) 0%,transparent 70%);pointer-events:none}
+.newsletter-text h3{font-family:var(--fh);font-size:32px;letter-spacing:1px;color:var(--text);margin-bottom:6px}
+.newsletter-text p{font-size:14px;color:var(--muted2)}
+.newsletter-form{display:flex;gap:10px;flex-shrink:0}
+.newsletter-form input{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 16px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;width:240px;transition:border-color .2s}
+.newsletter-form input:focus{border-color:var(--red)}
+.newsletter-form input::placeholder{color:var(--muted)}
+.newsletter-form button{background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s;white-space:nowrap}
+.newsletter-form button:hover{opacity:.85;transform:translateY(-1px)}
 
-  /* ── NEWSLETTER ── */
-  .newsletter-section {
-    max-width: 1200px;
-    margin: 36px auto;
-    padding: 0 24px;
-  }
-  .newsletter-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 36px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 32px;
-    position: relative;
-    overflow: hidden;
-  }
-  .newsletter-box::before {
-    content: '';
-    position: absolute;
-    right: -60px;
-    top: -60px;
-    width: 260px;
-    height: 260px;
-    background: radial-gradient(circle, rgba(232,50,60,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .newsletter-text h3 {
-    font-family: var(--font-head);
-    font-size: 32px;
-    letter-spacing: 1px;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-  .newsletter-text p { font-size: 14px; color: var(--muted2); }
-  .newsletter-form {
-    display: flex;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-  .newsletter-form input {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 11px 16px;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 13px;
-    outline: none;
-    width: 240px;
-    transition: border-color 0.2s;
-  }
-  .newsletter-form input:focus { border-color: var(--red); }
-  .newsletter-form input::placeholder { color: var(--muted); }
-  .newsletter-form button {
-    background: var(--red);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 11px 22px;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.2s;
-    white-space: nowrap;
-  }
-  .newsletter-form button:hover { opacity: 0.85; transform: translateY(-1px); }
+/* FOOTER */
+footer{background:var(--surface);border-top:1px solid var(--border);margin-top:48px}
+.footer-inner{max-width:1200px;margin:0 auto;padding:40px 24px 24px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:32px}
+.footer-brand p{font-size:13px;color:var(--muted2);line-height:1.7;max-width:240px;margin-top:8px}
+.footer-col h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:14px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.footer-col ul li a{font-size:13px;color:var(--muted2);transition:color .2s}
+.footer-col ul li a:hover{color:var(--text)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
 
-  /* ── FOOTER ── */
-  footer {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    margin-top: 48px;
-  }
-  .footer-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 24px 24px;
-  }
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 40px;
-    margin-bottom: 32px;
-  }
-  .footer-brand .logo { font-size: 36px; display: block; margin-bottom: 10px; }
-  .footer-brand p { font-size: 13px; color: var(--muted2); line-height: 1.7; max-width: 240px; }
-  .footer-col h4 {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--muted);
-    margin-bottom: 14px;
-  }
-  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  .footer-col ul li a { font-size: 13px; color: var(--muted2); transition: color 0.2s; }
-  .footer-col ul li a:hover { color: var(--text); }
-  .footer-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--muted);
-  }
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.refresh-ring{width:10px;height:10px;border:2px solid var(--border);border-top-color:#50c878;border-radius:50%;display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ── SCROLL ANIMATIONS ── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ── PAGE LOAD ANIMATION ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .hero-main { animation: fadeUp 0.7s ease 0.1s both; }
-  .hero-stack { animation: fadeUp 0.7s ease 0.2s both; }
-  .hero-stack .stack-card:nth-child(1) { animation: fadeUp 0.6s ease 0.25s both; }
-  .hero-stack .stack-card:nth-child(2) { animation: fadeUp 0.6s ease 0.35s both; }
-  .hero-stack .stack-card:nth-child(3) { animation: fadeUp 0.6s ease 0.45s both; }
-
-  /* ── MOBILE ── */
-  @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; }
-    .hero-title { font-size: 38px; }
-    .hero-stack { display: grid; grid-template-columns: 1fr 1fr; }
-    .content-layout { grid-template-columns: 1fr; }
-    .articles-grid { grid-template-columns: repeat(2, 1fr); }
-    .footer-grid { grid-template-columns: 1fr 1fr; }
-    .newsletter-box { flex-direction: column; padding: 24px; }
-    .newsletter-form { flex-direction: column; width: 100%; }
-    .newsletter-form input { width: 100%; }
-    .nav-links, .nav-search { display: none; }
-    .hamburger { display: flex; }
-  }
-  @media (max-width: 560px) {
-    .articles-grid { grid-template-columns: 1fr; }
-    .hero-stack { grid-template-columns: 1fr; }
-    .footer-grid { grid-template-columns: 1fr; }
-    .hero-title { font-size: 30px; }
-  }
-
-  /* ── MOBILE MENU ── */
-  .mobile-menu {
-    display: none;
-    flex-direction: column;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 16px 24px;
-    gap: 4px;
-  }
-  .mobile-menu.open { display: flex; }
-  .mobile-menu a {
-    padding: 10px 0;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--muted2);
-    border-bottom: 1px solid var(--border);
-  }
-  .mobile-menu a:last-child { border-bottom: none; }
-
-  /* ── HIDDEN CATEGORY FILTER ── */
-  .article-card[data-cat] { transition: opacity 0.3s, transform 0.3s, border-color 0.25s, box-shadow 0.25s; }
-  .article-card.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; position: absolute; }
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}.hero-title{font-size:38px}
+  .content-layout{grid-template-columns:1fr}
+  .articles-grid,.anime-grid{grid-template-columns:repeat(2,1fr)}
+  .scores-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .newsletter-box{flex-direction:column;padding:24px}
+  .newsletter-form{flex-direction:column;width:100%}
+  .newsletter-form input{width:100%}
+  .nav-links,.nav-search{display:none}
+  .hamburger{display:flex}
+}
+@media(max-width:560px){
+  .articles-grid,.anime-grid,.scores-grid{grid-template-columns:1fr}
+  .hero-title{font-size:28px}.footer-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -741,273 +218,187 @@
 <!-- BREAKING NEWS TICKER -->
 <div class="ticker-bar">
   <div class="ticker-label">🔴 Breaking</div>
-  <div class="ticker-track" id="ticker">
-    <span>NBA Playoffs: Warriors defeat Spurs 118-104 — Curry drops 38 pts</span>
-    <span>Demon Slayer Season 4 finale gets release date — fans react</span>
-    <span>Champions League: Man City vs Real Madrid — Preview & Predictions</span>
-    <span>One Piece chapter 1115 — Gear 6 teased?</span>
-    <span>UFC 300: Jones vs Aspinall full fight card confirmed</span>
-    <span>Blue Lock Season 2 officially announced — premiere date revealed</span>
-    <span>MLB: Dodgers beat Guardians 7-3 in Spring Training opener</span>
-    <span>Attack on Titan tops MyAnimeList all-time ranking again</span>
-    <span>NBA Playoffs: Warriors defeat Spurs 118-104 — Curry drops 38 pts</span>
-    <span>Demon Slayer Season 4 finale gets release date — fans react</span>
-    <span>Champions League: Man City vs Real Madrid — Preview & Predictions</span>
-    <span>One Piece chapter 1115 — Gear 6 teased?</span>
-    <span>UFC 300: Jones vs Aspinall full fight card confirmed</span>
-    <span>Blue Lock Season 2 officially announced — premiere date revealed</span>
-    <span>MLB: Dodgers beat Guardians 7-3 in Spring Training opener</span>
-    <span>Attack on Titan tops MyAnimeList all-time ranking again</span>
+  <div class="ticker-overflow">
+    <div class="ticker-track" id="tickerTrack">
+      <span>Loading live news...</span><span>Loading live news...</span>
+    </div>
   </div>
 </div>
 
-<!-- NAVIGATION -->
+<!-- NAV -->
 <nav id="mainNav">
   <div class="nav-inner">
     <a href="#" class="logo">Nex<span>Zone</span></a>
     <ul class="nav-links">
       <li><a href="#" class="active">Home</a></li>
-      <li><a href="#">Sports</a></li>
-      <li><a href="#">Anime</a></li>
-      <li><a href="#">Reviews</a></li>
-      <li><a href="#">Rankings</a></li>
+      <li><a href="#sports-scores">Sports</a></li>
+      <li><a href="#anime-section">Anime</a></li>
+      <li><a href="#articles-section">Articles</a></li>
       <li><a href="#" class="nav-cta">Subscribe</a></li>
     </ul>
     <div class="nav-search">
-      <span class="search-icon">🔍</span>
-      <input type="text" placeholder="Search articles...">
+      <span>🔍</span>
+      <input type="text" placeholder="Search..." id="searchInput" oninput="filterSearch(this.value)">
     </div>
-    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <div class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')">
       <span></span><span></span><span></span>
     </div>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#">Home</a>
-    <a href="#">Sports</a>
-    <a href="#">Anime</a>
-    <a href="#">Reviews</a>
-    <a href="#">Rankings</a>
+    <a href="#">Home</a><a href="#sports-scores">Sports</a>
+    <a href="#anime-section">Anime</a><a href="#articles-section">Articles</a>
     <a href="#">Subscribe</a>
   </div>
 </nav>
 
-<!-- TOP AD BANNER -->
+<!-- TOP AD — REPLACE WITH YOUR ADSENSE CODE -->
 <div class="ad-banner">
-  <div class="ad-slot leaderboard">📢 Advertisement — Google AdSense Leaderboard (728×90)</div>
+  <div class="ad-slot leaderboard">📢 Google AdSense — Leaderboard (728×90) — Paste your AdSense code here</div>
 </div>
 
-<!-- HERO SECTION -->
+<!-- API STATUS -->
+<div class="api-status-bar" id="apiStatusBar">
+  <div class="api-pill loading" id="pill-nba"><div class="api-dot"></div>NBA loading...</div>
+  <div class="api-pill loading" id="pill-epl"><div class="api-dot"></div>EPL loading...</div>
+  <div class="api-pill loading" id="pill-anime"><div class="api-dot"></div>Anime loading...</div>
+  <div class="last-updated" id="lastUpdated"></div>
+</div>
+
+<!-- HERO -->
 <div class="hero">
-  <div class="hero-main" onclick="alert('Full article page coming soon!')">
+  <div class="hero-main">
     <div class="hero-badge">Live Coverage</div>
-    <div class="hero-title">NBA Playoffs 2025:<br>Who Takes<br>The Crown?</div>
-    <div class="hero-excerpt">Full breakdown of every playoff matchup, star performances, and our expert predictions heading into the conference finals. Will Curry and the Warriors finally reclaim glory?</div>
+    <div class="hero-title" id="heroTitle">Loading Top Story...</div>
+    <div class="hero-excerpt" id="heroExcerpt">Fetching the latest scores and headlines from live sources...</div>
     <div class="hero-meta">
-      <span class="author">By NexZone Sports Desk · 4 min read</span>
-      <span class="cat-tag">NBA</span>
+      <span class="author" id="heroMeta">NexZone Sports Desk</span>
+      <span class="cat-tag" id="heroCat">Sports</span>
     </div>
     <a class="read-btn" href="#">Read Full Story →</a>
   </div>
-  <div class="hero-stack">
-    <div class="stack-card" onclick="alert('Article coming soon!')">
-      <div class="stack-tag anime">Anime</div>
-      <div class="stack-title">Demon Slayer S4 Final Episode — Everything You Need to Know Before You Watch</div>
-      <div class="stack-time">2 hours ago</div>
-    </div>
-    <div class="stack-card" onclick="alert('Article coming soon!')">
-      <div class="stack-tag sports">Soccer</div>
-      <div class="stack-title">Champions League: Man City vs Real Madrid — Full Preview & Key Stats</div>
-      <div class="stack-time">5 hours ago</div>
-    </div>
-    <div class="stack-card" onclick="alert('Article coming soon!')">
-      <div class="stack-tag anime">Anime</div>
-      <div class="stack-title">One Piece 1115+: Is Oda Finally Revealing Gear 6? Fan Theories Explained</div>
-      <div class="stack-time">Yesterday</div>
-    </div>
+  <div class="hero-stack" id="heroStack">
+    <div class="stack-card skeleton" style="height:90px;"></div>
+    <div class="stack-card skeleton" style="height:90px;"></div>
+    <div class="stack-card skeleton" style="height:90px;"></div>
   </div>
 </div>
 
 <!-- LIVE SCORES BAR -->
 <div class="live-scores-bar">
   <div class="live-label"><div class="live-dot-anim"></div>Live Scores</div>
-  <div style="overflow:hidden;flex:1;">
-    <div class="scores-track" id="scoresTrack">
-      <div class="score-item">🏀 Warriors vs Spurs <span class="score-val">118–104</span> <span class="live-tag">Final</span></div>
-      <div class="score-item">🏀 Nuggets vs Jazz <span class="score-val">87–92</span> <span class="live-tag">Q3</span></div>
-      <div class="score-item">⚽ Man City vs Real Madrid <span class="score-val">1–1</span> <span class="live-tag">Live</span></div>
-      <div class="score-item">⚾ Dodgers vs Guardians <span class="score-val">7–3</span> <span class="live-tag">Final</span></div>
-      <div class="score-item">🏈 NFL Draft <span class="score-val">Apr 25</span></div>
-      <div class="score-item">🥊 UFC 300 <span class="score-val">May 12</span></div>
-      <div class="score-item">🏀 Warriors vs Spurs <span class="score-val">118–104</span> <span class="live-tag">Final</span></div>
-      <div class="score-item">🏀 Nuggets vs Jazz <span class="score-val">87–92</span> <span class="live-tag">Q3</span></div>
-      <div class="score-item">⚽ Man City vs Real Madrid <span class="score-val">1–1</span> <span class="live-tag">Live</span></div>
-      <div class="score-item">⚾ Dodgers vs Guardians <span class="score-val">7–3</span> <span class="live-tag">Final</span></div>
-      <div class="score-item">🏈 NFL Draft <span class="score-val">Apr 25</span></div>
-      <div class="score-item">🥊 UFC 300 <span class="score-val">May 12</span></div>
+  <div class="scores-overflow">
+    <div class="scores-track" id="scoresBar">
+      <div class="score-item">⏳ Loading scores...</div>
+      <div class="score-item">⏳ Loading scores...</div>
     </div>
   </div>
 </div>
 
-<!-- MAIN CONTENT -->
-<div class="section-wrap reveal">
-  <!-- TABS -->
-  <div class="tabs-row">
-    <button class="tab-btn active" onclick="filterCat('all', this)">All</button>
-    <button class="tab-btn" onclick="filterCat('sports', this)">Sports</button>
-    <button class="tab-btn" onclick="filterCat('anime', this)">Anime</button>
-    <button class="tab-btn" onclick="filterCat('review', this)">Reviews</button>
+<!-- SCORES GRID -->
+<div class="scores-section reveal" id="sports-scores">
+  <div class="section-head"><h2>Today's Games <span class="api-badge">Live via ESPN</span></h2></div>
+  <div class="scores-grid" id="scoresGrid">
+    <div class="score-card skeleton" style="height:110px;"></div>
+    <div class="score-card skeleton" style="height:110px;"></div>
+    <div class="score-card skeleton" style="height:110px;"></div>
+    <div class="score-card skeleton" style="height:110px;"></div>
   </div>
+</div>
 
+<!-- ARTICLES -->
+<div class="section-wrap reveal" id="articles-section">
+  <div class="tabs-row">
+    <button class="tab-btn active" onclick="filterCat('all',this)">All</button>
+    <button class="tab-btn" onclick="filterCat('sports',this)">Sports</button>
+    <button class="tab-btn" onclick="filterCat('anime',this)">Anime</button>
+    <button class="tab-btn" onclick="filterCat('review',this)">Reviews</button>
+  </div>
   <div class="content-layout">
-    <!-- ARTICLES -->
     <div>
       <div class="section-head"><h2>Latest Articles</h2></div>
       <div class="articles-grid" id="articlesGrid">
-
-        <div class="article-card" data-cat="sports">
-          <div class="card-thumb thumb-sports">⚽</div>
-          <div class="card-body">
-            <div class="card-tag tag-sports">Soccer</div>
-            <div class="card-title">EPL Week 36 Top Goals Ranked: Who Was The Best This Week?</div>
-            <div class="card-footer"><span>2h ago</span><span class="card-views">👁 4.2k</span></div>
-          </div>
+        <div class="article-card" data-cat="sports" data-title="nba playoffs 2025 full breakdown">
+          <div class="card-thumb">🏀</div>
+          <div class="card-body"><div class="card-tag tag-sports">NBA</div>
+          <div class="card-title">NBA Playoffs 2025: Full Breakdown of Every Matchup</div>
+          <div class="card-footer"><span>Today</span><span>👁 8.1k</span></div></div>
         </div>
-
-        <div class="article-card" data-cat="sports">
-          <div class="card-thumb thumb-sports">🏀</div>
-          <div class="card-body">
-            <div class="card-tag tag-sports">NBA</div>
-            <div class="card-title">Warriors vs Spurs Full Game Recap: Curry Goes Off For 38</div>
-            <div class="card-footer"><span>5h ago</span><span class="card-views">👁 8.1k</span></div>
-          </div>
+        <div class="article-card" data-cat="sports" data-title="epl week 36 top goals">
+          <div class="card-thumb">⚽</div>
+          <div class="card-body"><div class="card-tag tag-sports">Soccer</div>
+          <div class="card-title">EPL Week 36 Top Goals Ranked: Who Was Best This Week?</div>
+          <div class="card-footer"><span>2h ago</span><span>👁 4.2k</span></div></div>
         </div>
-
-        <div class="article-card" data-cat="anime">
-          <div class="card-thumb thumb-anime">⚔️</div>
-          <div class="card-body">
-            <div class="card-tag tag-anime">Anime</div>
-            <div class="card-title">Attack on Titan: The 10 Greatest Moments in the Entire Series</div>
-            <div class="card-footer"><span>Yesterday</span><span class="card-views">👁 12.3k</span></div>
-          </div>
+        <div class="article-card" data-cat="anime" data-title="attack on titan top 10 moments">
+          <div class="card-thumb">⚔️</div>
+          <div class="card-body"><div class="card-tag tag-anime">Anime</div>
+          <div class="card-title">Attack on Titan: The 10 Greatest Moments in the Entire Series</div>
+          <div class="card-footer"><span>Yesterday</span><span>👁 12.3k</span></div></div>
         </div>
-
-        <div class="article-card" data-cat="anime">
-          <div class="card-thumb thumb-anime">🎌</div>
-          <div class="card-body">
-            <div class="card-tag tag-anime">Anime</div>
-            <div class="card-title">Spring 2025 Anime Season: Complete Guide to Every New Show</div>
-            <div class="card-footer"><span>Yesterday</span><span class="card-views">👁 9.7k</span></div>
-          </div>
+        <div class="article-card" data-cat="anime" data-title="spring 2025 anime season guide">
+          <div class="card-thumb">🎌</div>
+          <div class="card-body"><div class="card-tag tag-anime">Anime</div>
+          <div class="card-title">Spring 2025 Anime Season: Complete Guide to Every New Show</div>
+          <div class="card-footer"><span>Yesterday</span><span>👁 9.7k</span></div></div>
         </div>
-
-        <div class="article-card" data-cat="sports">
-          <div class="card-thumb thumb-sports">🥊</div>
-          <div class="card-body">
-            <div class="card-tag tag-sports">MMA</div>
-            <div class="card-title">UFC 300 Full Fight Card: Every Matchup Analyzed & Predicted</div>
-            <div class="card-footer"><span>2d ago</span><span class="card-views">👁 6.5k</span></div>
-          </div>
+        <div class="article-card" data-cat="sports" data-title="ufc 300 fight card predictions">
+          <div class="card-thumb">🥊</div>
+          <div class="card-body"><div class="card-tag tag-sports">MMA</div>
+          <div class="card-title">UFC 300 Full Fight Card: Every Matchup Analyzed and Predicted</div>
+          <div class="card-footer"><span>2d ago</span><span>👁 6.5k</span></div></div>
         </div>
-
-        <div class="article-card" data-cat="review">
-          <div class="card-thumb thumb-anime">🌀</div>
-          <div class="card-body">
-            <div class="card-tag tag-review">Review</div>
-            <div class="card-title">Jujutsu Kaisen Final Arc Full Review: Does It Stick the Landing?</div>
-            <div class="card-footer"><span>3d ago</span><span class="card-views">👁 15.2k</span></div>
-          </div>
+        <div class="article-card" data-cat="review" data-title="jujutsu kaisen final arc review">
+          <div class="card-thumb">🌀</div>
+          <div class="card-body"><div class="card-tag tag-review">Review</div>
+          <div class="card-title">Jujutsu Kaisen Final Arc Review: Does It Stick the Landing?</div>
+          <div class="card-footer"><span>3d ago</span><span>👁 15.2k</span></div></div>
         </div>
-
-        <div class="article-card" data-cat="sports">
-          <div class="card-thumb thumb-sports">🏈</div>
-          <div class="card-body">
-            <div class="card-tag tag-sports">NFL</div>
-            <div class="card-title">2025 NFL Draft: Top 10 Picks and What They Mean for Each Team</div>
-            <div class="card-footer"><span>3d ago</span><span class="card-views">👁 7.8k</span></div>
-          </div>
+        <div class="article-card" data-cat="sports" data-title="nfl draft 2025 top picks">
+          <div class="card-thumb">🏈</div>
+          <div class="card-body"><div class="card-tag tag-sports">NFL</div>
+          <div class="card-title">2025 NFL Draft: Top 10 Picks and What They Mean for Every Team</div>
+          <div class="card-footer"><span>3d ago</span><span>👁 7.8k</span></div></div>
         </div>
-
-        <div class="article-card" data-cat="anime">
-          <div class="card-thumb thumb-anime">💙</div>
-          <div class="card-body">
-            <div class="card-tag tag-anime">Anime</div>
-            <div class="card-title">Blue Lock Season 2 Announced — Release Date & What We Know</div>
-            <div class="card-footer"><span>4d ago</span><span class="card-views">👁 18.4k</span></div>
-          </div>
+        <div class="article-card" data-cat="anime" data-title="blue lock season 2 release date">
+          <div class="card-thumb">💙</div>
+          <div class="card-body"><div class="card-tag tag-anime">Anime</div>
+          <div class="card-title">Blue Lock Season 2 Officially Announced — Release Date Revealed</div>
+          <div class="card-footer"><span>4d ago</span><span>👁 18.4k</span></div></div>
         </div>
-
-        <div class="article-card" data-cat="review">
-          <div class="card-thumb thumb-sports">⚾</div>
-          <div class="card-body">
-            <div class="card-tag tag-review">Review</div>
-            <div class="card-title">MLB 2025 Season Preview: Who Are The Real Contenders?</div>
-            <div class="card-footer"><span>5d ago</span><span class="card-views">👁 5.1k</span></div>
-          </div>
+        <div class="article-card" data-cat="review" data-title="mlb 2025 season preview contenders">
+          <div class="card-thumb">⚾</div>
+          <div class="card-body"><div class="card-tag tag-review">Review</div>
+          <div class="card-title">MLB 2025 Season Preview: Who Are the Real Contenders?</div>
+          <div class="card-footer"><span>5d ago</span><span>👁 5.1k</span></div></div>
         </div>
-
       </div>
     </div>
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="sidebar-box">
         <h3>🔥 Trending</h3>
-        <div class="trend-list">
-          <div class="trend-item">
-            <div class="trend-num">1</div>
-            <div class="trend-text">
-              <div class="trend-title">Curry drops 52 pts in playoff opener</div>
-              <div class="trend-meta">Sports · NBA</div>
-            </div>
-          </div>
-          <div class="trend-item">
-            <div class="trend-num">2</div>
-            <div class="trend-text">
-              <div class="trend-title">Demon Slayer S4 finale review</div>
-              <div class="trend-meta">Anime</div>
-            </div>
-          </div>
-          <div class="trend-item">
-            <div class="trend-num">3</div>
-            <div class="trend-text">
-              <div class="trend-title">Ronaldo scores 900th career goal</div>
-              <div class="trend-meta">Sports · Soccer</div>
-            </div>
-          </div>
-          <div class="trend-item">
-            <div class="trend-num">4</div>
-            <div class="trend-text">
-              <div class="trend-title">Blue Lock Season 2 announcement</div>
-              <div class="trend-meta">Anime</div>
-            </div>
-          </div>
-          <div class="trend-item">
-            <div class="trend-num">5</div>
-            <div class="trend-text">
-              <div class="trend-title">UFC 300 main event predictions</div>
-              <div class="trend-meta">Sports · MMA</div>
-            </div>
-          </div>
+        <div class="trend-list" id="trendingList">
+          <div class="skeleton" style="height:50px;border-radius:8px;"></div>
+          <div class="skeleton" style="height:50px;border-radius:8px;margin-top:8px;"></div>
+          <div class="skeleton" style="height:50px;border-radius:8px;margin-top:8px;"></div>
         </div>
       </div>
-
-      <!-- SIDEBAR AD -->
+      <!-- REPLACE WITH YOUR ADSENSE RECTANGLE CODE -->
       <div class="ad-slot medium-rect">📢 AdSense Rectangle (300×250)</div>
-
-      <div class="sidebar-box">
-        <h3>📺 Watch Now</h3>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="background:var(--surface);border-radius:8px;padding:10px;font-size:12px;color:var(--muted2);">
-            <div style="font-weight:600;color:var(--text);margin-bottom:3px;">🏀 NBA Playoffs Live</div>
-            <div>Warriors vs Thunder — Game 3</div>
-          </div>
-          <div style="background:var(--surface);border-radius:8px;padding:10px;font-size:12px;color:var(--muted2);">
-            <div style="font-weight:600;color:var(--text);margin-bottom:3px;">⚽ Champions League</div>
-            <div>Man City vs Real Madrid — Semi-Final</div>
-          </div>
-        </div>
-      </div>
     </div>
+  </div>
+</div>
+
+<!-- ANIME SECTION — LIVE FROM MYANIMELIST -->
+<div class="scores-section reveal" id="anime-section" style="margin-top:40px;">
+  <div class="section-head"><h2>Top Airing Anime <span class="api-badge">Live via MyAnimeList</span></h2></div>
+  <div class="anime-grid" id="animeGrid">
+    <div class="anime-card skeleton" style="height:220px;"></div>
+    <div class="anime-card skeleton" style="height:220px;"></div>
+    <div class="anime-card skeleton" style="height:220px;"></div>
+    <div class="anime-card skeleton" style="height:220px;"></div>
+    <div class="anime-card skeleton" style="height:220px;"></div>
+    <div class="anime-card skeleton" style="height:220px;"></div>
   </div>
 </div>
 
@@ -1019,8 +410,8 @@
       <p>Get the latest sports scores & anime news delivered daily. No spam, ever.</p>
     </div>
     <div class="newsletter-form">
-      <input type="email" placeholder="Enter your email address...">
-      <button>Subscribe Free →</button>
+      <input type="email" placeholder="Enter your email..." id="emailInput">
+      <button onclick="subscribe()">Subscribe Free →</button>
     </div>
   </div>
 </div>
@@ -1030,97 +421,324 @@
   <div class="footer-inner">
     <div class="footer-grid">
       <div class="footer-brand">
-        <span class="logo">Nex<span>Zone</span></span>
-        <p>Your ultimate destination for sports news, anime reviews, live scores, and rankings. Updated daily.</p>
+        <span class="logo" style="display:block;margin-bottom:4px;">Nex<span>Zone</span></span>
+        <p>Your ultimate destination for sports news, anime reviews, live scores, and rankings. Updated daily via live APIs.</p>
       </div>
       <div class="footer-col">
         <h4>Sports</h4>
-        <ul>
-          <li><a href="#">NBA</a></li>
-          <li><a href="#">Soccer / EPL</a></li>
-          <li><a href="#">NFL</a></li>
-          <li><a href="#">MMA / UFC</a></li>
-          <li><a href="#">MLB</a></li>
-        </ul>
+        <ul><li><a href="#">NBA</a></li><li><a href="#">Soccer / EPL</a></li><li><a href="#">NFL</a></li><li><a href="#">MMA / UFC</a></li><li><a href="#">MLB</a></li></ul>
       </div>
       <div class="footer-col">
         <h4>Anime</h4>
-        <ul>
-          <li><a href="#">Seasonal Reviews</a></li>
-          <li><a href="#">Top Rankings</a></li>
-          <li><a href="#">Episode Guides</a></li>
-          <li><a href="#">Manga News</a></li>
-        </ul>
+        <ul><li><a href="#">Seasonal Reviews</a></li><li><a href="#">Top Rankings</a></li><li><a href="#">Episode Guides</a></li><li><a href="#">Manga News</a></li></ul>
       </div>
       <div class="footer-col">
         <h4>Company</h4>
-        <ul>
-          <li><a href="#">About NexZone</a></li>
-          <li><a href="#">Advertise With Us</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Use</a></li>
-        </ul>
+        <ul><li><a href="#">About NexZone</a></li><li><a href="#">Advertise</a></li><li><a href="#">Contact</a></li><li><a href="#">Privacy Policy</a></li></ul>
       </div>
     </div>
     <div class="footer-bottom">
       <span>© 2025 NexZone Media. All rights reserved.</span>
-      <span>Built with ❤️ for fans, by fans.</span>
+      <span>Live data: ESPN API · Jikan / MyAnimeList API · Free & open</span>
     </div>
   </div>
 </footer>
 
 <script>
-  // Sticky nav shadow
-  const nav = document.getElementById('mainNav');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 40);
-  });
+// ═══════════════════════════════════════════
+//  NEXZONE LIVE API ENGINE
+//  FREE APIs — no API key required:
+//  • ESPN (undocumented public API) — NBA & EPL live scores
+//  • Jikan API (jikan.moe)          — top airing anime from MyAnimeList
+//  Auto-refreshes every 90 seconds
+// ═══════════════════════════════════════════
 
-  // Mobile menu
-  function toggleMenu() {
-    document.getElementById('mobileMenu').classList.toggle('open');
+const APIS = {
+  nba:    'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard',
+  epl:    'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard',
+  anime:  'https://api.jikan.moe/v4/top/anime?limit=6&filter=airing'
+};
+
+// Sticky nav shadow
+window.addEventListener('scroll', () =>
+  document.getElementById('mainNav').classList.toggle('scrolled', scrollY > 40));
+
+// Scroll reveal
+const revealObs = new IntersectionObserver(entries =>
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } }),
+  { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// Stagger article cards on first load
+window.addEventListener('load', () => {
+  document.querySelectorAll('.article-card').forEach((c, i) => {
+    c.style.opacity = '0';
+    c.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+      c.style.transition = 'opacity .5s ease, transform .5s ease, border-color .25s, box-shadow .25s';
+      c.style.opacity = '1';
+      c.style.transform = '';
+    }, 300 + i * 85);
+  });
+});
+
+// ── Pill helper
+function pill(id, state, txt) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = `api-pill ${state}`;
+  el.innerHTML = `<div class="api-dot"></div>${txt}`;
+}
+
+// ── Get game status info
+function gameStatus(ev) {
+  const st = ev.status?.type;
+  if (!st) return { label: 'TBD', cls: 'soon' };
+  if (st.state === 'in') return { label: st.shortDetail || 'Live', cls: 'live' };
+  if (st.state === 'post') return { label: 'Final', cls: 'final' };
+  if (ev.date) {
+    const t = new Date(ev.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return { label: t, cls: 'soon' };
+  }
+  return { label: 'Upcoming', cls: 'soon' };
+}
+
+// ═══════════════
+//  FETCH SPORTS
+// ═══════════════
+async function fetchSports() {
+  pill('pill-nba', 'loading', '<span class="refresh-ring"></span> NBA…');
+  pill('pill-epl', 'loading', '<span class="refresh-ring"></span> EPL…');
+
+  const results = [];
+
+  // NBA
+  try {
+    const r = await fetch(APIS.nba);
+    const d = await r.json();
+    const evs = d.events || [];
+    pill('pill-nba', 'ok', `NBA — ${evs.length} game${evs.length !== 1 ? 's' : ''}`);
+    evs.forEach(ev => results.push({ emoji: '🏀', sport: 'NBA', ev }));
+  } catch { pill('pill-nba', 'err', 'NBA — offline'); }
+
+  // EPL
+  try {
+    const r = await fetch(APIS.epl);
+    const d = await r.json();
+    const evs = d.events || [];
+    pill('pill-epl', 'ok', `EPL — ${evs.length} match${evs.length !== 1 ? 'es' : ''}`);
+    evs.forEach(ev => results.push({ emoji: '⚽', sport: 'EPL', ev }));
+  } catch { pill('pill-epl', 'err', 'EPL — offline'); }
+
+  renderSports(results);
+  return results;
+}
+
+// ═══════════════
+//  RENDER SPORTS
+// ═══════════════
+function renderSports(results) {
+  const grid = document.getElementById('scoresGrid');
+  const bar  = document.getElementById('scoresBar');
+  const ticker = document.getElementById('tickerTrack');
+
+  if (!results.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--muted);">No games scheduled today. Check back later!</div>`;
+    return;
   }
 
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  reveals.forEach(el => observer.observe(el));
+  // Score cards (max 8)
+  grid.innerHTML = results.slice(0, 8).map(({ emoji, sport, ev }) => {
+    const comp  = ev.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    const st    = gameStatus(ev);
+    const hs    = parseInt(home?.score) || 0;
+    const as    = parseInt(away?.score) || 0;
+    const hwins = st.cls === 'final' && hs > as;
+    const awins = st.cls === 'final' && as > hs;
+    return `
+      <div class="score-card ${st.cls === 'live' ? 'is-live' : ''}">
+        <div class="sc-league">${emoji} ${sport}
+          ${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px;font-weight:700">● LIVE</span>' : ''}
+        </div>
+        <div class="sc-teams">
+          <div class="sc-team ${hwins ? 'winner' : ''}">
+            <span>${home?.team?.shortDisplayName || home?.team?.abbreviation || 'Home'}</span>
+            <span class="pts">${home?.score ?? '—'}</span>
+          </div>
+          <div class="sc-team ${awins ? 'winner' : ''}">
+            <span>${away?.team?.shortDisplayName || away?.team?.abbreviation || 'Away'}</span>
+            <span class="pts">${away?.score ?? '—'}</span>
+          </div>
+        </div>
+        <div class="sc-status ${st.cls === 'live' ? 'live-st' : ''}">${st.label}</div>
+      </div>`;
+  }).join('');
 
-  // Category filter
-  function filterCat(cat, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const grid = document.getElementById('articlesGrid');
-    const cards = grid.querySelectorAll('.article-card');
-    cards.forEach((card, i) => {
-      const match = cat === 'all' || card.dataset.cat === cat;
-      card.style.opacity = match ? '1' : '0.15';
-      card.style.transform = match ? 'scale(1)' : 'scale(0.97)';
-      card.style.pointerEvents = match ? 'auto' : 'none';
-    });
+  // Scrolling bar (duplicate for seamless loop)
+  const barHTML = results.map(({ emoji, ev }) => {
+    const comp = ev.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    const st = gameStatus(ev);
+    return `<div class="score-item">${emoji} ${home?.team?.abbreviation ?? '?'} vs ${away?.team?.abbreviation ?? '?'}
+      <span class="score-val">${home?.score ?? '?'}–${away?.score ?? '?'}</span>
+      <span class="s-${st.cls}">${st.label}</span>
+    </div>`;
+  }).join('');
+  bar.innerHTML = barHTML + barHTML;
+
+  // Update hero with first live game
+  const live = results.find(({ ev }) => gameStatus(ev).cls === 'live');
+  if (live) {
+    const comp = live.ev.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    document.getElementById('heroTitle').textContent =
+      `${live.emoji} ${home?.team?.name ?? ''} vs ${away?.team?.name ?? ''}`;
+    document.getElementById('heroExcerpt').textContent =
+      `Current score: ${home?.score ?? '?'} – ${away?.score ?? '?'}. Follow live play-by-play, full stats, and expert analysis here on NexZone.`;
+    document.getElementById('heroCat').textContent = 'Live Now';
+    document.getElementById('heroMeta').textContent = `${live.sport} · NexZone Sports Desk`;
+  } else {
+    // No live game — show next upcoming
+    const next = results[0];
+    const comp = next?.ev.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    document.getElementById('heroTitle').textContent =
+      `${next?.emoji ?? '🏆'} ${home?.team?.name ?? ''} vs ${away?.team?.name ?? ''}`;
+    document.getElementById('heroExcerpt').textContent =
+      `Coming up: ${gameStatus(next?.ev).label}. Get our full preview, starting lineups, and expert predictions on NexZone.`;
+    document.getElementById('heroCat').textContent = next?.sport ?? 'Sports';
   }
 
-  // Stagger article card reveal on load
-  window.addEventListener('load', () => {
-    const cards = document.querySelectorAll('.article-card');
-    cards.forEach((card, i) => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(20px)';
-      setTimeout(() => {
-        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease, border-color 0.25s, box-shadow 0.25s';
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
-      }, 300 + i * 80);
-    });
+  // Trending sidebar
+  const trendEl = document.getElementById('trendingList');
+  trendEl.innerHTML = results.slice(0, 5).map(({ emoji, ev }, i) => {
+    const comp = ev.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    const st = gameStatus(ev);
+    return `<div class="trend-item">
+      <div class="trend-num">${i + 1}</div>
+      <div>
+        <div class="trend-title">${home?.team?.name ?? '?'} vs ${away?.team?.name ?? '?'}</div>
+        <div class="trend-meta">${emoji} ${st.cls === 'live' ? '● Live now' : st.label}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Ticker
+  const tickerItems = results.map(({ emoji, ev }) => {
+    const comp = ev.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    const st = gameStatus(ev);
+    return `<span>${emoji} ${home?.team?.name ?? '?'} vs ${away?.team?.name ?? '?'}: ${home?.score ?? '?'}–${away?.score ?? '?'} (${st.label})</span>`;
+  }).join('');
+  ticker.innerHTML = tickerItems + tickerItems;
+}
+
+// ═══════════════
+//  FETCH ANIME
+// ═══════════════
+async function fetchAnime(sportsResults) {
+  pill('pill-anime', 'loading', '<span class="refresh-ring"></span> Anime…');
+  try {
+    const r = await fetch(APIS.anime);
+    const d = await r.json();
+    const items = d.data || [];
+    if (!items.length) throw new Error('empty');
+
+    pill('pill-anime', 'ok', `Anime — Top ${items.length} airing`);
+    renderAnime(items);
+
+    // Hero stack: mix of sports + anime
+    const stack = document.getElementById('heroStack');
+    const toShow = items.slice(0, 3);
+    stack.innerHTML = toShow.map(a => `
+      <div class="stack-card" onclick="window.open('${a.url}','_blank')">
+        <div class="stack-tag anime">Anime</div>
+        <div class="stack-title">${a.title}</div>
+        <div class="stack-time">⭐ ${a.score ?? 'N/A'} · ${a.episodes ?? '?'} episodes</div>
+      </div>`).join('');
+
+    // Add anime to ticker (append)
+    const ticker = document.getElementById('tickerTrack');
+    const animeTicker = items.slice(0, 4).map(a =>
+      `<span>🎌 ${a.title} — Score ${a.score ?? 'N/A'} | Rank #${a.rank ?? '?'}</span>`
+    ).join('');
+    ticker.innerHTML = ticker.innerHTML + animeTicker + animeTicker;
+
+  } catch {
+    pill('pill-anime', 'err', 'Anime — offline');
+    document.getElementById('animeGrid').innerHTML =
+      `<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--muted);">Could not load anime data. Try refreshing in a moment.</div>`;
+  }
+}
+
+function renderAnime(items) {
+  document.getElementById('animeGrid').innerHTML = items.map(a => `
+    <div class="anime-card" onclick="window.open('${a.url}','_blank')">
+      ${a.images?.jpg?.image_url
+        ? `<img class="anime-img" src="${a.images.jpg.image_url}" alt="${a.title}" loading="lazy"
+            onerror="this.outerHTML='<div class=anime-img-ph>🎌</div>'">`
+        : `<div class="anime-img-ph">🎌</div>`}
+      <div class="anime-body">
+        <div class="anime-title">${a.title}</div>
+        <div class="anime-meta">
+          <span>${a.type ?? 'TV'} · ${a.episodes ?? '?'} eps</span>
+          <span class="anime-score">⭐ ${a.score ?? 'N/A'}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════
+//  FILTERS
+// ═══════════════
+function filterCat(cat, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.article-card').forEach(c => {
+    const match = cat === 'all' || c.dataset.cat === cat;
+    c.style.opacity = match ? '1' : '0.15';
+    c.style.transform = match ? '' : 'scale(0.97)';
+    c.style.pointerEvents = match ? 'auto' : 'none';
   });
+}
+
+function filterSearch(v) {
+  const q = v.toLowerCase();
+  document.querySelectorAll('.article-card').forEach(c => {
+    const t = (c.dataset.title || '').toLowerCase();
+    c.style.opacity = t.includes(q) || !q ? '1' : '0.15';
+  });
+}
+
+// ═══════════════
+//  SUBSCRIBE
+// ═══════════════
+function subscribe() {
+  const v = document.getElementById('emailInput').value;
+  if (!v || !v.includes('@')) { alert('Please enter a valid email address!'); return; }
+  alert(`✅ Subscribed! Welcome to NexZone, ${v}`);
+  document.getElementById('emailInput').value = '';
+}
+
+// ═══════════════
+//  INIT + AUTO-REFRESH
+// ═══════════════
+async function init() {
+  const el = document.getElementById('lastUpdated');
+  if (el) el.innerHTML = `<span class="refresh-ring"></span> Refreshing...`;
+  const results = await fetchSports();
+  setTimeout(() => fetchAnime(results), 800); // Jikan rate-limit buffer
+  if (el) {
+    setTimeout(() => {
+      el.textContent = `✅ Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }, 2000);
+  }
+}
+
+init();
+setInterval(init, 90000); // auto-refresh every 90 seconds
 </script>
 </body>
 </html>
