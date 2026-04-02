@@ -1504,14 +1504,12 @@ window.addEventListener('scroll', () =>
 // ══════════════════════
 function doSearch(val) {
   const query = val.toLowerCase().trim();
-  
-  // Select every card on the site (Articles, Scores, Anime, and Sidebar)
+  // Selects all your content cards
   const allCards = document.querySelectorAll('.ac, .anc, .sc, .stack-card');
 
   allCards.forEach(card => {
     const text = card.innerText.toLowerCase();
-    
-    // If the text exists in the card, show it; otherwise hide it
+    // Only show cards that match the search word
     if (text.includes(query)) {
       card.style.display = "";
       card.style.opacity = "1";
@@ -1520,11 +1518,10 @@ function doSearch(val) {
     }
   });
 
-  // If search is cleared, reset all displays
+  // If the user clears the search, show everything again
   if (query === "") {
     allCards.forEach(c => {
       c.style.display = "";
-      c.style.opacity = "1";
     });
   }
 }
