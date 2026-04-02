@@ -1222,28 +1222,6 @@ function openGame(g) {
   }).join('') : '<p style="color:var(--m);font-size:13px;">No other games today</p>';
 }
 
-// ══════════════════════
-//  SEARCH LOGIC
-// ══════════════════════
-function doSearch(query) {
-  const q = query.toLowerCase().trim();
-  
-  // 1. If user is on a specific page, we search everything or just that page
-  // For a "Universal Search", we'll filter all cards globally:
-  const cards = document.querySelectorAll('.ac, .anc, .sc, .stack-card');
-
-  cards.forEach(card => {
-    // Get all text inside the card to see if it matches the query
-    const text = card.innerText.toLowerCase();
-    
-    if (text.includes(q)) {
-      card.style.display = ""; // Show
-      card.style.opacity = "1";
-    } else {
-      card.style.display = "none"; // Hide
-    }
-  });
-
   // 2. Special case: If search is empty, show everything again
   if (q === "") {
     cards.forEach(card => {
@@ -1524,6 +1502,36 @@ document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
 // Sticky nav
 window.addEventListener('scroll', () =>
   document.getElementById('mainNav').classList.toggle('scrolled', scrollY > 40));
+
+// ══════════════════════
+//  SEARCH ENGINE
+// ══════════════════════
+function doSearch(val) {
+  const query = val.toLowerCase().trim();
+  
+  // Select every card on the site (Articles, Scores, Anime, and Sidebar)
+  const allCards = document.querySelectorAll('.ac, .anc, .sc, .stack-card');
+
+  allCards.forEach(card => {
+    const text = card.innerText.toLowerCase();
+    
+    // If the text exists in the card, show it; otherwise hide it
+    if (text.includes(query)) {
+      card.style.display = "";
+      card.style.opacity = "1";
+    } else {
+      card.style.display = "none";
+    }
+  });
+
+  // If search is cleared, reset all displays
+  if (query === "") {
+    allCards.forEach(c => {
+      c.style.display = "";
+      c.style.opacity = "1";
+    });
+  }
+}
 
 // ══════════════════════
 //  INIT + AUTO-REFRESH
