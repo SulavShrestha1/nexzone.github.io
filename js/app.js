@@ -251,6 +251,12 @@ function paintAnimePageGrid() {
 }
 
 function nav(page, data) {
+  pageHomeSports = 1;
+  pageLiveSports = 1;
+  pageHomeAnime = 1;
+  pageAnimeGrid = 1;
+  pageNews = 1;
+
   if (page === 'animeDetail' && data != null) {
     showAnimeDetailPage(data, true);
     return;

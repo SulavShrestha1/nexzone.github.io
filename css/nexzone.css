@@ -60,7 +60,7 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
 
 /* ── API STATUS ── */
 .api-bar{max-width:1200px;margin:10px auto 0;padding:0 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.api-pill{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;border:1px solid var(--b);color:var(--m2)}
+.api-pill{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;border:1px solid var(--b);color:var(--m2);cursor:pointer;}
 .api-pill.ld{border-color:rgba(245,166,35,.3);color:var(--gold)}
 .api-pill.ok{border-color:rgba(80,200,120,.3);color:var(--green)}
 .api-pill.er{border-color:rgba(232,50,60,.3);color:var(--red)}
@@ -420,4 +420,26 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: var(--text) !important;
   caret-color: var(--text) !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+#scoresGrid, 
+#liveScoresGrid, 
+#animeGrid, 
+#animePageGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Creates 3 columns */
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+/* Mobile Responsiveness: Stack them on smaller screens */
+@media (max-width: 992px) {
+  #scoresGrid, #liveScoresGrid, #animeGrid, #animePageGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  #scoresGrid, #liveScoresGrid, #animeGrid, #animePageGrid {
+    grid-template-columns: 1fr;
+  }
 }
