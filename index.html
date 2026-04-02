@@ -3,486 +3,1268 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NexZone — Your #1 source for live sports scores, NBA, EPL, NFL, and top anime news, reviews, and rankings updated daily.">
+<meta name="keywords" content="sports news, anime news, NBA scores, EPL scores, anime reviews, live sports">
+<meta property="og:title" content="NexZone — Sports & Anime Hub">
+<meta property="og:description" content="Live scores, sports news, anime reviews and rankings. Updated daily.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#e8323c">
 <title>NexZone — Sports & Anime Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ══════════════════════════════════════
+     GOOGLE ADSENSE — paste your code here
+     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
+     ══════════════════════════════════════ -->
+
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0c;--surface:#111118;--card:#16161f;--card-hover:#1c1c28;
-  --border:rgba(255,255,255,0.07);--border-hover:rgba(232,50,60,0.4);
-  --red:#e8323c;--red-glow:rgba(232,50,60,0.15);--gold:#f5a623;
-  --text:#f0eff5;--muted:#6b7080;--muted2:#9299a8;
+  --bg:#0a0a0c;--surface:#111118;--card:#16161f;--card-h:#1c1c28;
+  --b:rgba(255,255,255,.07);--bh:rgba(232,50,60,.4);
+  --red:#e8323c;--rg:rgba(232,50,60,.15);--gold:#f5a623;
+  --green:#50c878;--blue:#7eb8f7;
+  --text:#f0eff5;--m:#6b7080;--m2:#9299a8;
   --fh:'Bebas Neue',sans-serif;--fb:'Outfit',sans-serif;
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.6;overflow-x:hidden}
-a{text-decoration:none;color:inherit}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+a{text-decoration:none;color:inherit;cursor:pointer}
+button{cursor:pointer}
+img{max-width:100%}
 
-/* TICKER */
-.ticker-bar{background:var(--red);overflow:hidden;height:34px;display:flex;align-items:center}
+/* ── PAGE SYSTEM ── */
+.page{display:none;animation:fadeIn .35s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TICKER ── */
+.ticker-bar{background:var(--red);overflow:hidden;height:34px;display:flex;align-items:center;flex-shrink:0}
 .ticker-label{background:#b01c25;color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 14px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;gap:6px}
-.ticker-overflow{overflow:hidden;flex:1}
-.ticker-track{display:flex;animation:ticker 70s linear infinite;white-space:nowrap}
+.ticker-of{overflow:hidden;flex:1}
+.ticker-track{display:flex;animation:tick 70s linear infinite;white-space:nowrap}
 .ticker-track span{padding:0 28px;font-size:12px;font-weight:500;color:#fff}
 .ticker-track span::before{content:'● ';font-size:7px;opacity:.7}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* NAV */
-nav{position:sticky;top:0;z-index:100;background:rgba(10,10,12,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:box-shadow .3s}
-nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.6)}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.logo{font-family:var(--fh);font-size:30px;letter-spacing:3px;color:var(--text);flex-shrink:0}
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:200;background:rgba(10,10,12,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b);transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-family:var(--fh);font-size:30px;letter-spacing:3px;color:var(--text);flex-shrink:0;cursor:pointer}
 .logo span{color:var(--red)}
-.nav-links{display:flex;gap:6px;list-style:none}
-.nav-links a{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);padding:6px 12px;border-radius:6px;transition:color .2s,background .2s}
-.nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.06)}
-.nav-links a.active{color:var(--red)}
-.nav-cta{background:var(--red)!important;color:#fff!important}
-.nav-search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;flex-shrink:0}
-.nav-search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--fb);font-size:13px;width:150px}
-.nav-search input::placeholder{color:var(--muted)}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
-.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px}
-.mobile-menu{display:none;flex-direction:column;background:var(--surface);border-top:1px solid var(--border);padding:16px 24px;gap:4px}
+.nav-links{display:flex;gap:4px;list-style:none}
+.nav-links li a,.nav-links li button{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--m2);padding:7px 12px;border-radius:6px;transition:color .2s,background .2s;background:none;border:none;font-family:var(--fb)}
+.nav-links li a:hover,.nav-links li button:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.nav-links li a.active,.nav-links li button.active{color:var(--red)}
+.nav-cta{background:var(--red)!important;color:#fff!important;border-radius:6px!important}
+.nav-search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--b);border-radius:8px;padding:6px 12px;flex-shrink:0}
+.nav-search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--fb);font-size:13px;width:140px}
+.nav-search input::placeholder{color:var(--m)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;display:block;transition:all .3s}
+.mobile-menu{display:none;flex-direction:column;background:var(--surface);border-top:1px solid var(--b);padding:12px 24px;gap:2px}
 .mobile-menu.open{display:flex}
-.mobile-menu a{padding:10px 0;font-size:14px;font-weight:500;color:var(--muted2);border-bottom:1px solid var(--border)}
+.mobile-menu button{padding:11px 0;font-size:14px;font-weight:500;color:var(--m2);border-bottom:1px solid var(--b);text-align:left;background:none;border-left:none;border-right:none;border-top:none;font-family:var(--fb)}
+.mobile-menu button:last-child{border-bottom:none}
 
-/* AD */
-.ad-banner{max-width:1200px;margin:16px auto 0;padding:0 24px}
-.ad-slot{border:1px dashed rgba(255,255,255,.1);border-radius:8px;background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:500}
-.ad-slot.leaderboard{height:90px}
-.ad-slot.medium-rect{height:250px;width:100%}
+/* ── AD SLOTS ── */
+.ad-wrap{max-width:1200px;margin:16px auto 0;padding:0 24px}
+.ad-slot{border:1px dashed rgba(255,255,255,.1);border-radius:8px;background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:center;color:var(--m);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:500;text-align:center}
+.ad-slot.lb{height:90px}
+.ad-slot.rect{height:250px;width:100%}
+.ad-slot.inline{height:90px;margin:20px 0}
 
-/* API STATUS */
-.api-status-bar{max-width:1200px;margin:12px auto 0;padding:0 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.api-pill{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;border:1px solid var(--border);color:var(--muted2)}
-.api-pill.loading{border-color:rgba(245,166,35,.3);color:var(--gold)}
-.api-pill.ok{border-color:rgba(80,200,120,.3);color:#50c878}
-.api-pill.err{border-color:rgba(232,50,60,.3);color:var(--red)}
+/* ── API STATUS ── */
+.api-bar{max-width:1200px;margin:10px auto 0;padding:0 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.api-pill{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;border:1px solid var(--b);color:var(--m2)}
+.api-pill.ld{border-color:rgba(245,166,35,.3);color:var(--gold)}
+.api-pill.ok{border-color:rgba(80,200,120,.3);color:var(--green)}
+.api-pill.er{border-color:rgba(232,50,60,.3);color:var(--red)}
 .api-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
-.last-updated{font-size:11px;color:var(--muted);margin-left:auto;display:flex;align-items:center;gap:6px}
+.lu{font-size:11px;color:var(--m);margin-left:auto;display:flex;align-items:center;gap:6px}
+.spin{width:10px;height:10px;border:2px solid var(--b);border-top-color:var(--green);border-radius:50%;display:inline-block;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
 
-/* HERO */
+/* ── HERO ── */
 .hero{max-width:1200px;margin:24px auto 0;padding:0 24px;display:grid;grid-template-columns:1fr 340px;gap:16px}
-.hero-main{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:36px 36px 28px;position:relative;overflow:hidden;transition:border-color .3s,box-shadow .3s;cursor:pointer;animation:fadeUp .7s ease .1s both}
-.hero-main::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 10% 80%,rgba(232,50,60,.1) 0%,transparent 60%);pointer-events:none}
-.hero-main:hover{border-color:var(--border-hover);box-shadow:0 0 40px var(--red-glow)}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:4px;margin-bottom:14px;animation:pulse-badge 2s ease-in-out infinite}
+.hero-main{background:var(--card);border-radius:16px;border:1px solid var(--b);padding:36px;position:relative;overflow:hidden;transition:border-color .3s,box-shadow .3s;cursor:pointer;animation:fadeUp .7s ease .1s both}
+.hero-main::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 10% 80%,rgba(232,50,60,.12) 0%,transparent 60%);pointer-events:none}
+.hero-main:hover{border-color:var(--bh);box-shadow:0 0 40px var(--rg)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:4px;margin-bottom:14px;animation:pbadge 2s ease-in-out infinite}
 .hero-badge::before{content:'●';font-size:7px}
-@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.7}}
+@keyframes pbadge{0%,100%{opacity:1}50%{opacity:.7}}
 .hero-title{font-family:var(--fh);font-size:48px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:14px}
-.hero-excerpt{color:var(--muted2);font-size:14px;line-height:1.7;max-width:420px;margin-bottom:20px}
-.hero-meta{display:flex;align-items:center;gap:16px}
-.author{font-size:12px;color:var(--muted)}
+.hero-excerpt{color:var(--m2);font-size:14px;line-height:1.7;max-width:420px;margin-bottom:20px}
+.hero-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.author{font-size:12px;color:var(--m)}
 .cat-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(245,166,35,.15);color:var(--gold);text-transform:uppercase;letter-spacing:.5px}
-.read-btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;transition:opacity .2s,transform .2s;margin-top:20px}
+.read-btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;transition:opacity .2s,transform .2s;margin-top:20px;border:none;font-family:var(--fb)}
 .read-btn:hover{opacity:.85;transform:translateY(-1px)}
 .hero-stack{display:flex;flex-direction:column;gap:12px;animation:fadeUp .7s ease .2s both}
-.stack-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;cursor:pointer;transition:border-color .25s,background .25s,transform .2s;flex:1}
-.stack-card:hover{border-color:var(--border-hover);background:var(--card-hover);transform:translateX(3px)}
-.stack-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.stack-tag.anime{color:var(--gold)}.stack-tag.sports{color:var(--red)}
-.stack-title{font-size:13px;font-weight:600;line-height:1.4;color:var(--text)}
-.stack-time{font-size:11px;color:var(--muted);margin-top:5px}
+.stack-card{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:16px 18px;cursor:pointer;transition:border-color .25s,background .25s,transform .2s;flex:1}
+.stack-card:hover{border-color:var(--bh);background:var(--card-h);transform:translateX(4px)}
+.stag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.stag.anime{color:var(--gold)}.stag.sports{color:var(--red)}
+.stitle{font-size:13px;font-weight:600;line-height:1.4;color:var(--text)}
+.stime{font-size:11px;color:var(--m);margin-top:5px}
 
-/* LIVE SCORES BAR */
-.live-scores-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;height:44px;display:flex;align-items:center;margin-top:28px}
+/* ── LIVE SCORES BAR ── */
+.scores-bar{background:var(--surface);border-top:1px solid var(--b);border-bottom:1px solid var(--b);overflow:hidden;height:44px;display:flex;align-items:center;margin-top:28px}
 .live-label{background:var(--red);color:#fff;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:0 16px;height:100%;display:flex;align-items:center;flex-shrink:0;gap:6px}
-.live-dot-anim{width:7px;height:7px;background:#fff;border-radius:50%;animation:live-pulse 1.4s ease-in-out infinite}
-@keyframes live-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-.scores-overflow{overflow:hidden;flex:1}
-.scores-track{display:flex;animation:scores-scroll 45s linear infinite;white-space:nowrap}
-.score-item{padding:0 20px;font-size:12px;font-weight:500;color:var(--text);border-right:1px solid var(--border);height:44px;display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
-.score-val{font-weight:700;color:var(--gold)}
-.s-live{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;text-transform:uppercase}
-.s-final{background:rgba(255,255,255,.1);color:var(--muted2);font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;text-transform:uppercase}
-.s-soon{background:rgba(245,166,35,.2);color:var(--gold);font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;text-transform:uppercase}
-@keyframes scores-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.live-dot{width:7px;height:7px;background:#fff;border-radius:50%;animation:lp 1.4s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.sof{overflow:hidden;flex:1}
+.st{display:flex;animation:ss 45s linear infinite;white-space:nowrap}
+.si{padding:0 20px;font-size:12px;font-weight:500;color:var(--text);border-right:1px solid var(--b);height:44px;display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+.sv{font-weight:700;color:var(--gold)}
+.slive{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;text-transform:uppercase}
+.sfin{background:rgba(255,255,255,.1);color:var(--m2);font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px}
+.ssoon{background:rgba(245,166,35,.2);color:var(--gold);font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px}
+@keyframes ss{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* SCORE CARDS */
-.scores-section{max-width:1200px;margin:36px auto 0;padding:0 24px}
+/* ── SCORE CARDS ── */
+.sec{max-width:1200px;margin:36px auto 0;padding:0 24px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.sec-head h2{font-family:var(--fh);font-size:26px;letter-spacing:1px;color:var(--text)}
+.sec-head::before{content:'';width:4px;height:26px;background:var(--red);border-radius:2px;flex-shrink:0}
 .scores-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.score-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;transition:border-color .25s,transform .2s}
-.score-card.is-live{border-color:rgba(232,50,60,.3)}
-.score-card:hover{transform:translateY(-2px)}
-.sc-league{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.sc{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:14px;transition:border-color .25s,transform .2s,box-shadow .2s;cursor:pointer}
+.sc.islive{border-color:rgba(232,50,60,.3)}
+.sc:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.4);border-color:var(--bh)}
+.sc-lg{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--m);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
 .sc-teams{display:flex;flex-direction:column;gap:6px}
 .sc-team{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:500}
 .sc-team .pts{font-family:var(--fh);font-size:20px;color:var(--text)}
-.sc-team.winner .pts{color:var(--gold)}
-.sc-status{font-size:10px;color:var(--muted);margin-top:8px;text-align:center;padding-top:8px;border-top:1px solid var(--border)}
-.sc-status.live-st{color:var(--red);font-weight:600}
+.sc-team.win .pts{color:var(--gold)}
+.sc-st{font-size:10px;color:var(--m);margin-top:8px;text-align:center;padding-top:8px;border-top:1px solid var(--b)}
+.sc-st.lv{color:var(--red);font-weight:700}
+.apibadge{font-size:9px;background:rgba(80,200,120,.1);color:var(--green);border:1px solid rgba(80,200,120,.2);padding:1px 7px;border-radius:10px;font-weight:600;font-family:var(--fb)}
 
-/* SECTION */
-.section-wrap{max-width:1200px;margin:36px auto 0;padding:0 24px}
-.tabs-row{display:flex;align-items:center;border-bottom:1px solid var(--border);margin-bottom:24px}
-.tab-btn{padding:12px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;background:none;border-left:none;border-right:none;border-top:none;font-family:var(--fb)}
-.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--red);border-bottom-color:var(--red)}
+/* ── ARTICLE GRID ── */
 .content-layout{display:grid;grid-template-columns:1fr 300px;gap:28px}
-.section-head{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-.section-head h2{font-family:var(--fh);font-size:26px;letter-spacing:1px;color:var(--text)}
-.section-head::before{content:'';width:4px;height:26px;background:var(--red);border-radius:2px;flex-shrink:0}
+.tabs{display:flex;border-bottom:1px solid var(--b);margin-bottom:24px}
+.tab{padding:12px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--m);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;background:none;border-left:none;border-right:none;border-top:none;font-family:var(--fb)}
+.tab:hover{color:var(--text)}.tab.active{color:var(--red);border-bottom-color:var(--red)}
+.ag{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ac{background:var(--card);border:1px solid var(--b);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s,opacity .3s}
+.ac:hover{border-color:var(--bh);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-3px)}
+.ct{height:100px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface);border-bottom:1px solid var(--b)}
+.cb{padding:14px}
+.ctag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.ts{color:var(--red)}.ta{color:var(--gold)}.tr{color:var(--blue)}
+.ctitle{font-size:13px;font-weight:600;line-height:1.4;color:var(--text);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cf{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--m)}
 
-/* ARTICLE CARDS */
-.articles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.article-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s,opacity .3s}
-.article-card:hover{border-color:var(--border-hover);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-3px)}
-.card-thumb{height:100px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface);border-bottom:1px solid var(--border)}
-.card-body{padding:14px}
-.card-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.tag-sports{color:var(--red)}.tag-anime{color:var(--gold)}.tag-review{color:#7eb8f7}
-.card-title{font-size:13px;font-weight:600;line-height:1.4;color:var(--text);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.card-footer{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}
-.api-badge{font-size:9px;background:rgba(80,200,120,.1);color:#50c878;border:1px solid rgba(80,200,120,.2);padding:1px 6px;border-radius:10px;font-weight:600;font-family:var(--fb)}
-
-/* SIDEBAR */
+/* ── SIDEBAR ── */
 .sidebar{display:flex;flex-direction:column;gap:20px}
-.sidebar-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
-.sidebar-box h3{font-family:var(--fh);font-size:20px;letter-spacing:1px;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-.trend-list{display:flex;flex-direction:column;gap:8px}
-.trend-item{display:flex;align-items:flex-start;gap:10px;padding:9px;border-radius:8px;cursor:pointer;transition:background .2s}
-.trend-item:hover{background:rgba(255,255,255,.04)}
-.trend-num{font-family:var(--fh);font-size:26px;color:var(--red);line-height:1;min-width:26px}
-.trend-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
-.trend-meta{font-size:10px;color:var(--muted);margin-top:2px}
+.sb{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:18px}
+.sb h3{font-family:var(--fh);font-size:20px;letter-spacing:1px;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--b)}
+.tl{display:flex;flex-direction:column;gap:8px}
+.ti{display:flex;align-items:flex-start;gap:10px;padding:9px;border-radius:8px;cursor:pointer;transition:background .2s}
+.ti:hover{background:rgba(255,255,255,.04)}
+.tn{font-family:var(--fh);font-size:26px;color:var(--red);line-height:1;min-width:26px}
+.tt{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.tm{font-size:10px;color:var(--m);margin-top:2px}
 
-/* ANIME */
+/* ── ANIME GRID ── */
 .anime-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.anime-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s}
-.anime-card:hover{border-color:rgba(245,166,35,.4);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-3px)}
-.anime-img{width:100%;height:140px;object-fit:cover;display:block}
-.anime-img-ph{width:100%;height:140px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px}
-.anime-body{padding:12px}
-.anime-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.anime-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}
-.anime-score{color:var(--gold);font-weight:600}
+.anc{background:var(--card);border:1px solid var(--b);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s}
+.anc:hover{border-color:rgba(245,166,35,.4);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-3px)}
+.animg{width:100%;height:140px;object-fit:cover;display:block}
+.anph{width:100%;height:140px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px}
+.anb{padding:12px}
+.antitle{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.anmeta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--m)}
+.anscore{color:var(--gold);font-weight:600}
 
-/* SKELETON */
-.skeleton{background:var(--surface);border-radius:8px;animation:shimmer 1.5s ease-in-out infinite}
-@keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
+/* ── SKELETON ── */
+.sk{background:var(--surface);border-radius:8px;animation:shim 1.5s ease-in-out infinite}
+@keyframes shim{0%,100%{opacity:.4}50%{opacity:.8}}
 
-/* NEWSLETTER */
-.newsletter-section{max-width:1200px;margin:36px auto;padding:0 24px}
-.newsletter-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;position:relative;overflow:hidden}
-.newsletter-box::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(232,50,60,.08) 0%,transparent 70%);pointer-events:none}
-.newsletter-text h3{font-family:var(--fh);font-size:32px;letter-spacing:1px;color:var(--text);margin-bottom:6px}
-.newsletter-text p{font-size:14px;color:var(--muted2)}
-.newsletter-form{display:flex;gap:10px;flex-shrink:0}
-.newsletter-form input{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 16px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;width:240px;transition:border-color .2s}
-.newsletter-form input:focus{border-color:var(--red)}
-.newsletter-form input::placeholder{color:var(--muted)}
-.newsletter-form button{background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s;white-space:nowrap}
-.newsletter-form button:hover{opacity:.85;transform:translateY(-1px)}
+/* ── ARTICLE PAGE ── */
+.article-page{max-width:800px;margin:0 auto;padding:32px 24px}
+.ap-back{display:inline-flex;align-items:center;gap:8px;color:var(--m2);font-size:13px;font-weight:500;margin-bottom:28px;padding:8px 14px;border-radius:8px;border:1px solid var(--b);transition:all .2s;background:none;font-family:var(--fb)}
+.ap-back:hover{color:var(--text);border-color:var(--bh);background:rgba(255,255,255,.04)}
+.ap-cat{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.ap-title{font-family:var(--fh);font-size:52px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:18px}
+.ap-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 0;border-top:1px solid var(--b);border-bottom:1px solid var(--b);margin-bottom:32px}
+.ap-author{font-size:13px;font-weight:600;color:var(--text)}
+.ap-date{font-size:12px;color:var(--m)}
+.ap-read{font-size:12px;color:var(--m);display:flex;align-items:center;gap:5px}
+.ap-hero-img{width:100%;height:320px;background:var(--card);border-radius:16px;border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:72px;margin-bottom:32px;position:relative;overflow:hidden}
+.ap-hero-img::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(232,50,60,.08) 0%,transparent 70%)}
+.ap-body{font-size:16px;line-height:1.85;color:var(--m2)}
+.ap-body h3{font-family:var(--fh);font-size:28px;letter-spacing:.5px;color:var(--text);margin:36px 0 14px}
+.ap-body p{margin-bottom:20px}
+.ap-body strong{color:var(--text);font-weight:600}
+.ap-body ul{padding-left:20px;margin-bottom:20px}
+.ap-body ul li{margin-bottom:8px}
+.ap-body .highlight{background:rgba(232,50,60,.08);border-left:3px solid var(--red);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;color:var(--text)}
+.ap-share{margin-top:40px;padding-top:32px;border-top:1px solid var(--b)}
+.ap-share h4{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px}
+.share-btns{display:flex;gap:10px;flex-wrap:wrap}
+.share-btn{padding:9px 18px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--b);background:var(--card);color:var(--m2);transition:all .2s;font-family:var(--fb)}
+.share-btn:hover{color:var(--text);border-color:var(--bh)}
+.ap-related{margin-top:48px}
+.ap-related h3{font-family:var(--fh);font-size:26px;letter-spacing:1px;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.ap-related h3::before{content:'';width:4px;height:26px;background:var(--red);border-radius:2px}
 
-/* FOOTER */
-footer{background:var(--surface);border-top:1px solid var(--border);margin-top:48px}
-.footer-inner{max-width:1200px;margin:0 auto;padding:40px 24px 24px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:32px}
-.footer-brand p{font-size:13px;color:var(--muted2);line-height:1.7;max-width:240px;margin-top:8px}
-.footer-col h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:14px}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
-.footer-col ul li a{font-size:13px;color:var(--muted2);transition:color .2s}
-.footer-col ul li a:hover{color:var(--text)}
-.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+/* ── GAME PAGE ── */
+.game-page{max-width:900px;margin:0 auto;padding:32px 24px}
+.game-hero{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:40px;text-align:center;position:relative;overflow:hidden;margin-bottom:28px}
+.game-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 110%,rgba(232,50,60,.15) 0%,transparent 60%);pointer-events:none}
+.game-teams{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;margin-bottom:24px}
+.game-team{text-align:center}
+.game-team-name{font-family:var(--fh);font-size:32px;letter-spacing:1px;color:var(--text)}
+.game-team-pts{font-family:var(--fh);font-size:72px;color:var(--gold);line-height:1}
+.game-vs{font-family:var(--fh);font-size:22px;color:var(--m);margin-top:16px}
+.game-status{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;padding:6px 16px;border-radius:20px}
+.game-status.live{background:rgba(232,50,60,.15);color:var(--red);border:1px solid rgba(232,50,60,.3)}
+.game-status.final{background:rgba(255,255,255,.06);color:var(--m2);border:1px solid var(--b)}
+.game-status.soon{background:rgba(245,166,35,.1);color:var(--gold);border:1px solid rgba(245,166,35,.3)}
+.game-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.game-info-card{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:18px;text-align:center}
+.game-info-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--m);margin-bottom:6px}
+.game-info-val{font-family:var(--fh);font-size:28px;color:var(--text);letter-spacing:.5px}
 
-/* ANIMATIONS */
+/* ── INNER PAGES ── */
+.inner-page{max-width:800px;margin:0 auto;padding:48px 24px}
+.inner-page h1{font-family:var(--fh);font-size:52px;letter-spacing:1px;color:var(--text);margin-bottom:12px}
+.inner-page .subtitle{font-size:16px;color:var(--m2);margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--b)}
+.inner-page h2{font-family:var(--fh);font-size:28px;letter-spacing:.5px;color:var(--text);margin:36px 0 14px}
+.inner-page p{font-size:15px;color:var(--m2);line-height:1.8;margin-bottom:18px}
+.inner-page ul{padding-left:20px;margin-bottom:20px}
+.inner-page ul li{font-size:15px;color:var(--m2);line-height:1.8;margin-bottom:8px}
+.contact-form{display:flex;flex-direction:column;gap:16px;margin-top:28px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--m)}
+.form-group input,.form-group textarea,.form-group select{background:var(--surface);border:1px solid var(--b);border-radius:8px;padding:12px 16px;color:var(--text);font-family:var(--fb);font-size:14px;outline:none;transition:border-color .2s;width:100%}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--red)}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--m)}
+.form-group textarea{resize:vertical;min-height:120px}
+.form-submit{background:var(--red);color:#fff;border:none;border-radius:8px;padding:13px 28px;font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s;align-self:flex-start}
+.form-submit:hover{opacity:.85;transform:translateY(-1px)}
+.advertise-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.plan-card{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:24px}
+.plan-card.featured{border-color:rgba(232,50,60,.4);position:relative}
+.plan-best{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px;white-space:nowrap}
+.plan-name{font-family:var(--fh);font-size:22px;letter-spacing:.5px;color:var(--text);margin-bottom:6px}
+.plan-price{font-family:var(--fh);font-size:40px;color:var(--gold);margin-bottom:14px}
+.plan-price span{font-size:14px;color:var(--m);font-family:var(--fb);font-weight:400}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.plan-features li{font-size:13px;color:var(--m2);display:flex;align-items:center;gap:8px}
+.plan-features li::before{content:'✓';color:var(--green);font-weight:700;font-size:12px}
+.plan-btn{width:100%;padding:10px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;border:1px solid var(--b);background:transparent;color:var(--text);transition:all .2s}
+.plan-btn:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ── NEWSLETTER ── */
+.nl-section{max-width:1200px;margin:36px auto;padding:0 24px}
+.nl-box{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:36px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;position:relative;overflow:hidden}
+.nl-box::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(232,50,60,.08) 0%,transparent 70%);pointer-events:none}
+.nl-text h3{font-family:var(--fh);font-size:32px;letter-spacing:1px;color:var(--text);margin-bottom:6px}
+.nl-text p{font-size:14px;color:var(--m2)}
+.nl-form{display:flex;gap:10px;flex-shrink:0}
+.nl-form input{background:var(--surface);border:1px solid var(--b);border-radius:8px;padding:11px 16px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;width:230px;transition:border-color .2s}
+.nl-form input:focus{border-color:var(--red)}
+.nl-form input::placeholder{color:var(--m)}
+.nl-form button{background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s;white-space:nowrap}
+.nl-form button:hover{opacity:.85;transform:translateY(-1px)}
+
+/* ── SUCCESS PAGE ── */
+.success-page{max-width:560px;margin:80px auto;padding:0 24px;text-align:center}
+.success-icon{font-size:64px;margin-bottom:24px;animation:bounce .6s ease}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.success-page h1{font-family:var(--fh);font-size:52px;color:var(--text);margin-bottom:12px;letter-spacing:1px}
+.success-page p{font-size:15px;color:var(--m2);line-height:1.8;margin-bottom:28px}
+
+/* ── FOOTER ── */
+footer{background:var(--surface);border-top:1px solid var(--b);margin-top:60px}
+.fi{max-width:1200px;margin:0 auto;padding:40px 24px 24px}
+.fg{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:32px}
+.fb-desc{font-size:13px;color:var(--m2);line-height:1.7;max-width:240px;margin-top:8px}
+.fcol h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--m);margin-bottom:14px}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.fcol ul li button{font-size:13px;color:var(--m2);transition:color .2s;background:none;border:none;font-family:var(--fb);padding:0;text-align:left;cursor:pointer}
+.fcol ul li button:hover{color:var(--red)}
+.fbot{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--b);font-size:12px;color:var(--m);flex-wrap:wrap;gap:10px}
+
+/* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.refresh-ring{width:10px;height:10px;border:2px solid var(--border);border-top-color:#50c878;border-radius:50%;display:inline-block;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+.reveal.vis{opacity:1;transform:translateY(0)}
 
-/* RESPONSIVE */
+/* ── RESPONSIVE ── */
 @media(max-width:900px){
-  .hero{grid-template-columns:1fr}.hero-title{font-size:38px}
+  .hero{grid-template-columns:1fr}.hero-title{font-size:36px}
   .content-layout{grid-template-columns:1fr}
-  .articles-grid,.anime-grid{grid-template-columns:repeat(2,1fr)}
+  .ag,.anime-grid{grid-template-columns:repeat(2,1fr)}
   .scores-grid{grid-template-columns:repeat(2,1fr)}
-  .footer-grid{grid-template-columns:1fr 1fr}
-  .newsletter-box{flex-direction:column;padding:24px}
-  .newsletter-form{flex-direction:column;width:100%}
-  .newsletter-form input{width:100%}
+  .fg{grid-template-columns:1fr 1fr}
+  .nl-box{flex-direction:column;padding:24px}
+  .nl-form{flex-direction:column;width:100%}
+  .nl-form input{width:100%}
   .nav-links,.nav-search{display:none}
   .hamburger{display:flex}
+  .game-teams{gap:20px}
+  .game-team-pts{font-size:52px}
+  .advertise-plans{grid-template-columns:1fr}
+  .game-info-grid{grid-template-columns:1fr 1fr}
+  .ap-title{font-size:36px}
 }
 @media(max-width:560px){
-  .articles-grid,.anime-grid,.scores-grid{grid-template-columns:1fr}
-  .hero-title{font-size:28px}.footer-grid{grid-template-columns:1fr}
+  .ag,.anime-grid,.scores-grid{grid-template-columns:1fr}
+  .hero-title{font-size:28px}
+  .fg{grid-template-columns:1fr}
+  .ap-title{font-size:28px}
 }
 </style>
 </head>
 <body>
 
-<!-- BREAKING NEWS TICKER -->
+<!-- ════ BREAKING TICKER (always visible) ════ -->
 <div class="ticker-bar">
   <div class="ticker-label">🔴 Breaking</div>
-  <div class="ticker-overflow">
+  <div class="ticker-of">
     <div class="ticker-track" id="tickerTrack">
-      <span>Loading live news...</span><span>Loading live news...</span>
+      <span>Loading live headlines...</span>
+      <span>Loading live headlines...</span>
     </div>
   </div>
 </div>
 
-<!-- NAV -->
+<!-- ════ NAV (always visible) ════ -->
 <nav id="mainNav">
   <div class="nav-inner">
-    <a href="#" class="logo">Nex<span>Zone</span></a>
+    <span class="logo" onclick="nav('home')">Nex<span>Zone</span></span>
     <ul class="nav-links">
-      <li><a href="#" class="active">Home</a></li>
-      <li><a href="#sports-scores">Sports</a></li>
-      <li><a href="#anime-section">Anime</a></li>
-      <li><a href="#articles-section">Articles</a></li>
-      <li><a href="#" class="nav-cta">Subscribe</a></li>
+      <li><button id="nl-home" class="active" onclick="nav('home')">Home</button></li>
+      <li><button id="nl-sports" onclick="nav('sports')">Sports</button></li>
+      <li><button id="nl-anime" onclick="nav('anime')">Anime</button></li>
+      <li><button id="nl-articles" onclick="nav('articles')">Articles</button></li>
+      <li><button class="nav-cta" onclick="nav('subscribe')">Subscribe</button></li>
     </ul>
     <div class="nav-search">
       <span>🔍</span>
-      <input type="text" placeholder="Search..." id="searchInput" oninput="filterSearch(this.value)">
+      <input type="text" placeholder="Search..." id="searchInput" oninput="doSearch(this.value)">
     </div>
-    <div class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')">
+    <button class="hamburger" onclick="document.getElementById('mMenu').classList.toggle('open')">
       <span></span><span></span><span></span>
-    </div>
+    </button>
   </div>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#">Home</a><a href="#sports-scores">Sports</a>
-    <a href="#anime-section">Anime</a><a href="#articles-section">Articles</a>
-    <a href="#">Subscribe</a>
+  <div class="mobile-menu" id="mMenu">
+    <button onclick="nav('home');document.getElementById('mMenu').classList.remove('open')">Home</button>
+    <button onclick="nav('sports');document.getElementById('mMenu').classList.remove('open')">Sports</button>
+    <button onclick="nav('anime');document.getElementById('mMenu').classList.remove('open')">Anime</button>
+    <button onclick="nav('articles');document.getElementById('mMenu').classList.remove('open')">Articles</button>
+    <button onclick="nav('subscribe');document.getElementById('mMenu').classList.remove('open')">Subscribe</button>
+    <button onclick="nav('about');document.getElementById('mMenu').classList.remove('open')">About</button>
   </div>
 </nav>
 
-<!-- TOP AD — REPLACE WITH YOUR ADSENSE CODE -->
-<div class="ad-banner">
-  <div class="ad-slot leaderboard">📢 Google AdSense — Leaderboard (728×90) — Paste your AdSense code here</div>
-</div>
+<!-- ════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════ -->
+<div id="page-home" class="page active">
 
-<!-- API STATUS -->
-<div class="api-status-bar" id="apiStatusBar">
-  <div class="api-pill loading" id="pill-nba"><div class="api-dot"></div>NBA loading...</div>
-  <div class="api-pill loading" id="pill-epl"><div class="api-dot"></div>EPL loading...</div>
-  <div class="api-pill loading" id="pill-anime"><div class="api-dot"></div>Anime loading...</div>
-  <div class="last-updated" id="lastUpdated"></div>
-</div>
+  <!-- TOP AD -->
+  <div class="ad-wrap">
+    <!-- PASTE ADSENSE LEADERBOARD CODE HERE -->
+    <div class="ad-slot lb">📢 Google AdSense Leaderboard (728×90) — Paste your AdSense code here to earn</div>
+  </div>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-main">
-    <div class="hero-badge">Live Coverage</div>
-    <div class="hero-title" id="heroTitle">Loading Top Story...</div>
-    <div class="hero-excerpt" id="heroExcerpt">Fetching the latest scores and headlines from live sources...</div>
-    <div class="hero-meta">
-      <span class="author" id="heroMeta">NexZone Sports Desk</span>
-      <span class="cat-tag" id="heroCat">Sports</span>
+  <!-- API STATUS -->
+  <div class="api-bar">
+    <div class="api-pill ld" id="pill-nba"><div class="api-dot"></div>NBA loading...</div>
+    <div class="api-pill ld" id="pill-epl"><div class="api-dot"></div>EPL loading...</div>
+    <div class="api-pill ld" id="pill-anime"><div class="api-dot"></div>Anime loading...</div>
+    <div class="lu" id="lu"></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-main" id="heroCard" onclick="openHeroArticle()">
+      <div class="hero-badge">Live Coverage</div>
+      <div class="hero-title" id="heroTitle">Loading Top Story...</div>
+      <div class="hero-excerpt" id="heroExcerpt">Fetching the latest scores and headlines from live sources...</div>
+      <div class="hero-meta">
+        <span class="author" id="heroAuthor">NexZone Sports Desk</span>
+        <span class="cat-tag" id="heroCat">Sports</span>
+      </div>
+      <button class="read-btn" onclick="event.stopPropagation();openHeroArticle()">Read Full Story →</button>
     </div>
-    <a class="read-btn" href="#">Read Full Story →</a>
-  </div>
-  <div class="hero-stack" id="heroStack">
-    <div class="stack-card skeleton" style="height:90px;"></div>
-    <div class="stack-card skeleton" style="height:90px;"></div>
-    <div class="stack-card skeleton" style="height:90px;"></div>
-  </div>
-</div>
-
-<!-- LIVE SCORES BAR -->
-<div class="live-scores-bar">
-  <div class="live-label"><div class="live-dot-anim"></div>Live Scores</div>
-  <div class="scores-overflow">
-    <div class="scores-track" id="scoresBar">
-      <div class="score-item">⏳ Loading scores...</div>
-      <div class="score-item">⏳ Loading scores...</div>
+    <div class="hero-stack" id="heroStack">
+      <div class="sk" style="height:90px;border-radius:12px;"></div>
+      <div class="sk" style="height:90px;border-radius:12px;margin-top:4px;"></div>
+      <div class="sk" style="height:90px;border-radius:12px;margin-top:4px;"></div>
     </div>
   </div>
-</div>
 
-<!-- SCORES GRID -->
-<div class="scores-section reveal" id="sports-scores">
-  <div class="section-head"><h2>Today's Games <span class="api-badge">Live via ESPN</span></h2></div>
-  <div class="scores-grid" id="scoresGrid">
-    <div class="score-card skeleton" style="height:110px;"></div>
-    <div class="score-card skeleton" style="height:110px;"></div>
-    <div class="score-card skeleton" style="height:110px;"></div>
-    <div class="score-card skeleton" style="height:110px;"></div>
+  <!-- LIVE SCORES BAR -->
+  <div class="scores-bar">
+    <div class="live-label"><div class="live-dot"></div>Live Scores</div>
+    <div class="sof"><div class="st" id="scoresBar"><div class="si">⏳ Loading...</div><div class="si">⏳ Loading...</div></div></div>
   </div>
-</div>
 
-<!-- ARTICLES -->
-<div class="section-wrap reveal" id="articles-section">
-  <div class="tabs-row">
-    <button class="tab-btn active" onclick="filterCat('all',this)">All</button>
-    <button class="tab-btn" onclick="filterCat('sports',this)">Sports</button>
-    <button class="tab-btn" onclick="filterCat('anime',this)">Anime</button>
-    <button class="tab-btn" onclick="filterCat('review',this)">Reviews</button>
+  <!-- SCORES GRID -->
+  <div class="sec reveal" id="sec-scores">
+    <div class="sec-head"><h2>Today's Games <span class="apibadge">Live via ESPN</span></h2></div>
+    <div class="scores-grid" id="scoresGrid">
+      <div class="sk" style="height:110px;border-radius:12px;"></div>
+      <div class="sk" style="height:110px;border-radius:12px;"></div>
+      <div class="sk" style="height:110px;border-radius:12px;"></div>
+      <div class="sk" style="height:110px;border-radius:12px;"></div>
+    </div>
   </div>
-  <div class="content-layout">
-    <div>
-      <div class="section-head"><h2>Latest Articles</h2></div>
-      <div class="articles-grid" id="articlesGrid">
-        <div class="article-card" data-cat="sports" data-title="nba playoffs 2025 full breakdown">
-          <div class="card-thumb">🏀</div>
-          <div class="card-body"><div class="card-tag tag-sports">NBA</div>
-          <div class="card-title">NBA Playoffs 2025: Full Breakdown of Every Matchup</div>
-          <div class="card-footer"><span>Today</span><span>👁 8.1k</span></div></div>
+
+  <!-- ARTICLES + SIDEBAR -->
+  <div class="sec reveal" style="margin-top:36px;">
+    <div class="tabs" id="articleTabs">
+      <button class="tab active" onclick="filterCat('all',this)">All</button>
+      <button class="tab" onclick="filterCat('sports',this)">Sports</button>
+      <button class="tab" onclick="filterCat('anime',this)">Anime</button>
+      <button class="tab" onclick="filterCat('review',this)">Reviews</button>
+    </div>
+    <div class="content-layout">
+      <div>
+        <div class="sec-head"><h2>Latest Articles</h2></div>
+        <div class="ag" id="articlesGrid"></div>
+      </div>
+      <div class="sidebar">
+        <div class="sb">
+          <h3>🔥 Trending</h3>
+          <div class="tl" id="trendingList">
+            <div class="sk" style="height:48px;border-radius:8px;"></div>
+            <div class="sk" style="height:48px;border-radius:8px;margin-top:8px;"></div>
+            <div class="sk" style="height:48px;border-radius:8px;margin-top:8px;"></div>
+          </div>
         </div>
-        <div class="article-card" data-cat="sports" data-title="epl week 36 top goals">
-          <div class="card-thumb">⚽</div>
-          <div class="card-body"><div class="card-tag tag-sports">Soccer</div>
-          <div class="card-title">EPL Week 36 Top Goals Ranked: Who Was Best This Week?</div>
-          <div class="card-footer"><span>2h ago</span><span>👁 4.2k</span></div></div>
-        </div>
-        <div class="article-card" data-cat="anime" data-title="attack on titan top 10 moments">
-          <div class="card-thumb">⚔️</div>
-          <div class="card-body"><div class="card-tag tag-anime">Anime</div>
-          <div class="card-title">Attack on Titan: The 10 Greatest Moments in the Entire Series</div>
-          <div class="card-footer"><span>Yesterday</span><span>👁 12.3k</span></div></div>
-        </div>
-        <div class="article-card" data-cat="anime" data-title="spring 2025 anime season guide">
-          <div class="card-thumb">🎌</div>
-          <div class="card-body"><div class="card-tag tag-anime">Anime</div>
-          <div class="card-title">Spring 2025 Anime Season: Complete Guide to Every New Show</div>
-          <div class="card-footer"><span>Yesterday</span><span>👁 9.7k</span></div></div>
-        </div>
-        <div class="article-card" data-cat="sports" data-title="ufc 300 fight card predictions">
-          <div class="card-thumb">🥊</div>
-          <div class="card-body"><div class="card-tag tag-sports">MMA</div>
-          <div class="card-title">UFC 300 Full Fight Card: Every Matchup Analyzed and Predicted</div>
-          <div class="card-footer"><span>2d ago</span><span>👁 6.5k</span></div></div>
-        </div>
-        <div class="article-card" data-cat="review" data-title="jujutsu kaisen final arc review">
-          <div class="card-thumb">🌀</div>
-          <div class="card-body"><div class="card-tag tag-review">Review</div>
-          <div class="card-title">Jujutsu Kaisen Final Arc Review: Does It Stick the Landing?</div>
-          <div class="card-footer"><span>3d ago</span><span>👁 15.2k</span></div></div>
-        </div>
-        <div class="article-card" data-cat="sports" data-title="nfl draft 2025 top picks">
-          <div class="card-thumb">🏈</div>
-          <div class="card-body"><div class="card-tag tag-sports">NFL</div>
-          <div class="card-title">2025 NFL Draft: Top 10 Picks and What They Mean for Every Team</div>
-          <div class="card-footer"><span>3d ago</span><span>👁 7.8k</span></div></div>
-        </div>
-        <div class="article-card" data-cat="anime" data-title="blue lock season 2 release date">
-          <div class="card-thumb">💙</div>
-          <div class="card-body"><div class="card-tag tag-anime">Anime</div>
-          <div class="card-title">Blue Lock Season 2 Officially Announced — Release Date Revealed</div>
-          <div class="card-footer"><span>4d ago</span><span>👁 18.4k</span></div></div>
-        </div>
-        <div class="article-card" data-cat="review" data-title="mlb 2025 season preview contenders">
-          <div class="card-thumb">⚾</div>
-          <div class="card-body"><div class="card-tag tag-review">Review</div>
-          <div class="card-title">MLB 2025 Season Preview: Who Are the Real Contenders?</div>
-          <div class="card-footer"><span>5d ago</span><span>👁 5.1k</span></div></div>
-        </div>
+        <!-- PASTE ADSENSE RECTANGLE HERE -->
+        <div class="ad-slot rect">📢 AdSense Rectangle (300×250)</div>
       </div>
     </div>
+  </div>
 
-    <div class="sidebar">
-      <div class="sidebar-box">
-        <h3>🔥 Trending</h3>
-        <div class="trend-list" id="trendingList">
-          <div class="skeleton" style="height:50px;border-radius:8px;"></div>
-          <div class="skeleton" style="height:50px;border-radius:8px;margin-top:8px;"></div>
-          <div class="skeleton" style="height:50px;border-radius:8px;margin-top:8px;"></div>
-        </div>
+  <!-- ANIME SECTION -->
+  <div class="sec reveal" id="sec-anime" style="margin-top:40px;">
+    <div class="sec-head"><h2>Top Airing Anime <span class="apibadge">Live via MyAnimeList</span></h2></div>
+    <div class="anime-grid" id="animeGrid">
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+    </div>
+  </div>
+
+  <!-- NEWSLETTER -->
+  <div class="nl-section reveal">
+    <div class="nl-box">
+      <div class="nl-text">
+        <h3>Stay In The Zone</h3>
+        <p>Daily sports scores & anime news. No spam, cancel anytime.</p>
       </div>
-      <!-- REPLACE WITH YOUR ADSENSE RECTANGLE CODE -->
-      <div class="ad-slot medium-rect">📢 AdSense Rectangle (300×250)</div>
+      <div class="nl-form">
+        <input type="email" placeholder="Your email address..." id="nlEmail">
+        <button onclick="subscribe()">Subscribe Free →</button>
+      </div>
+    </div>
+  </div>
+</div><!-- end page-home -->
+
+<!-- ════════════════════════════════════════
+     PAGE: ARTICLE
+════════════════════════════════════════ -->
+<div id="page-article" class="page">
+  <div class="article-page">
+    <button class="ap-back" onclick="history.back()">← Back</button>
+    <div class="ap-cat ts" id="ap-cat">Sports</div>
+    <h1 class="ap-title" id="ap-title">Article Title</h1>
+    <div class="ap-meta">
+      <span class="ap-author" id="ap-author">NexZone Sports Desk</span>
+      <span class="ap-date" id="ap-date">Today</span>
+      <span class="ap-read" id="ap-read">📖 5 min read</span>
+    </div>
+    <div class="ap-hero-img" id="ap-img">🏆</div>
+
+    <!-- ADSENSE IN-ARTICLE -->
+    <div class="ad-slot inline">📢 AdSense In-Article Ad — Paste code here</div>
+
+    <div class="ap-body" id="ap-body">Loading article...</div>
+    <div class="ap-share">
+      <h4>Share this article</h4>
+      <div class="share-btns">
+        <button class="share-btn" onclick="shareArticle('twitter')">𝕏 Twitter / X</button>
+        <button class="share-btn" onclick="shareArticle('reddit')">Reddit</button>
+        <button class="share-btn" onclick="shareArticle('copy')">🔗 Copy Link</button>
+      </div>
+    </div>
+    <div class="ap-related">
+      <h3>Related Articles</h3>
+      <div class="ag" id="relatedGrid"></div>
     </div>
   </div>
 </div>
 
-<!-- ANIME SECTION — LIVE FROM MYANIMELIST -->
-<div class="scores-section reveal" id="anime-section" style="margin-top:40px;">
-  <div class="section-head"><h2>Top Airing Anime <span class="api-badge">Live via MyAnimeList</span></h2></div>
-  <div class="anime-grid" id="animeGrid">
-    <div class="anime-card skeleton" style="height:220px;"></div>
-    <div class="anime-card skeleton" style="height:220px;"></div>
-    <div class="anime-card skeleton" style="height:220px;"></div>
-    <div class="anime-card skeleton" style="height:220px;"></div>
-    <div class="anime-card skeleton" style="height:220px;"></div>
-    <div class="anime-card skeleton" style="height:220px;"></div>
-  </div>
-</div>
-
-<!-- NEWSLETTER -->
-<div class="newsletter-section reveal">
-  <div class="newsletter-box">
-    <div class="newsletter-text">
-      <h3>Stay In The Zone</h3>
-      <p>Get the latest sports scores & anime news delivered daily. No spam, ever.</p>
+<!-- ════════════════════════════════════════
+     PAGE: GAME DETAIL
+════════════════════════════════════════ -->
+<div id="page-game" class="page">
+  <div class="game-page">
+    <button class="ap-back" onclick="history.back()">← Back to Scores</button>
+    <div class="game-hero">
+      <div class="game-teams" id="gameTeams">Loading game...</div>
+      <div class="game-status" id="gameStatus">Loading</div>
     </div>
-    <div class="newsletter-form">
-      <input type="email" placeholder="Enter your email..." id="emailInput">
-      <button onclick="subscribe()">Subscribe Free →</button>
+    <div class="game-info-grid" id="gameInfoGrid"></div>
+    <div class="ad-slot inline">📢 AdSense In-Game Ad</div>
+    <div class="sec-head" style="margin-top:32px;"><h2>Game Summary</h2></div>
+    <div id="gameSummary" style="color:var(--m2);font-size:15px;line-height:1.8;"></div>
+    <div class="ap-related" style="margin-top:36px;">
+      <h3>More Games</h3>
+      <div class="scores-grid" id="moreGamesGrid"></div>
     </div>
   </div>
 </div>
 
-<!-- FOOTER -->
+<!-- ════════════════════════════════════════
+     PAGE: SPORTS
+════════════════════════════════════════ -->
+<div id="page-sports" class="page">
+  <div class="sec" style="padding-top:32px;">
+    <div class="sec-head"><h2>Sports — Live Scores & News</h2></div>
+    <div class="ad-slot inline" style="margin-bottom:24px;">📢 AdSense Banner</div>
+    <div class="scores-grid" id="sportScoresGrid">
+      <div class="sk" style="height:110px;border-radius:12px;"></div>
+      <div class="sk" style="height:110px;border-radius:12px;"></div>
+      <div class="sk" style="height:110px;border-radius:12px;"></div>
+      <div class="sk" style="height:110px;border-radius:12px;"></div>
+    </div>
+    <div class="sec-head" style="margin-top:40px;"><h2>Sports Articles</h2></div>
+    <div class="ag" id="sportsArticlesGrid"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ANIME
+════════════════════════════════════════ -->
+<div id="page-anime" class="page">
+  <div class="sec" style="padding-top:32px;">
+    <div class="sec-head"><h2>Anime — Top Airing <span class="apibadge">Live via MyAnimeList</span></h2></div>
+    <div class="ad-slot inline" style="margin-bottom:24px;">📢 AdSense Banner</div>
+    <div class="anime-grid" id="animePageGrid">
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+      <div class="sk anc" style="height:220px;"></div>
+    </div>
+    <div class="sec-head" style="margin-top:40px;"><h2>Anime Articles</h2></div>
+    <div class="ag" id="animeArticlesGrid"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ARTICLES
+════════════════════════════════════════ -->
+<div id="page-articles" class="page">
+  <div class="sec" style="padding-top:32px;">
+    <div class="sec-head"><h2>All Articles</h2></div>
+    <div class="tabs">
+      <button class="tab active" onclick="filterAll('all',this)">All</button>
+      <button class="tab" onclick="filterAll('sports',this)">Sports</button>
+      <button class="tab" onclick="filterAll('anime',this)">Anime</button>
+      <button class="tab" onclick="filterAll('review',this)">Reviews</button>
+    </div>
+    <div class="ag" id="allArticlesGrid"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: SUBSCRIBE
+════════════════════════════════════════ -->
+<div id="page-subscribe" class="page">
+  <div class="inner-page">
+    <h1>Subscribe to NexZone</h1>
+    <p class="subtitle">Get daily sports scores, anime news, and exclusive content delivered straight to your inbox.</p>
+    <div class="contact-form">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" placeholder="Enter your name" id="subName">
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="Enter your email" id="subEmail">
+      </div>
+      <div class="form-group">
+        <label>Interests</label>
+        <select id="subInterest">
+          <option>Sports + Anime (Everything)</option>
+          <option>Sports Only</option>
+          <option>Anime Only</option>
+        </select>
+      </div>
+      <button class="form-submit" onclick="submitSubscribe()">Subscribe Free →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: SUBSCRIBE SUCCESS
+════════════════════════════════════════ -->
+<div id="page-subscribed" class="page">
+  <div class="success-page">
+    <div class="success-icon">🎉</div>
+    <h1>You're In!</h1>
+    <p>Welcome to NexZone! You'll start receiving daily sports scores and anime news. Check your inbox for a welcome email.</p>
+    <button class="read-btn" onclick="nav('home')">← Back to Home</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ABOUT
+════════════════════════════════════════ -->
+<div id="page-about" class="page">
+  <div class="inner-page">
+    <h1>About NexZone</h1>
+    <p class="subtitle">Your #1 destination for live sports scores and top anime content, updated daily.</p>
+    <h2>Who We Are</h2>
+    <p>NexZone is a fan-powered sports and anime media hub launched in 2025. We cover everything from live NBA and EPL scores to the latest anime season reviews and rankings — all in one place.</p>
+    <h2>What We Cover</h2>
+    <ul>
+      <li><strong>Sports:</strong> NBA, EPL / Soccer, NFL, MMA / UFC, MLB, and more</li>
+      <li><strong>Anime:</strong> Season reviews, rankings, episode guides, and manga news</li>
+      <li><strong>Live Data:</strong> Real-time scores powered by ESPN's public data feed</li>
+      <li><strong>Anime Rankings:</strong> Live top anime data from MyAnimeList via Jikan API</li>
+    </ul>
+    <h2>Our Mission</h2>
+    <p>Sports and anime fans deserve a single place where they can catch live scores, read quality analysis, and discover the best anime airing right now — without switching between 10 different websites.</p>
+    <h2>Contact Us</h2>
+    <p>Want to write for NexZone or advertise with us? <button style="background:none;border:none;color:var(--red);font-size:15px;cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;" onclick="nav('contact')">Get in touch →</button></p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: CONTACT
+════════════════════════════════════════ -->
+<div id="page-contact" class="page">
+  <div class="inner-page">
+    <h1>Contact Us</h1>
+    <p class="subtitle">Have a story tip, feedback, or want to write for NexZone? We'd love to hear from you.</p>
+    <div class="contact-form">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" placeholder="Enter your name" id="cName">
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="Enter your email" id="cEmail">
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <select id="cSubject">
+          <option>General Inquiry</option>
+          <option>Story Tip</option>
+          <option>Write for NexZone</option>
+          <option>Advertising</option>
+          <option>Technical Issue</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="Your message..." id="cMessage"></textarea>
+      </div>
+      <button class="form-submit" onclick="submitContact()">Send Message →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: PRIVACY
+════════════════════════════════════════ -->
+<div id="page-privacy" class="page">
+  <div class="inner-page">
+    <h1>Privacy Policy</h1>
+    <p class="subtitle">Last updated: January 2025</p>
+    <h2>Information We Collect</h2>
+    <p>When you subscribe to our newsletter, we collect your email address and name. We do not sell, rent, or share your personal information with third parties without your consent.</p>
+    <h2>How We Use Your Data</h2>
+    <ul>
+      <li>To send you our daily sports and anime newsletter</li>
+      <li>To improve the content and experience on NexZone</li>
+      <li>To display relevant advertising via Google AdSense</li>
+    </ul>
+    <h2>Google AdSense & Cookies</h2>
+    <p>NexZone uses Google AdSense to display advertisements. Google uses cookies to show you relevant ads based on your browsing history. You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" style="color:var(--red)">Google Ad Settings</a>.</p>
+    <h2>Third-Party APIs</h2>
+    <p>We use the ESPN public API for live sports scores and Jikan/MyAnimeList API for anime data. These services have their own privacy policies which govern their data practices.</p>
+    <h2>Contact</h2>
+    <p>For any privacy concerns, <button style="background:none;border:none;color:var(--red);font-size:15px;cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;" onclick="nav('contact')">contact us here</button>.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ADVERTISE
+════════════════════════════════════════ -->
+<div id="page-advertise" class="page">
+  <div class="inner-page">
+    <h1>Advertise With Us</h1>
+    <p class="subtitle">Reach a passionate audience of sports and anime fans. Growing to 50k+ monthly visitors.</p>
+    <h2>Why Advertise on NexZone?</h2>
+    <ul>
+      <li>Highly engaged audience: sports fans + anime fans = high time on site</li>
+      <li>Multiple ad placements: leaderboard, rectangle, in-article, inline banners</li>
+      <li>Niche audience with high purchase intent</li>
+      <li>Growing traffic month over month</li>
+    </ul>
+    <h2>Ad Packages</h2>
+    <div class="advertise-plans">
+      <div class="plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$49<span>/month</span></div>
+        <ul class="plan-features">
+          <li>1 sidebar rectangle ad</li>
+          <li>300×250 placement</li>
+          <li>Monthly reporting</li>
+          <li>Direct booking</li>
+        </ul>
+        <button class="plan-btn" onclick="nav('contact')">Get Started</button>
+      </div>
+      <div class="plan-card featured">
+        <div class="plan-best">Most Popular</div>
+        <div class="plan-name">Growth</div>
+        <div class="plan-price">$149<span>/month</span></div>
+        <ul class="plan-features">
+          <li>Leaderboard + Rectangle</li>
+          <li>In-article placement</li>
+          <li>Weekly analytics report</li>
+          <li>Social media mention</li>
+        </ul>
+        <button class="plan-btn" onclick="nav('contact')">Get Started</button>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">$299<span>/month</span></div>
+        <ul class="plan-features">
+          <li>All ad placements</li>
+          <li>Sponsored article</li>
+          <li>Daily analytics</li>
+          <li>Homepage feature</li>
+        </ul>
+        <button class="plan-btn" onclick="nav('contact')">Get Started</button>
+      </div>
+    </div>
+    <p style="margin-top:24px;font-size:13px;color:var(--m);">Note: You can also use Google AdSense for automatic ad placement. See our <button style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;" onclick="nav('contact')">contact page</button> for more info.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     FOOTER (always visible)
+════════════════════════════════════════ -->
 <footer>
-  <div class="footer-inner">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <span class="logo" style="display:block;margin-bottom:4px;">Nex<span>Zone</span></span>
-        <p>Your ultimate destination for sports news, anime reviews, live scores, and rankings. Updated daily via live APIs.</p>
+  <div class="fi">
+    <div class="fg">
+      <div>
+        <span class="logo" style="display:block;margin-bottom:6px;cursor:pointer;" onclick="nav('home')">Nex<span>Zone</span></span>
+        <p class="fb-desc">Your #1 source for live sports scores, NBA, EPL, NFL, and top anime news. Updated daily via live APIs.</p>
       </div>
-      <div class="footer-col">
+      <div class="fcol">
         <h4>Sports</h4>
-        <ul><li><a href="#">NBA</a></li><li><a href="#">Soccer / EPL</a></li><li><a href="#">NFL</a></li><li><a href="#">MMA / UFC</a></li><li><a href="#">MLB</a></li></ul>
+        <ul>
+          <li><button onclick="nav('sports')">NBA</button></li>
+          <li><button onclick="nav('sports')">Soccer / EPL</button></li>
+          <li><button onclick="nav('sports')">NFL</button></li>
+          <li><button onclick="nav('sports')">MMA / UFC</button></li>
+          <li><button onclick="nav('sports')">MLB</button></li>
+        </ul>
       </div>
-      <div class="footer-col">
+      <div class="fcol">
         <h4>Anime</h4>
-        <ul><li><a href="#">Seasonal Reviews</a></li><li><a href="#">Top Rankings</a></li><li><a href="#">Episode Guides</a></li><li><a href="#">Manga News</a></li></ul>
+        <ul>
+          <li><button onclick="nav('anime')">Top Airing</button></li>
+          <li><button onclick="nav('anime')">Seasonal Reviews</button></li>
+          <li><button onclick="nav('articles')">Episode Guides</button></li>
+          <li><button onclick="nav('articles')">Rankings</button></li>
+          <li><button onclick="nav('articles')">Manga News</button></li>
+        </ul>
       </div>
-      <div class="footer-col">
+      <div class="fcol">
         <h4>Company</h4>
-        <ul><li><a href="#">About NexZone</a></li><li><a href="#">Advertise</a></li><li><a href="#">Contact</a></li><li><a href="#">Privacy Policy</a></li></ul>
+        <ul>
+          <li><button onclick="nav('about')">About NexZone</button></li>
+          <li><button onclick="nav('advertise')">Advertise With Us</button></li>
+          <li><button onclick="nav('contact')">Contact Us</button></li>
+          <li><button onclick="nav('privacy')">Privacy Policy</button></li>
+          <li><button onclick="nav('subscribe')">Newsletter</button></li>
+        </ul>
       </div>
     </div>
-    <div class="footer-bottom">
+    <div class="fbot">
       <span>© 2025 NexZone Media. All rights reserved.</span>
-      <span>Live data: ESPN API · Jikan / MyAnimeList API · Free & open</span>
+      <span>Live data: ESPN API · Jikan / MyAnimeList</span>
     </div>
   </div>
 </footer>
 
 <script>
-// ═══════════════════════════════════════════
-//  NEXZONE LIVE API ENGINE
-//  FREE APIs — no API key required:
-//  • ESPN (undocumented public API) — NBA & EPL live scores
-//  • Jikan API (jikan.moe)          — top airing anime from MyAnimeList
-//  Auto-refreshes every 90 seconds
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  NEXZONE — COMPLETE SITE ENGINE
+//  • SPA hash router
+//  • Live APIs: ESPN (NBA + EPL) + Jikan (MyAnimeList)
+//  • Articles data store
+//  • Full navigation
+//  • Auto-refresh every 90s
+// ═══════════════════════════════════════════════════════
 
-const APIS = {
-  nba:    'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard',
-  epl:    'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard',
-  anime:  'https://api.jikan.moe/v4/top/anime?limit=6&filter=airing'
-};
+// ── ARTICLES DATA (add new articles here!)
+const ARTICLES = [
+  {
+    id:'nba-playoffs-2025', cat:'sports', tagCls:'ts', tag:'NBA', emoji:'🏀',
+    title:'NBA Playoffs 2025: Full Breakdown of Every Matchup',
+    excerpt:'Full breakdown of every playoff matchup, star performances, and our expert predictions heading into the conference finals.',
+    date:'Today', views:'8.1k', author:'NexZone Sports Desk', readTime:'5 min read',
+    content:`
+      <h3>The Road to the Finals</h3>
+      <p>The 2025 NBA Playoffs have delivered some of the most thrilling basketball we've seen in years. From Steph Curry's vintage performances to the incredible defensive battles in the East, this postseason has it all.</p>
+      <div class="highlight">🏀 Fast Fact: Steph Curry is averaging 34.2 points per game this postseason — his best playoff scoring average since 2019.</div>
+      <h3>Western Conference Breakdown</h3>
+      <p><strong>Golden State Warriors vs Oklahoma City Thunder:</strong> The Warriors have looked dominant in their series, with Curry and Draymond Green executing their system to perfection. The Thunder's young core has shown flashes but struggles against Golden State's veteran poise.</p>
+      <p><strong>Denver Nuggets vs Dallas Mavericks:</strong> Nikola Jokic continues his MVP-level play, averaging a triple-double. Luka Doncic has matched him shot-for-shot, making this the most entertaining series of the first round.</p>
+      <h3>Eastern Conference Breakdown</h3>
+      <p><strong>Boston Celtics vs Miami Heat:</strong> The Celtics have been the class of the East all season and it's showing in the playoffs. Jayson Tatum has elevated his game, posting consecutive 40-point performances.</p>
+      <p><strong>Milwaukee Bucks vs Cleveland Cavaliers:</strong> Giannis Antetokounmpo looks like a man possessed, driving to the rim with force that no defender can stop. Cleveland's young stars have impressed but may be overmatched.</p>
+      <h3>Our Final Four Predictions</h3>
+      <ul>
+        <li>Warriors over Nuggets — Curry's experience edges out Jokic's brilliance</li>
+        <li>Celtics over Bucks — Boston's depth and defense proves too much</li>
+        <li>Warriors vs Celtics — NBA Finals prediction: Warriors in 6</li>
+      </ul>
+      <p>Stay tuned to NexZone for daily game recaps, live scores, and playoff analysis as the bracket tightens.</p>`
+  },
+  {
+    id:'epl-week-36', cat:'sports', tagCls:'ts', tag:'Soccer', emoji:'⚽',
+    title:'EPL Week 36 Top Goals: Who Was Best This Week?',
+    excerpt:'A stunning week of Premier League action with hat-tricks, last-minute winners, and a title race tighter than ever.',
+    date:'2h ago', views:'4.2k', author:'NexZone Soccer Desk', readTime:'3 min read',
+    content:`
+      <h3>Goal of the Week</h3>
+      <p>This week's Premier League action produced some stunning moments, none more impressive than the audacious 40-yard lobbed goal at Anfield that sent the home crowd wild. A moment of pure genius that will be replayed for years.</p>
+      <div class="highlight">⚽ Title Race Update: Arsenal lead Manchester City by just 1 point with 3 games left. Every match is a final.</div>
+      <h3>Top 5 Goals of the Week</h3>
+      <ul>
+        <li><strong>#1 — The Long-Range Lob:</strong> A breathtaking 40-yard effort that looped over the stranded keeper with precision</li>
+        <li><strong>#2 — The Clinical Finish:</strong> A composed one-on-one finish that showed elite composure under pressure</li>
+        <li><strong>#3 — The Thunderbolt:</strong> A 25-yard rocket that left the keeper absolutely no chance</li>
+        <li><strong>#4 — The Header:</strong> A powerful attacking header from a perfectly timed run into the box</li>
+        <li><strong>#5 — The Chip:</strong> A delicate chip over an advancing keeper that showed real quality</li>
+      </ul>
+      <h3>Week 36 Results Summary</h3>
+      <p>Arsenal continued their impressive form with a comprehensive victory. Manchester City bounced back after last week's draw. The relegation battle remains intense with three clubs still in danger with three games remaining.</p>`
+  },
+  {
+    id:'attack-on-titan-top-10', cat:'anime', tagCls:'ta', tag:'Anime', emoji:'⚔️',
+    title:'Attack on Titan: The 10 Greatest Moments in the Entire Series',
+    excerpt:'From the breach of Wall Maria to the final chapter, we rank the most iconic, emotional and jaw-dropping moments in AOT history.',
+    date:'Yesterday', views:'12.3k', author:'NexZone Anime Team', readTime:'8 min read',
+    content:`
+      <h3>A Legendary Series</h3>
+      <p>Attack on Titan is widely considered one of the greatest anime and manga series of all time. Hajime Isayama's masterpiece delivered years of shocking twists, emotional gut-punches, and some of the most stunning animation ever put to screen.</p>
+      <div class="highlight">🎌 AOT holds a 9.0/10 rating on MyAnimeList with over 3 million votes — one of the highest-rated anime in history.</div>
+      <h3>Top 10 Greatest Moments</h3>
+      <ul>
+        <li><strong>#10 — The Wall Breaks:</strong> The opening episode moment that set the entire tone of the series</li>
+        <li><strong>#9 — Levi vs Female Titan:</strong> A masterclass in animation that redefined what anime action could be</li>
+        <li><strong>#8 — Historia's Coronation:</strong> A payoff moment years in the making for one of the series' best characters</li>
+        <li><strong>#7 — The Return to Shiganshina:</strong> The entire arc is a masterpiece; this is just where it begins</li>
+        <li><strong>#6 — Rod Reiss Titan Battle:</strong> Historia's defining moment of bravery</li>
+        <li><strong>#5 — Eren's Founding Titan Reveal:</strong> The twist that changed everything we thought we knew</li>
+        <li><strong>#4 — Levi vs Beast Titan:</strong> Perhaps the most satisfying action sequence in anime history</li>
+        <li><strong>#3 — The Rumbling Begins:</strong> Pure apocalyptic scale that left every viewer speechless</li>
+        <li><strong>#2 — Eren's True Plan Revealed:</strong> A narrative gut-punch that rewired how we understood the entire series</li>
+        <li><strong>#1 — Eren and Armin's Final Conversation:</strong> An emotional, thematically perfect ending to their friendship</li>
+      </ul>
+      <p>Attack on Titan will be studied for decades as an example of long-form storytelling done right. What's your #1 moment?</p>`
+  },
+  {
+    id:'spring-2025-anime', cat:'anime', tagCls:'ta', tag:'Anime', emoji:'🎌',
+    title:'Spring 2025 Anime Season: Complete Guide to Every New Show',
+    excerpt:"The spring season is here with over 40 new shows. We break down every series you need to watch and what to skip.",
+    date:'Yesterday', views:'9.7k', author:'NexZone Anime Team', readTime:'6 min read',
+    content:`
+      <h3>Spring 2025 Preview</h3>
+      <p>Spring anime seasons are historically some of the strongest of the year, and 2025 is no exception. With returning fan favorites and promising newcomers, your watchlist is about to get very full.</p>
+      <div class="highlight">🎌 Pro tip: Don't try to watch everything. Pick 3–5 shows max and actually enjoy them. Quality over quantity.</div>
+      <h3>Must Watch — S-Tier</h3>
+      <ul>
+        <li><strong>Demon Slayer Season 4:</strong> The hashira training arc reaches its conclusion. Incredible animation, emotional story</li>
+        <li><strong>Dungeon Meshi (Delicious in Dungeon) Part 2:</strong> One of 2024's best continues. Heartwarming and original</li>
+        <li><strong>Jujutsu Kaisen Special:</strong> One-off special bridging events. Essential for JJK fans</li>
+      </ul>
+      <h3>Highly Recommended — A-Tier</h3>
+      <ul>
+        <li><strong>Blue Exorcist Season 4:</strong> A long-awaited return to form for this beloved franchise</li>
+        <li><strong>Wind Breaker:</strong> A surprisingly deep delinquent anime with great character work</li>
+        <li><strong>Bartender Glass of God:</strong> A unique, calm, atmospheric slice-of-life that stands out</li>
+      </ul>
+      <h3>Keep an Eye On — B-Tier</h3>
+      <p>Several isekai entries this season show promise in their first episodes. The new shonen entry from Jump looks ambitious with its world-building, though it needs a few episodes to find its footing.</p>`
+  },
+  {
+    id:'ufc-300-preview', cat:'sports', tagCls:'ts', tag:'MMA', emoji:'🥊',
+    title:'UFC 300 Full Fight Card: Every Matchup Analyzed',
+    excerpt:"UFC 300 is here and the card is absolutely stacked. We break down every main card fight and give our predictions.",
+    date:'2d ago', views:'6.5k', author:'NexZone MMA Desk', readTime:'5 min read',
+    content:`
+      <h3>A Historic Event</h3>
+      <p>UFC 300 is a landmark event for the promotion, and they have assembled one of the most stacked cards in the history of the sport. Multiple championship bouts, legendary fighters, and incredible matchups top to bottom.</p>
+      <div class="highlight">🥊 UFC 300 is projected to be the highest-grossing UFC event in history, with PPV buyrates expected to top 2 million.</div>
+      <h3>Main Event Analysis</h3>
+      <p>The main event pits the champion against the most dangerous challenger in the division's history. Both fighters are coming in at the peak of their powers, and this fight could legitimately go any way.</p>
+      <h3>Our Picks</h3>
+      <ul>
+        <li><strong>Main Event:</strong> Champion via decision — experience edges out power</li>
+        <li><strong>Co-Main:</strong> Challenger by TKO in round 3 — the striker advantage is significant</li>
+        <li><strong>Prelim Card:</strong> Heavy favorites hold, one upset expected in the featherweight bout</li>
+      </ul>
+      <p>Check back to NexZone on fight night for live results and post-fight analysis updated in real time.</p>`
+  },
+  {
+    id:'jjk-final-arc-review', cat:'review', tagCls:'tr', tag:'Review', emoji:'🌀',
+    title:'Jujutsu Kaisen Final Arc Review: Does It Stick the Landing?',
+    excerpt:"After years of build-up, hype, and some of anime's most outrageous power escalation, does JJK's final arc deliver?",
+    date:'3d ago', views:'15.2k', author:'NexZone Anime Team', readTime:'7 min read',
+    content:`
+      <h3>The Build-Up Was Real</h3>
+      <p>Jujutsu Kaisen became a phenomenon almost overnight. Gojo Satoru's introduction, the Shibuya Incident, the Prison Realm — each arc raised the stakes higher and kept fans absolutely hooked. The question was always: can it stick the landing?</p>
+      <div class="highlight">🌀 JJK's Shibuya Incident arc is considered one of the greatest anime arcs in recent memory. High expectations for the finale.</div>
+      <h3>What Works</h3>
+      <p><strong>The animation quality remains outstanding.</strong> MAPPA's work on JJK has been consistently incredible, and the final arc is no exception. Several fight sequences are among the best ever animated.</p>
+      <p><strong>Character payoffs:</strong> Most of the main cast get meaningful moments that feel earned. Yuji's growth as a character reaches a satisfying point, and the themes of death and legacy are handled with maturity.</p>
+      <h3>What Doesn't Quite Land</h3>
+      <p>The power escalation becomes genuinely difficult to follow by the end. When new abilities and rules are introduced in the middle of climactic battles, it breaks immersion. The pacing also rushes certain emotional beats that deserved more time.</p>
+      <h3>Final Verdict</h3>
+      <p>JJK's final arc is an 8/10 — not perfect, but a genuinely satisfying conclusion to one of this generation's defining shonen series. The highs are extraordinary even if the lows frustrate.</p>`
+  },
+  {
+    id:'nfl-draft-2025', cat:'sports', tagCls:'ts', tag:'NFL', emoji:'🏈',
+    title:'2025 NFL Draft: Top 10 Picks and What They Mean',
+    excerpt:"The 2025 NFL Draft is here. We analyze every top-10 pick, what each team needed, and who won and lost draft day.",
+    date:'3d ago', views:'7.8k', author:'NexZone NFL Desk', readTime:'5 min read',
+    content:`
+      <h3>Draft Day Breakdown</h3>
+      <p>The 2025 NFL Draft saw several franchises make bold moves to reshape their futures. Quarterback talent was at a premium, and multiple teams traded up aggressively to secure their guy.</p>
+      <div class="highlight">🏈 This draft class is being called one of the deepest for offensive line talent in over a decade. Multiple linemen went in the top 15.</div>
+      <h3>Big Winners</h3>
+      <ul>
+        <li><strong>Pick #1 Overall:</strong> A generational prospect at quarterback who should immediately start and compete for Offensive Rookie of the Year</li>
+        <li><strong>Pick #3:</strong> A team that needed a pass rusher got arguably the best one in years — a rare combination of speed and technique</li>
+        <li><strong>Pick #7:</strong> Outstanding value for a team that traded down and still landed a top-tier receiver</li>
+      </ul>
+      <h3>Draft Day Surprises</h3>
+      <p>Several teams reached earlier than expected for need positions, and at least two first-rounders fell further than any analyst predicted — creating potential sleeper value for the teams that nabbed them late in round one.</p>`
+  },
+  {
+    id:'blue-lock-season-2', cat:'anime', tagCls:'ta', tag:'Anime', emoji:'💙',
+    title:'Blue Lock Season 2: Release Date, Story & What to Expect',
+    excerpt:"Blue Lock Season 2 is officially confirmed. Here's everything we know: premiere date, story arcs, and returning characters.",
+    date:'4d ago', views:'18.4k', author:'NexZone Anime Team', readTime:'4 min read',
+    content:`
+      <h3>The Most Anticipated Sports Anime of the Year</h3>
+      <p>Blue Lock Season 1 took the anime world by storm, combining the intensity of a sports anime with a psychological thriller that kept fans on the edge of their seats. Season 2 has now been officially confirmed, and the fandom is absolutely electric.</p>
+      <div class="highlight">💙 Blue Lock Season 1 was the most-watched new anime title of 2022–2023 on Crunchyroll globally. Season 2 expectations are enormous.</div>
+      <h3>What Story Arc Will Be Adapted?</h3>
+      <p>Season 2 is expected to adapt the U-20 Japan arc, which is widely considered one of the most exciting arcs in the manga. Isagi and the Blue Lock players face off against Japan's established national team — a David vs Goliath battle that redefines what's possible.</p>
+      <h3>New Characters to Watch</h3>
+      <ul>
+        <li><strong>Ryusei Shidou:</strong> A wildcard striker whose unpredictable playstyle makes him impossible to defend</li>
+        <li><strong>Alexis Ness:</strong> A technically gifted midfielder who challenges Isagi's footballing worldview</li>
+        <li><strong>Several U-20 veterans</strong> who represent everything the Blue Lock project was built to destroy</li>
+      </ul>
+      <h3>When Does It Air?</h3>
+      <p>Blue Lock Season 2 is set to premiere in the fall 2025 season. Production is handled by 8bit studio with the same core team returning. Mark your calendars — this is going to be special.</p>`
+  },
+  {
+    id:'mlb-2025-preview', cat:'review', tagCls:'tr', tag:'Review', emoji:'⚾',
+    title:'MLB 2025 Season Preview: Who Are the Real Contenders?',
+    excerpt:"From the Dodgers dynasty to surprise dark horses, we break down every division and pick our World Series winner.",
+    date:'5d ago', views:'5.1k', author:'NexZone Baseball Desk', readTime:'5 min read',
+    content:`
+      <h3>The 2025 MLB Season in Focus</h3>
+      <p>The Los Angeles Dodgers enter 2025 as the prohibitive favorites after their World Series triumph, armed with what many are calling the greatest roster ever assembled in baseball history. But baseball has a way of humbling even the mightiest.</p>
+      <div class="highlight">⚾ The Dodgers' 2025 payroll of $370M+ is the highest in MLB history by a significant margin.</div>
+      <h3>American League Contenders</h3>
+      <ul>
+        <li><strong>New York Yankees:</strong> Judge is healthy and hungry. The rotation is deeper than in years. Real threat</li>
+        <li><strong>Houston Astros:</strong> Never count them out. The system continues to produce despite losing key pieces</li>
+        <li><strong>Baltimore Orioles:</strong> The young core is ready to take the next step from promising to elite</li>
+      </ul>
+      <h3>National League Contenders</h3>
+      <ul>
+        <li><strong>Los Angeles Dodgers:</strong> The favorite in every metric. Ohtani + Yamamoto + Kershaw depth is unfair</li>
+        <li><strong>Atlanta Braves:</strong> Acuna returning healthy could make them the only team that truly scares LA</li>
+        <li><strong>Philadelphia Phillies:</strong> Harper, Nola, and one of the most passionate fanbases in sports</li>
+      </ul>
+      <h3>World Series Pick</h3>
+      <p>Dodgers over Yankees in 6. It's not an exciting prediction, but the roster construction is simply on another level. Unless injury strikes, LA is the 2025 World Series champion.</p>`
+  }
+];
 
-// Sticky nav shadow
-window.addEventListener('scroll', () =>
-  document.getElementById('mainNav').classList.toggle('scrolled', scrollY > 40));
+// ── STATE
+let currentPage = 'home';
+let currentArticleId = null;
+let currentGameData = null;
+let allSportsData = [];
+let allAnimeData = [];
+let heroArticleId = null;
 
-// Scroll reveal
-const revealObs = new IntersectionObserver(entries =>
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } }),
-  { threshold: 0.08 });
-document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+// ══════════════════════
+//  ROUTER
+// ══════════════════════
+function nav(page, data) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
-// Stagger article cards on first load
-window.addEventListener('load', () => {
-  document.querySelectorAll('.article-card').forEach((c, i) => {
-    c.style.opacity = '0';
-    c.style.transform = 'translateY(20px)';
-    setTimeout(() => {
-      c.style.transition = 'opacity .5s ease, transform .5s ease, border-color .25s, box-shadow .25s';
-      c.style.opacity = '1';
-      c.style.transform = '';
-    }, 300 + i * 85);
-  });
+  // Show target
+  const el = document.getElementById('page-' + page);
+  if (!el) return;
+  el.classList.add('active');
+  currentPage = page;
+
+  // Update nav highlight
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  const nl = document.getElementById('nl-' + page);
+  if (nl) nl.classList.add('active');
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Update URL hash
+  window.location.hash = page;
+
+  // Page-specific inits
+  if (page === 'article' && data) openArticle(data);
+  if (page === 'game' && data) openGame(data);
+  if (page === 'sports') populateSportsPage();
+  if (page === 'anime') populateAnimePage();
+  if (page === 'articles') populateAllArticles();
+}
+
+// Handle browser back/forward
+window.addEventListener('hashchange', () => {
+  const h = window.location.hash.slice(1);
+  if (h && h !== currentPage) nav(h);
 });
 
-// ── Pill helper
+// On load — respect hash
+window.addEventListener('load', () => {
+  const h = window.location.hash.slice(1);
+  if (h && document.getElementById('page-' + h)) nav(h);
+  buildArticlesGrid();
+});
+
+// ══════════════════════
+//  BUILD ARTICLE CARDS
+// ══════════════════════
+function makeCard(a, clickFn) {
+  const d = document.createElement('div');
+  d.className = 'ac';
+  d.dataset.cat = a.cat;
+  d.dataset.title = a.title.toLowerCase();
+  d.innerHTML = `
+    <div class="ct">${a.emoji}</div>
+    <div class="cb">
+      <div class="ctag ${a.tagCls}">${a.tag}</div>
+      <div class="ctitle">${a.title}</div>
+      <div class="cf"><span>${a.date}</span><span>👁 ${a.views}</span></div>
+    </div>`;
+  d.onclick = clickFn || (() => nav('article', a));
+  setTimeout(() => {
+    d.style.transition = 'opacity .5s, transform .5s, border-color .25s, box-shadow .25s';
+  }, 10);
+  return d;
+}
+
+function buildArticlesGrid() {
+  const grid = document.getElementById('articlesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  ARTICLES.forEach((a, i) => {
+    const card = makeCard(a);
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    grid.appendChild(card);
+    setTimeout(() => { card.style.opacity = '1'; card.style.transform = ''; }, 300 + i * 80);
+  });
+}
+
+function populateAllArticles(cat = 'all') {
+  const grid = document.getElementById('allArticlesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  ARTICLES.filter(a => cat === 'all' || a.cat === cat).forEach(a => grid.appendChild(makeCard(a)));
+}
+
+function populateSportsPage() {
+  const grid = document.getElementById('sportsArticlesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  ARTICLES.filter(a => a.cat === 'sports').forEach(a => grid.appendChild(makeCard(a)));
+  // Copy scores
+  const sg = document.getElementById('sportScoresGrid');
+  const src = document.getElementById('scoresGrid');
+  if (sg && src) sg.innerHTML = src.innerHTML;
+}
+
+function populateAnimePage() {
+  const ag = document.getElementById('animePageGrid');
+  const src = document.getElementById('animeGrid');
+  if (ag && src) ag.innerHTML = src.innerHTML;
+  const grid = document.getElementById('animeArticlesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  ARTICLES.filter(a => a.cat === 'anime').forEach(a => grid.appendChild(makeCard(a)));
+}
+
+// ══════════════════════
+//  OPEN ARTICLE
+// ══════════════════════
+function openArticle(a) {
+  currentArticleId = a.id;
+  document.getElementById('ap-cat').textContent = a.tag;
+  document.getElementById('ap-cat').className = `ap-cat ${a.tagCls}`;
+  document.getElementById('ap-title').textContent = a.title;
+  document.getElementById('ap-author').textContent = a.author || 'NexZone Team';
+  document.getElementById('ap-date').textContent = a.date;
+  document.getElementById('ap-read').innerHTML = `📖 ${a.readTime}`;
+  document.getElementById('ap-img').innerHTML = `<span style="font-size:80px">${a.emoji}</span>`;
+  document.getElementById('ap-body').innerHTML = a.content;
+
+  // Update meta title for SEO
+  document.title = `${a.title} — NexZone`;
+
+  // Related articles (same cat, different id)
+  const related = ARTICLES.filter(x => x.cat === a.cat && x.id !== a.id).slice(0, 3);
+  const rg = document.getElementById('relatedGrid');
+  rg.innerHTML = '';
+  related.forEach(r => rg.appendChild(makeCard(r)));
+}
+
+function openHeroArticle() {
+  const a = heroArticleId ? ARTICLES.find(x => x.id === heroArticleId) : null;
+  if (a) nav('article', a);
+  else if (allSportsData.length) openGameFromHero();
+}
+
+function openGameFromHero() {
+  const live = allSportsData.find(x => gameStatus(x.ev).cls === 'live');
+  const g = live || allSportsData[0];
+  if (g) nav('game', g);
+}
+
+// ══════════════════════
+//  OPEN GAME
+// ══════════════════════
+function openGame(g) {
+  currentGameData = g;
+  const { emoji, sport, ev } = g;
+  const comp = ev.competitions?.[0];
+  const [home, away] = comp?.competitors || [];
+  const st = gameStatus(ev);
+
+  document.title = `${home?.team?.name} vs ${away?.team?.name} — NexZone`;
+
+  document.getElementById('gameTeams').innerHTML = `
+    <div class="game-team">
+      <div class="game-team-name">${home?.team?.shortDisplayName || home?.team?.name || 'Home'}</div>
+      <div class="game-team-pts">${home?.score ?? '—'}</div>
+    </div>
+    <div class="game-vs">${emoji}<br>VS</div>
+    <div class="game-team">
+      <div class="game-team-name">${away?.team?.shortDisplayName || away?.team?.name || 'Away'}</div>
+      <div class="game-team-pts">${away?.score ?? '—'}</div>
+    </div>`;
+
+  document.getElementById('gameStatus').innerHTML = `${st.cls === 'live' ? '<span style="animation:pbadge 1.4s infinite">●</span> ' : ''}${st.label}`;
+  document.getElementById('gameStatus').className = `game-status ${st.cls}`;
+
+  document.getElementById('gameInfoGrid').innerHTML = `
+    <div class="game-info-card"><div class="game-info-label">League</div><div class="game-info-val">${emoji} ${sport}</div></div>
+    <div class="game-info-card"><div class="game-info-label">Status</div><div class="game-info-val" style="font-size:18px;">${st.label}</div></div>
+    <div class="game-info-card"><div class="game-info-label">Venue</div><div class="game-info-val" style="font-size:16px;">${comp?.venue?.fullName || 'TBD'}</div></div>`;
+
+  document.getElementById('gameSummary').innerHTML = `
+    <p>Follow <strong>${home?.team?.name}</strong> vs <strong>${away?.team?.name}</strong> live on NexZone. 
+    ${st.cls === 'live' ? `The game is currently <strong style="color:var(--red)">LIVE</strong> with the score standing at ${home?.score}–${away?.score}. Scores refresh automatically every 90 seconds.` :
+      st.cls === 'final' ? `This game has concluded. Final score: <strong>${home?.team?.name} ${home?.score}, ${away?.team?.name} ${away?.score}</strong>.` :
+      `This game is scheduled to tip off at <strong>${st.label}</strong>. Check back for live updates.`}
+    </p>
+    <p>Live score data is powered by ESPN's public feed and refreshes automatically. Bookmark this page to follow the action in real time.</p>`;
+
+  // More games from same sport
+  const others = allSportsData.filter(x => x.sport === g.sport && x.ev.id !== ev.id).slice(0, 4);
+  const mg = document.getElementById('moreGamesGrid');
+  mg.innerHTML = others.length ? others.map(o => {
+    const oc = o.ev.competitions?.[0];
+    const [oh, oa] = oc?.competitors || [];
+    const os = gameStatus(o.ev);
+    return `<div class="sc ${os.cls === 'live' ? 'islive' : ''}" onclick="nav('game', allSportsData.find(x=>x.ev.id==='${o.ev.id}'))">
+      <div class="sc-lg">${o.emoji} ${o.sport} ${os.cls === 'live' ? '<span style="color:var(--red);font-size:9px">● LIVE</span>' : ''}</div>
+      <div class="sc-teams">
+        <div class="sc-team"><span>${oh?.team?.abbreviation || '?'}</span><span class="pts">${oh?.score ?? '—'}</span></div>
+        <div class="sc-team"><span>${oa?.team?.abbreviation || '?'}</span><span class="pts">${oa?.score ?? '—'}</span></div>
+      </div>
+      <div class="sc-st ${os.cls === 'live' ? 'lv' : ''}">${os.label}</div>
+    </div>`;
+  }).join('') : '<p style="color:var(--m);font-size:13px;">No other games today</p>';
+}
+
+// ══════════════════════
+//  FILTERS
+// ══════════════════════
+function filterCat(cat, btn) {
+  document.querySelectorAll('#articleTabs .tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#articlesGrid .ac').forEach(c => {
+    const m = cat === 'all' || c.dataset.cat === cat;
+    c.style.opacity = m ? '1' : '0.15';
+    c.style.transform = m ? '' : 'scale(.97)';
+    c.style.pointerEvents = m ? 'auto' : 'none';
+  });
+}
+
+function filterAll(cat, btn) {
+  document.querySelectorAll('#page-articles .tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  populateAllArticles(cat);
+}
+
+function doSearch(v) {
+  const q = v.toLowerCase();
+  if (!q) { document.querySelectorAll('.ac').forEach(c => c.style.opacity = '1'); return; }
+  document.querySelectorAll('.ac').forEach(c => {
+    c.style.opacity = (c.dataset.title || '').includes(q) ? '1' : '0.15';
+  });
+}
+
+// ══════════════════════
+//  GAME STATUS HELPER
+// ══════════════════════
+function gameStatus(ev) {
+  const s = ev?.status?.type;
+  if (!s) return { label:'TBD', cls:'soon' };
+  if (s.state === 'in') return { label: s.shortDetail || 'Live', cls:'live' };
+  if (s.state === 'post') return { label:'Final', cls:'final' };
+  if (ev.date) return { label: new Date(ev.date).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), cls:'soon' };
+  return { label:'Upcoming', cls:'soon' };
+}
+
+// ══════════════════════
+//  PILL HELPER
+// ══════════════════════
 function pill(id, state, txt) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -490,255 +1272,247 @@ function pill(id, state, txt) {
   el.innerHTML = `<div class="api-dot"></div>${txt}`;
 }
 
-// ── Get game status info
-function gameStatus(ev) {
-  const st = ev.status?.type;
-  if (!st) return { label: 'TBD', cls: 'soon' };
-  if (st.state === 'in') return { label: st.shortDetail || 'Live', cls: 'live' };
-  if (st.state === 'post') return { label: 'Final', cls: 'final' };
-  if (ev.date) {
-    const t = new Date(ev.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    return { label: t, cls: 'soon' };
-  }
-  return { label: 'Upcoming', cls: 'soon' };
-}
-
-// ═══════════════
-//  FETCH SPORTS
-// ═══════════════
-async function fetchSports() {
-  pill('pill-nba', 'loading', '<span class="refresh-ring"></span> NBA…');
-  pill('pill-epl', 'loading', '<span class="refresh-ring"></span> EPL…');
-
-  const results = [];
-
-  // NBA
+// ══════════════════════
+//  FETCH NBA
+// ══════════════════════
+async function fetchNBA() {
+  pill('pill-nba','ld','<span class="spin"></span> NBA...');
   try {
-    const r = await fetch(APIS.nba);
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard');
     const d = await r.json();
     const evs = d.events || [];
-    pill('pill-nba', 'ok', `NBA — ${evs.length} game${evs.length !== 1 ? 's' : ''}`);
-    evs.forEach(ev => results.push({ emoji: '🏀', sport: 'NBA', ev }));
-  } catch { pill('pill-nba', 'err', 'NBA — offline'); }
-
-  // EPL
-  try {
-    const r = await fetch(APIS.epl);
-    const d = await r.json();
-    const evs = d.events || [];
-    pill('pill-epl', 'ok', `EPL — ${evs.length} match${evs.length !== 1 ? 'es' : ''}`);
-    evs.forEach(ev => results.push({ emoji: '⚽', sport: 'EPL', ev }));
-  } catch { pill('pill-epl', 'err', 'EPL — offline'); }
-
-  renderSports(results);
-  return results;
+    pill('pill-nba','ok',`NBA — ${evs.length} game${evs.length!==1?'s':''}`);
+    return evs.map(ev => ({ emoji:'🏀', sport:'NBA', ev }));
+  } catch { pill('pill-nba','er','NBA offline'); return []; }
 }
 
-// ═══════════════
+// ══════════════════════
+//  FETCH EPL
+// ══════════════════════
+async function fetchEPL() {
+  pill('pill-epl','ld','<span class="spin"></span> EPL...');
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard');
+    const d = await r.json();
+    const evs = d.events || [];
+    pill('pill-epl','ok',`EPL — ${evs.length} match${evs.length!==1?'es':''}`);
+    return evs.map(ev => ({ emoji:'⚽', sport:'EPL', ev }));
+  } catch { pill('pill-epl','er','EPL offline'); return []; }
+}
+
+// ══════════════════════
 //  RENDER SPORTS
-// ═══════════════
-function renderSports(results) {
+// ══════════════════════
+function renderSports(data) {
+  allSportsData = data;
   const grid = document.getElementById('scoresGrid');
   const bar  = document.getElementById('scoresBar');
-  const ticker = document.getElementById('tickerTrack');
 
-  if (!results.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--muted);">No games scheduled today. Check back later!</div>`;
+  if (!data.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--m);">No games scheduled today. Check back later!</div>`;
+    bar.innerHTML = `<div class="si">No games today</div><div class="si">Check back later!</div>`;
     return;
   }
 
-  // Score cards (max 8)
-  grid.innerHTML = results.slice(0, 8).map(({ emoji, sport, ev }) => {
-    const comp  = ev.competitions?.[0];
-    const [home, away] = comp?.competitors || [];
-    const st    = gameStatus(ev);
-    const hs    = parseInt(home?.score) || 0;
-    const as    = parseInt(away?.score) || 0;
-    const hwins = st.cls === 'final' && hs > as;
-    const awins = st.cls === 'final' && as > hs;
-    return `
-      <div class="score-card ${st.cls === 'live' ? 'is-live' : ''}">
-        <div class="sc-league">${emoji} ${sport}
-          ${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px;font-weight:700">● LIVE</span>' : ''}
-        </div>
-        <div class="sc-teams">
-          <div class="sc-team ${hwins ? 'winner' : ''}">
-            <span>${home?.team?.shortDisplayName || home?.team?.abbreviation || 'Home'}</span>
-            <span class="pts">${home?.score ?? '—'}</span>
-          </div>
-          <div class="sc-team ${awins ? 'winner' : ''}">
-            <span>${away?.team?.shortDisplayName || away?.team?.abbreviation || 'Away'}</span>
-            <span class="pts">${away?.score ?? '—'}</span>
-          </div>
-        </div>
-        <div class="sc-status ${st.cls === 'live' ? 'live-st' : ''}">${st.label}</div>
-      </div>`;
-  }).join('');
-
-  // Scrolling bar (duplicate for seamless loop)
-  const barHTML = results.map(({ emoji, ev }) => {
+  // Score cards
+  grid.innerHTML = data.slice(0, 8).map(({ emoji, sport, ev }) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
-    return `<div class="score-item">${emoji} ${home?.team?.abbreviation ?? '?'} vs ${away?.team?.abbreviation ?? '?'}
-      <span class="score-val">${home?.score ?? '?'}–${away?.score ?? '?'}</span>
-      <span class="s-${st.cls}">${st.label}</span>
+    const hs = parseInt(home?.score)||0, as = parseInt(away?.score)||0;
+    const hwins = st.cls==='final' && hs>as, awins = st.cls==='final' && as>hs;
+    const gId = ev.id;
+    return `<div class="sc ${st.cls==='live'?'islive':''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
+      <div class="sc-lg">${emoji} ${sport} ${st.cls==='live'?'<span style="color:var(--red);font-size:9px">● LIVE</span>':''}</div>
+      <div class="sc-teams">
+        <div class="sc-team ${hwins?'win':''}"><span>${home?.team?.shortDisplayName||home?.team?.abbreviation||'Home'}</span><span class="pts">${home?.score??'—'}</span></div>
+        <div class="sc-team ${awins?'win':''}"><span>${away?.team?.shortDisplayName||away?.team?.abbreviation||'Away'}</span><span class="pts">${away?.score??'—'}</span></div>
+      </div>
+      <div class="sc-st ${st.cls==='live'?'lv':''}">${st.label}</div>
     </div>`;
+  }).join('');
+
+  // Scores bar
+  const barHTML = data.map(({ emoji, ev }) => {
+    const comp = ev.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    const st = gameStatus(ev);
+    return `<div class="si">${emoji} ${home?.team?.abbreviation??'?'} vs ${away?.team?.abbreviation??'?'} <span class="sv">${home?.score??'?'}–${away?.score??'?'}</span> <span class="${st.cls==='live'?'slive':st.cls==='final'?'sfin':'ssoon'}">${st.label}</span></div>`;
   }).join('');
   bar.innerHTML = barHTML + barHTML;
 
-  // Update hero with first live game
-  const live = results.find(({ ev }) => gameStatus(ev).cls === 'live');
+  // Hero — pick live game or first game
+  const live = data.find(x => gameStatus(x.ev).cls === 'live') || data[0];
   if (live) {
     const comp = live.ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
-    document.getElementById('heroTitle').textContent =
-      `${live.emoji} ${home?.team?.name ?? ''} vs ${away?.team?.name ?? ''}`;
-    document.getElementById('heroExcerpt').textContent =
-      `Current score: ${home?.score ?? '?'} – ${away?.score ?? '?'}. Follow live play-by-play, full stats, and expert analysis here on NexZone.`;
-    document.getElementById('heroCat').textContent = 'Live Now';
-    document.getElementById('heroMeta').textContent = `${live.sport} · NexZone Sports Desk`;
-  } else {
-    // No live game — show next upcoming
-    const next = results[0];
-    const comp = next?.ev.competitions?.[0];
-    const [home, away] = comp?.competitors || [];
-    document.getElementById('heroTitle').textContent =
-      `${next?.emoji ?? '🏆'} ${home?.team?.name ?? ''} vs ${away?.team?.name ?? ''}`;
-    document.getElementById('heroExcerpt').textContent =
-      `Coming up: ${gameStatus(next?.ev).label}. Get our full preview, starting lineups, and expert predictions on NexZone.`;
-    document.getElementById('heroCat').textContent = next?.sport ?? 'Sports';
+    const st = gameStatus(live.ev);
+    document.getElementById('heroTitle').textContent = `${live.emoji} ${home?.team?.name??''} vs ${away?.team?.name??''}`;
+    document.getElementById('heroExcerpt').textContent = `Score: ${home?.score??'?'} – ${away?.score??'?'}. ${st.cls==='live'?'Game is LIVE right now!':'Game time: '+st.label} Follow live updates, stats, and analysis on NexZone.`;
+    document.getElementById('heroCat').textContent = st.cls==='live'?'Live Now':live.sport;
+    document.getElementById('heroAuthor').textContent = `${live.sport} · NexZone Sports Desk`;
+    heroArticleId = null; // hero is a game, not an article
   }
 
   // Trending sidebar
   const trendEl = document.getElementById('trendingList');
-  trendEl.innerHTML = results.slice(0, 5).map(({ emoji, ev }, i) => {
+  trendEl.innerHTML = data.slice(0,5).map(({ emoji, ev }, i) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
-    return `<div class="trend-item">
-      <div class="trend-num">${i + 1}</div>
-      <div>
-        <div class="trend-title">${home?.team?.name ?? '?'} vs ${away?.team?.name ?? '?'}</div>
-        <div class="trend-meta">${emoji} ${st.cls === 'live' ? '● Live now' : st.label}</div>
-      </div>
+    const gId = ev.id;
+    return `<div class="ti" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
+      <div class="tn">${i+1}</div>
+      <div><div class="tt">${home?.team?.name??'?'} vs ${away?.team?.name??'?'}</div>
+      <div class="tm">${emoji} ${st.cls==='live'?'● Live now':st.label}</div></div>
     </div>`;
   }).join('');
 
   // Ticker
-  const tickerItems = results.map(({ emoji, ev }) => {
+  const tickerItems = data.map(({ emoji, ev }) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
-    return `<span>${emoji} ${home?.team?.name ?? '?'} vs ${away?.team?.name ?? '?'}: ${home?.score ?? '?'}–${away?.score ?? '?'} (${st.label})</span>`;
+    return `<span>${emoji} ${home?.team?.name??'?'} vs ${away?.team?.name??'?'}: ${home?.score??'?'}–${away?.score??'?'} (${st.label})</span>`;
   }).join('');
-  ticker.innerHTML = tickerItems + tickerItems;
+  updateTicker(tickerItems);
 }
 
-// ═══════════════
+// ══════════════════════
 //  FETCH ANIME
-// ═══════════════
-async function fetchAnime(sportsResults) {
-  pill('pill-anime', 'loading', '<span class="refresh-ring"></span> Anime…');
+// ══════════════════════
+async function fetchAnime() {
+  pill('pill-anime','ld','<span class="spin"></span> Anime...');
   try {
-    const r = await fetch(APIS.anime);
+    const r = await fetch('https://api.jikan.moe/v4/top/anime?limit=6&filter=airing');
     const d = await r.json();
     const items = d.data || [];
     if (!items.length) throw new Error('empty');
+    allAnimeData = items;
+    pill('pill-anime','ok',`Anime — Top ${items.length} airing`);
+    renderAnime(items, 'animeGrid');
+    renderAnime(items, 'animePageGrid');
 
-    pill('pill-anime', 'ok', `Anime — Top ${items.length} airing`);
-    renderAnime(items);
-
-    // Hero stack: mix of sports + anime
+    // Hero stack
     const stack = document.getElementById('heroStack');
-    const toShow = items.slice(0, 3);
-    stack.innerHTML = toShow.map(a => `
-      <div class="stack-card" onclick="window.open('${a.url}','_blank')">
-        <div class="stack-tag anime">Anime</div>
-        <div class="stack-title">${a.title}</div>
-        <div class="stack-time">⭐ ${a.score ?? 'N/A'} · ${a.episodes ?? '?'} episodes</div>
+    stack.innerHTML = items.slice(0,3).map(a =>
+      `<div class="stack-card" onclick="nav('article',ARTICLES.find(x=>x.cat==='anime')||ARTICLES[2])">
+        <div class="stag anime">Anime</div>
+        <div class="stitle">${a.title}</div>
+        <div class="stime">⭐ ${a.score??'N/A'} · ${a.episodes??'?'} eps</div>
       </div>`).join('');
 
-    // Add anime to ticker (append)
-    const ticker = document.getElementById('tickerTrack');
-    const animeTicker = items.slice(0, 4).map(a =>
-      `<span>🎌 ${a.title} — Score ${a.score ?? 'N/A'} | Rank #${a.rank ?? '?'}</span>`
-    ).join('');
-    ticker.innerHTML = ticker.innerHTML + animeTicker + animeTicker;
+    // Append anime to ticker
+    const animeTick = items.slice(0,4).map(a =>
+      `<span>🎌 ${a.title} — Score: ${a.score??'N/A'} | Rank #${a.rank??'?'}</span>`).join('');
+    updateTicker(null, animeTick);
 
   } catch {
-    pill('pill-anime', 'err', 'Anime — offline');
-    document.getElementById('animeGrid').innerHTML =
-      `<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--muted);">Could not load anime data. Try refreshing in a moment.</div>`;
+    pill('pill-anime','er','Anime offline');
+    ['animeGrid','animePageGrid'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--m);">Could not load anime data. Try refreshing.</div>`;
+    });
   }
 }
 
-function renderAnime(items) {
-  document.getElementById('animeGrid').innerHTML = items.map(a => `
-    <div class="anime-card" onclick="window.open('${a.url}','_blank')">
+function renderAnime(items, gridId) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  grid.innerHTML = items.map(a => `
+    <div class="anc" onclick="window.open('${a.url}','_blank')">
       ${a.images?.jpg?.image_url
-        ? `<img class="anime-img" src="${a.images.jpg.image_url}" alt="${a.title}" loading="lazy"
-            onerror="this.outerHTML='<div class=anime-img-ph>🎌</div>'">`
-        : `<div class="anime-img-ph">🎌</div>`}
-      <div class="anime-body">
-        <div class="anime-title">${a.title}</div>
-        <div class="anime-meta">
-          <span>${a.type ?? 'TV'} · ${a.episodes ?? '?'} eps</span>
-          <span class="anime-score">⭐ ${a.score ?? 'N/A'}</span>
-        </div>
+        ? `<img class="animg" src="${a.images.jpg.image_url}" alt="${a.title}" loading="lazy" onerror="this.outerHTML='<div class=anph>🎌</div>'">`
+        : `<div class="anph">🎌</div>`}
+      <div class="anb">
+        <div class="antitle">${a.title}</div>
+        <div class="anmeta"><span>${a.type??'TV'} · ${a.episodes??'?'} eps</span><span class="anscore">⭐ ${a.score??'N/A'}</span></div>
       </div>
     </div>`).join('');
 }
 
-// ═══════════════
-//  FILTERS
-// ═══════════════
-function filterCat(cat, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.article-card').forEach(c => {
-    const match = cat === 'all' || c.dataset.cat === cat;
-    c.style.opacity = match ? '1' : '0.15';
-    c.style.transform = match ? '' : 'scale(0.97)';
-    c.style.pointerEvents = match ? 'auto' : 'none';
-  });
+// ══════════════════════
+//  TICKER UPDATE
+// ══════════════════════
+let tickerSports = '', tickerAnime = '';
+function updateTicker(sports, anime) {
+  if (sports !== null && sports !== undefined) tickerSports = sports;
+  if (anime !== null && anime !== undefined) tickerAnime = anime;
+  const combined = (tickerSports + tickerAnime) || '<span>Loading live headlines...</span>';
+  const t = document.getElementById('tickerTrack');
+  if (t) t.innerHTML = combined + combined;
 }
 
-function filterSearch(v) {
-  const q = v.toLowerCase();
-  document.querySelectorAll('.article-card').forEach(c => {
-    const t = (c.dataset.title || '').toLowerCase();
-    c.style.opacity = t.includes(q) || !q ? '1' : '0.15';
-  });
-}
-
-// ═══════════════
+// ══════════════════════
 //  SUBSCRIBE
-// ═══════════════
+// ══════════════════════
 function subscribe() {
-  const v = document.getElementById('emailInput').value;
+  const v = document.getElementById('nlEmail')?.value;
   if (!v || !v.includes('@')) { alert('Please enter a valid email address!'); return; }
-  alert(`✅ Subscribed! Welcome to NexZone, ${v}`);
-  document.getElementById('emailInput').value = '';
+  nav('subscribed');
 }
 
-// ═══════════════
+function submitSubscribe() {
+  const name = document.getElementById('subName')?.value;
+  const email = document.getElementById('subEmail')?.value;
+  if (!email || !email.includes('@')) { alert('Please enter a valid email!'); return; }
+  nav('subscribed');
+}
+
+function submitContact() {
+  const name = document.getElementById('cName')?.value;
+  const email = document.getElementById('cEmail')?.value;
+  const msg = document.getElementById('cMessage')?.value;
+  if (!email || !email.includes('@')) { alert('Please enter a valid email!'); return; }
+  if (!msg) { alert('Please write a message!'); return; }
+  alert(`✅ Message sent! We'll get back to you at ${email} within 2 business days.`);
+  document.getElementById('cName').value = '';
+  document.getElementById('cEmail').value = '';
+  document.getElementById('cMessage').value = '';
+}
+
+// ══════════════════════
+//  SHARE
+// ══════════════════════
+function shareArticle(platform) {
+  const title = document.getElementById('ap-title')?.textContent;
+  const url = window.location.href;
+  if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, '_blank');
+  else if (platform === 'reddit') window.open(`https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
+  else { navigator.clipboard?.writeText(url).then(() => alert('Link copied!')).catch(() => alert('Link: ' + url)); }
+}
+
+// ══════════════════════
+//  SCROLL REVEAL
+// ══════════════════════
+const ro = new IntersectionObserver(entries =>
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); ro.unobserve(e.target); } }),
+  { threshold: 0.07 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+// Sticky nav
+window.addEventListener('scroll', () =>
+  document.getElementById('mainNav').classList.toggle('scrolled', scrollY > 40));
+
+// ══════════════════════
 //  INIT + AUTO-REFRESH
-// ═══════════════
+// ══════════════════════
 async function init() {
-  const el = document.getElementById('lastUpdated');
-  if (el) el.innerHTML = `<span class="refresh-ring"></span> Refreshing...`;
-  const results = await fetchSports();
-  setTimeout(() => fetchAnime(results), 800); // Jikan rate-limit buffer
-  if (el) {
-    setTimeout(() => {
-      el.textContent = `✅ Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    }, 2000);
-  }
+  const luEl = document.getElementById('lu');
+  if (luEl) luEl.innerHTML = `<span class="spin"></span> Refreshing...`;
+
+  const [nba, epl] = await Promise.all([fetchNBA(), fetchEPL()]);
+  renderSports([...nba, ...epl]);
+
+  setTimeout(fetchAnime, 900); // Jikan rate limit buffer
+
+  if (luEl) setTimeout(() => {
+    luEl.textContent = `✅ Updated ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+  }, 3000);
 }
 
 init();
-setInterval(init, 90000); // auto-refresh every 90 seconds
+setInterval(init, 90000);
 </script>
 </body>
 </html>
