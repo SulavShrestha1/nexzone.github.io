@@ -126,11 +126,11 @@ img{max-width:100%}
 .ticker-of::before,.ticker-of::after{content:'';position:absolute;top:0;bottom:0;width:40px;z-index:2;pointer-events:none}
 .ticker-of::before{left:0;background:linear-gradient(90deg,#e8323c,transparent)}
 .ticker-of::after{right:0;background:linear-gradient(-90deg,#ff4757,transparent)}
-.ticker-track{display:flex;animation:ticker 60s linear infinite;white-space:nowrap;will-change:transform}
+.ticker-track{display:flex;animation:ticker 80s linear infinite;white-space:nowrap;will-change:transform}
 .ticker-track .tck-item,.ticker-track .tck-empty{display:inline-block;padding:0 24px;font-size:14px;font-weight:500;color:#fff}
 .ticker-track .tck-item{cursor:pointer;transition:opacity .15s}
 .ticker-track .tck-item:hover{opacity:.85}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-33.333%)}}
 
 /* Navigation */
 nav{position:sticky;top:0;z-index:200;background:rgba(10,10,12,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b);transition:box-shadow .3s,border-color .3s}
@@ -551,6 +551,22 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
 }
 
+/* Adblock Detection Overlay */
+.adblock-overlay{position:fixed;inset:0;z-index:999999;background:rgba(5,5,8,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden}
+.adblock-overlay *{user-select:none!important;-webkit-user-select:none!important}
+.adblock-box{background:var(--card);border:2px solid var(--red);border-radius:24px;padding:48px 44px;max-width:520px;width:100%;text-align:center;box-shadow:0 0 60px rgba(232,50,60,.3),0 32px 96px rgba(0,0,0,.8);animation:nzPop .3s ease}
+.adblock-icon{font-size:72px;margin-bottom:20px;filter:drop-shadow(0 4px 16px rgba(232,50,60,.4))}
+.adblock-box h2{font-family:var(--fh);font-size:36px;letter-spacing:1px;color:var(--text);margin-bottom:16px}
+.adblock-box p{font-size:15px;color:var(--m2);line-height:1.7;margin-bottom:12px}
+.adblock-box strong{color:var(--text)}
+.adblock-steps{text-align:left;background:rgba(232,50,60,.08);border:1px solid rgba(232,50,60,.2);border-radius:14px;padding:20px 24px;margin:20px 0}
+.adblock-steps h3{font-size:14px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.adblock-steps ol{padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.adblock-steps li{font-size:14px;color:var(--m2);line-height:1.6}
+.adblock-btn{background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;border:none;border-radius:12px;padding:14px 36px;font-family:var(--fb);font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:16px;box-shadow:0 4px 16px rgba(232,50,60,.3)}
+.adblock-btn:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 6px 20px rgba(232,50,60,.4)}
+.adblock-note{font-size:12px!important;color:var(--m)!important;margin-top:16px!important;opacity:.7}
+
 /* Responsive */
 @media(max-width:1200px){
   .scores-grid .sc{flex:0 0 calc(33.333% - 11px)!important;max-width:calc(33.333% - 11px)!important}
@@ -599,6 +615,7 @@ input:-webkit-autofill:active {
 
 <!-- PWA Manifest -->
 <link rel="manifest" href="/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NexZone">
@@ -637,6 +654,26 @@ input:-webkit-autofill:active {
     <div class="nz-modal-icon" id="nzModalIcon" aria-hidden="true">ℹ</div>
     <p class="nz-modal-text" id="nzModalMsg"></p>
     <button type="button" class="nz-modal-btn" onclick="nzCloseModal()">OK</button>
+  </div>
+</div>
+
+<!-- ════ ADBLOCK DETECTION OVERLAY ════ -->
+<div id="adblockOverlay" class="adblock-overlay" style="display:none;" aria-hidden="true">
+  <div class="adblock-box">
+    <div class="adblock-icon">🛡️</div>
+    <h2>Ad Blocker Detected</h2>
+    <p>NexZone is a free platform supported by advertisements. We rely on ad revenue to keep our servers running and provide live sports scores, anime news, and quality content at no cost to you.</p>
+    <p><strong>Please disable your ad blocker for this site to continue browsing.</strong></p>
+    <div class="adblock-steps">
+      <h3>How to disable:</h3>
+      <ol>
+        <li>Click your ad blocker extension icon in the browser toolbar</li>
+        <li>Select <strong>"Don't run on this page"</strong> or <strong>"Pause on this site"</strong></li>
+        <li>Refresh this page</li>
+      </ol>
+    </div>
+    <button type="button" class="adblock-btn" onclick="nzCheckAdblock()">I've Disabled It — Check Again</button>
+    <p class="adblock-note">This page will remain locked until ads are unblocked.</p>
   </div>
 </div>
 
@@ -1360,7 +1397,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then(reg => console.log('SW registered'))
-      .catch(err => console.log('SW registration failed'));
+      .catch(() => {}); // Silently fail on local dev
   });
 }
 </script>

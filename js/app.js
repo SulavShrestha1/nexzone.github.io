@@ -281,6 +281,16 @@ function nav(page, data) {
   pageSportsScores = 1;
   pageSportsArticles = 1;
 
+  // Reset anime genre filter to "All" when navigating to anime page
+  if (page === 'anime') {
+    setTimeout(() => {
+      const firstChip = document.querySelector('#animeFilterChips .filter-chip');
+      if (firstChip) {
+        applyAnimeGenreFilter(null, firstChip);
+      }
+    }, 300);
+  }
+
   if (page === 'animeDetail' && data != null) {
     showAnimeDetailPage(data, true);
     return;
@@ -561,6 +571,10 @@ function filterSportsByGenre(genre, btn) {
 
 function populateAnimePage() {
   paintAnimePageGrid();
+  // Ensure genre filters are initialized
+  if (!document.getElementById('animeFilterChips')?.dataset?.ready) {
+    initAnimeGenreFilters();
+  }
 }
 
 let pageAnimeReviews = 1;
@@ -931,9 +945,35 @@ async function fetchNBA() {
     const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard');
     const d = await r.json();
     const evs = d.events || [];
-    pill('pill-nba', 'ok', `NBA — ${evs.length} game${evs.length !== 1 ? 's' : ''}`);
-    return evs.map(ev => ({ emoji: '🏀', sport: 'NBA', league: 'nba', ev }));
+    if (evs.length) {
+      pill('pill-nba', 'ok', `NBA — ${evs.length} game${evs.length !== 1 ? 's' : ''}`);
+      return evs.map(ev => ({ emoji: '🏀', sport: 'NBA', league: 'nba', ev }));
+    }
+    throw new Error('empty');
   } catch {
+    // Fallback: BallDontLie
+    try {
+      const games = await fetchBallDontLieGames();
+      if (games.length) {
+        pill('pill-nba', 'ok', `NBA — ${games.length} games (fallback)`);
+        return games.map(g => ({
+          emoji: '🏀',
+          sport: 'NBA',
+          league: 'nba',
+          ev: {
+            id: g.id,
+            status: { type: { state: g.status === 'Final' ? 'post' : g.status === '1st' || g.status === '2nd' || g.status === '3rd' || g.status === '4th' ? 'in' : 'pre', shortDetail: g.status } },
+            date: new Date().toISOString(),
+            competitions: [{
+              competitors: [
+                { team: { name: g.home_team, abbreviation: g.home_team, shortDisplayName: g.home_team }, score: g.home_team_score },
+                { team: { name: g.visitor_team, abbreviation: g.visitor_team, shortDisplayName: g.visitor_team }, score: g.visitor_team_score }
+              ]
+            }]
+          }
+        }));
+      }
+    } catch (_) {}
     pill('pill-nba', 'er', 'NBA offline');
     return [];
   }
@@ -945,9 +985,35 @@ async function fetchEPL() {
     const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard');
     const d = await r.json();
     const evs = d.events || [];
-    pill('pill-epl', 'ok', `EPL — ${evs.length} match${evs.length !== 1 ? 'es' : ''}`);
-    return evs.map(ev => ({ emoji: '⚽', sport: 'EPL', league: 'epl', ev }));
+    if (evs.length) {
+      pill('pill-epl', 'ok', `EPL — ${evs.length} match${evs.length !== 1 ? 'es' : ''}`);
+      return evs.map(ev => ({ emoji: '⚽', sport: 'EPL', league: 'epl', ev }));
+    }
+    throw new Error('empty');
   } catch {
+    // Fallback: TheSportsDB
+    try {
+      const events = await fetchTheSportsDB('epl');
+      if (events.length) {
+        pill('pill-epl', 'ok', `EPL — ${events.length} matches (fallback)`);
+        return events.slice(0, 10).map(e => ({
+          emoji: '⚽',
+          sport: 'EPL',
+          league: 'epl',
+          ev: {
+            id: e.idEvent || e.strEvent,
+            status: { type: { state: e.strStatus === 'Match Finished' ? 'post' : e.strStatus === 'Not Started' ? 'pre' : 'in', shortDetail: e.strStatus } },
+            date: e.dateEvent ? `${e.dateEvent}T${e.strTime}` : new Date().toISOString(),
+            competitions: [{
+              competitors: [
+                { team: { name: e.strHomeTeam, abbreviation: e.strHomeTeam?.substring(0, 3), shortDisplayName: e.strHomeTeam }, score: e.intHomeScore || 0 },
+                { team: { name: e.strAwayTeam, abbreviation: e.strAwayTeam?.substring(0, 3), shortDisplayName: e.strAwayTeam }, score: e.intAwayScore || 0 }
+              ]
+            }]
+          }
+        }));
+      }
+    } catch (_) {}
     pill('pill-epl', 'er', 'EPL offline');
     return [];
   }
@@ -1213,6 +1279,19 @@ async function fetchAnime() {
       `<span class="tck-item tck-anime" data-mal="${a.mal_id}" data-url="${escapeAttr(a.url)}" title="Open show page">🎌 ${escapeHtml(a.title)} — ⭐ ${a.score ?? 'N/A'} | Rank #${a.rank ?? '?'}</span>`).join('');
     updateTicker(null, animeTick);
   } catch {
+    // Fallback: Kitsu
+    try {
+      const items = await fetchKitsuTopAnime(25);
+      if (items.length) {
+        allAnimeData = items;
+        pill('pill-anime', 'ok', `Anime — ${items.length} (Kitsu)`);
+        pageHomeAnime = 1;
+        pageAnimeGrid = 1;
+        paintHomeAnime();
+        paintAnimePageGrid();
+        return;
+      }
+    } catch (_) {}
     pill('pill-anime', 'er', 'Anime offline');
     ['animeGrid', 'animePageGrid'].forEach(id => {
       const el = document.getElementById(id);
@@ -1365,20 +1444,44 @@ async function loadAnimeDetail(malId) {
 
 async function initAnimeGenreFilters() {
   const wrap = document.getElementById('animeFilterChips');
-  if (!wrap || wrap.dataset.ready) return;
-  wrap.dataset.ready = '1';
+  if (!wrap) return;
+  // Don't set ready until we actually render something
+  if (wrap.dataset.ready) return;
+  
+  // Default fallback genres
+  const defaultGenres = [
+    { mal_id: null, name: 'All' },
+    { mal_id: 1, name: 'Action' },
+    { mal_id: 4, name: 'Comedy' },
+    { mal_id: 22, name: 'Romance' },
+    { mal_id: 8, name: 'Drama' },
+    { mal_id: 10, name: 'Fantasy' },
+    { mal_id: 36, name: 'Slice of Life' },
+    { mal_id: 37, name: 'Supernatural' },
+  ];
+  
   try {
     const genres = await fetchJikanGenres();
-    animeGenreCache = genres;
-    const want = [1, 2, 4, 8, 10, 22, 36, 37, 41];
-    const popular = want.map(id => genres.find(g => g.mal_id === id)).filter(Boolean);
-    const chips = [{ mal_id: null, name: 'All airing' }, ...popular];
-    wrap.innerHTML = chips.map(g =>
-      `<button type="button" class="filter-chip${g.mal_id == null ? ' active' : ''}" data-genre="${g.mal_id ?? ''}" onclick="applyAnimeGenreFilter(${g.mal_id === null ? 'null' : g.mal_id}, this)">${escapeHtml(g.name)}</button>`
-    ).join('');
-  } catch {
-    wrap.innerHTML = '<span style="color:var(--m);font-size:13px;">Genre filters unavailable</span>';
+    if (genres && genres.length) {
+      animeGenreCache = genres;
+      const want = [1, 2, 4, 8, 10, 22, 36, 37, 41];
+      const popular = want.map(id => genres.find(g => g.mal_id === id)).filter(Boolean);
+      const chips = [{ mal_id: null, name: 'All' }, ...popular];
+      wrap.innerHTML = chips.map(g =>
+        `<button type="button" class="filter-chip${g.mal_id == null ? ' active' : ''}" data-genre="${g.mal_id ?? ''}" onclick="applyAnimeGenreFilter(${g.mal_id === null ? 'null' : g.mal_id}, this)">${escapeHtml(g.name)}</button>`
+      ).join('');
+      wrap.dataset.ready = '1'; // Only mark ready after successful render
+      return;
+    }
+  } catch (e) {
+    console.log('Genre fetch failed, using defaults');
   }
+  
+  // Use default genres if API fails
+  wrap.innerHTML = defaultGenres.map(g =>
+    `<button type="button" class="filter-chip${g.mal_id == null ? ' active' : ''}" data-genre="${g.mal_id ?? ''}" onclick="applyAnimeGenreFilter(${g.mal_id === null ? 'null' : g.mal_id}, this)">${escapeHtml(g.name)}</button>`
+  ).join('');
+  wrap.dataset.ready = '1'; // Mark ready after rendering defaults
 }
 
 window.applyAnimeGenreFilter = async function (genreId, btn) {
@@ -1566,40 +1669,193 @@ async function init() {
   const luEl = document.getElementById('lu');
   if (luEl) luEl.innerHTML = `<span class="spin"></span> Refreshing…`;
 
-  // Try restoring from cache first for instant display
+  // STEP 1: Restore from cache INSTANTLY (no waiting)
   const sportsCached = restoreFromCache();
   const animeCached = restoreAnimeFromCache();
 
-  // If cache was used, still fetch fresh data in background
-  if (sportsCached || animeCached) {
-    setTimeout(init, 2000); // Refresh after 2 seconds
+  // If we have cached data, show it immediately and refresh in background
+  if (sportsCached && animeCached) {
+    if (luEl) luEl.textContent = `✅ Cached data shown · Refreshing…`;
+    // Refresh in background after 3 seconds
+    setTimeout(() => {
+      initFresh();
+    }, 3000);
     return;
   }
 
-  const [nba, epl, nNews, sNews] = await Promise.all([
+  // STEP 2: No cache — fetch fresh but with staggered loading
+  initFresh();
+}
+
+async function initFresh() {
+  const luEl = document.getElementById('lu');
+
+  // Fetch sports and news in parallel (fastest APIs)
+  const sportsPromise = Promise.allSettled([
     fetchNBA(),
-    fetchEPL(),
-    fetchESPNNews('basketball/nba').catch(() => []),
-    fetchESPNNews('soccer/eng.1').catch(() => [])
+    fetchEPL()
+  ]).then(results => {
+    const nba = results[0].status === 'fulfilled' ? results[0].value : [];
+    const epl = results[1].status === 'fulfilled' ? results[1].value : [];
+    return [...nba, ...epl];
+  }).catch(() => []);
+
+  const newsPromise = Promise.allSettled([
+    fetchESPNNews('basketball/nba'),
+    fetchESPNNews('soccer/eng.1')
+  ]).then(results => {
+    const n = results[0].status === 'fulfilled' ? results[0].value : [];
+    const s = results[1].status === 'fulfilled' ? results[1].value : [];
+    return mergeEspnNews(n, s);
+  }).catch(() => []);
+
+  // Wait for sports + news (anime loads separately, slower)
+  const [sportsData, newsData] = await Promise.allSettled([
+    sportsPromise,
+    newsPromise
   ]);
 
-  allEspnNews = mergeEspnNews(nNews, sNews);
-  renderEspnNews(allEspnNews);
-  setHeroFromNews(allEspnNews);
+  const sports = sportsData.status === 'fulfilled' ? sportsData.value : [];
+  const news = newsData.status === 'fulfilled' ? newsData.value : [];
 
-  renderSports([...nba, ...epl]);
+  // Render what we have immediately
+  if (news.length) {
+    allEspnNews = news;
+    renderEspnNews(allEspnNews);
+    setHeroFromNews(allEspnNews);
+  }
 
-  setTimeout(fetchAnime, 900);
-  setTimeout(initAnimeGenreFilters, 1400);
+  if (sports.length) {
+    renderSports(sports);
+  }
 
-  if (luEl) setTimeout(() => {
-    luEl.textContent = `✅ Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-  }, 3000);
+  // Load anime in background (slowest API)
+  setTimeout(() => {
+    fetchAnime().catch(() => {});
+    initAnimeGenreFilters().catch(() => {});
+  }, 500);
+
+  if (luEl) {
+    const status = [];
+    if (sports.length) status.push(`${sports.length} games`);
+    if (news.length) status.push(`${news.length} headlines`);
+    luEl.textContent = status.length 
+      ? `✅ ${status.join(' · ')} · ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+      : `⚠️ APIs slow · ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  }
 }
 
 setupLiveInteractions();
 init();
 setInterval(init, 90000);
+
+// ════════════════════════════════════════
+// ADBLOCK DETECTION
+// ════════════════════════════════════════
+let adblockDetected = false;
+let adblockCheckInterval = null;
+
+function nzDetectAdblock() {
+  return new Promise((resolve) => {
+    // Method 1: Create bait element that adblockers typically block
+    const bait = document.createElement('div');
+    bait.innerHTML = '&nbsp;';
+    bait.className = 'adsbox ad-banner ad-content textads banner-ads banner ad-zone adspace';
+    bait.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
+    document.body.appendChild(bait);
+
+    setTimeout(() => {
+      const baitBlocked = bait.offsetHeight === 0 ||
+                          bait.clientHeight === 0 ||
+                          window.getComputedStyle(bait).display === 'none' ||
+                          window.getComputedStyle(bait).visibility === 'hidden' ||
+                          bait.style.display === 'none' ||
+                          !document.body.contains(bait);
+
+      if (document.body.contains(bait)) bait.remove();
+
+      // Method 2: Quick check for common adblocker globals
+      const hasAdblocker = typeof window.adsbygoogle !== 'undefined' &&
+                           typeof window.google_jobrunner === 'undefined';
+
+      resolve(baitBlocked || hasAdblocker);
+    }, 200);
+  });
+}
+
+async function nzCheckAdblock() {
+  const overlay = document.getElementById('adblockOverlay');
+  if (!overlay) return;
+
+  const isBlocked = await nzDetectAdblock();
+
+  if (isBlocked) {
+    adblockDetected = true;
+    overlay.style.display = 'flex';
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    document.body.style.touchAction = 'none';
+
+    // Start periodic re-check
+    if (adblockCheckInterval) clearInterval(adblockCheckInterval);
+    adblockCheckInterval = setInterval(async () => {
+      const stillBlocked = await nzDetectAdblock();
+      if (!stillBlocked) {
+        nzRemoveAdblockOverlay();
+      }
+    }, 3000);
+  } else {
+    nzRemoveAdblockOverlay();
+  }
+}
+
+function nzRemoveAdblockOverlay() {
+  const overlay = document.getElementById('adblockOverlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+  adblockDetected = false;
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
+  document.body.style.height = '';
+  document.body.style.touchAction = '';
+  if (adblockCheckInterval) {
+    clearInterval(adblockCheckInterval);
+    adblockCheckInterval = null;
+  }
+}
+
+// Run adblock check on page load
+window.addEventListener('load', () => {
+  setTimeout(nzCheckAdblock, 1000);
+});
+
+// Prevent bypass via keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (adblockDetected) {
+    // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+    if (e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+        (e.ctrlKey && e.key === 'U')) {
+      e.preventDefault();
+      return false;
+    }
+  }
+});
+
+// Prevent right-click when adblock is active
+document.addEventListener('contextmenu', (e) => {
+  if (adblockDetected) {
+    e.preventDefault();
+    return false;
+  }
+});
+
 window.addEventListener('resize', () => {
   if (window.innerWidth > 900) {
     const mMenu = document.getElementById('mMenu');

@@ -42,6 +42,11 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
+  // Skip chrome-extension and non-http(s) requests
+  if (!event.request.url.startsWith('http://') && !event.request.url.startsWith('https://')) {
+    return;
+  }
+
   // Skip cross-origin API requests
   if (event.request.url.includes('api.espn.com') || 
       event.request.url.includes('api.jikan.moe') ||
@@ -60,6 +65,7 @@ self.addEventListener('fetch', (event) => {
             if(!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
+            // Only cache http/https resources
             const responseToCache = response.clone();
             caches.open(CACHE_NAME)
               .then((cache) => {
@@ -71,7 +77,7 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(() => {
         // Fallback for offline
-        if (event.request.headers.get('Accept').includes('text/html')) {
+        if (event.request.headers.get('Accept') && event.request.headers.get('Accept').includes('text/html')) {
           return caches.match('/index.html');
         }
       })

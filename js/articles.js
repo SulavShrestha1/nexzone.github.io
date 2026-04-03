@@ -6,7 +6,7 @@ const DEMO_IMAGES = [
   'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=85', // Basketball
   'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=85', // Soccer
   'https://images.unsplash.com/photo-1614583224978-f05ce51ef5fa?w=900&q=85', // Anime general
-  'https://images.unsplash.com/photo-1549719386-74dfcbf7a31e?w=900&q=85', // MMA
+  'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=900&q=85', // MMA/Fighting
 ];
 
 const ARTICLES = [
@@ -114,7 +114,7 @@ coverImage:'https://images.unsplash.com/photo-1614583224978-f05ce51ef5fa?w=900&q
     title:'UFC 300 Full Fight Card: Every Matchup Analyzed',
     excerpt:"UFC 300 is here and the card is absolutely stacked. We break down every main card fight and give our predictions.",
     date:'2d ago', views:'6.5k', author:'NexZone MMA Desk', readTime:'5 min read',
-    coverImage:'https://images.unsplash.com/photo-1549719386-74dfcbf7a31e?w=900&q=85',
+    coverImage:'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=900&q=85',
     externalReadUrl:'https://www.espn.com/mma/',
     content:`
       <h3>A Historic Event</h3>
