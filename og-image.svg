@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0c"/>
+      <stop offset="100%" style="stop-color:#16161f"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e8323c"/>
+      <stop offset="100%" style="stop-color:#ff4757"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="0" y="0" width="8" height="630" fill="url(#accent)"/>
+  <circle cx="1050" cy="100" r="200" fill="rgba(232,50,60,0.08)"/>
+  <circle cx="150" cy="550" r="150" fill="rgba(232,50,60,0.06)"/>
+  <text x="600" y="280" text-anchor="middle" font-family="Arial,sans-serif" font-size="120" font-weight="bold" fill="#f0eff5" letter-spacing="8">Nex<tspan fill="#e8323c">Zone</tspan></text>
+  <text x="600" y="370" text-anchor="middle" font-family="Arial,sans-serif" font-size="36" fill="#6b7080" letter-spacing="4">SPORTS &amp; ANIME HUB</text>
+  <rect x="400" y="420" width="400" height="4" rx="2" fill="url(#accent)" opacity="0.6"/>
+  <text x="600" y="480" text-anchor="middle" font-family="Arial,sans-serif" font-size="24" fill="#9299a8">Live Scores  •  NBA  •  EPL  •  Anime  •  Reviews</text>
+  <text x="600" y="560" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="#6b7080">sulavshrestha1.github.io</text>
+</svg>

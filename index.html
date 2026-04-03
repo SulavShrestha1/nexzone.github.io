@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="NexZone — Your #1 source for live sports scores, NBA, EPL, NFL, and top anime news, reviews, and rankings updated daily.">
 <meta name="keywords" content="sports news, anime news, NBA scores, EPL scores, anime reviews, live sports">
 <meta name="author" content="NexZone Media">
@@ -11,91 +14,20 @@
 <meta property="og:description" content="Live scores, sports news, anime reviews and rankings. Updated daily.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://sulavshrestha1.github.io">
-<meta property="og:image" content="https://sulavshrestha1.github.io/og-image.jpg">
+<meta property="og:image" content="https://sulavshrestha1.github.io/og-image.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="NexZone — Sports & Anime Hub">
 <meta name="twitter:description" content="Live scores, sports news, anime reviews and rankings. Updated daily.">
 <meta name="theme-color" content="#e8323c">
 <title>NexZone — Sports & Anime Hub</title>
+<link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        nz: {
-          bg: '#0a0a0c',
-          surface: '#111118',
-          card: '#16161f',
-          cardh: '#1c1c28',
-          red: '#e8323c',
-          redglow: 'rgba(232,50,60,.15)',
-          gold: '#f5a623',
-          green: '#50c878',
-          blue: '#7eb8f7',
-          text: '#f0eff5',
-          muted: '#6b7080',
-          muted2: '#9299a8',
-          border: 'rgba(255,255,255,.07)',
-          borderhover: 'rgba(232,50,60,.4)',
-        }
-      },
-      fontFamily: {
-        heading: ['Bebas Neue', 'sans-serif'],
-        body: ['Outfit', 'sans-serif'],
-      },
-      animation: {
-        'fade-in': 'fadeIn 0.4s ease-out',
-        'fade-up': 'fadeUp 0.5s ease-out',
-        'slide-in': 'slideIn 0.3s ease-out',
-        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'bounce-slow': 'bounce 2s infinite',
-        'shimmer': 'shimmer 1.5s ease-in-out infinite',
-        'ticker': 'ticker 70s linear infinite',
-        'scores-scroll': 'scoresScroll 45s linear infinite',
-      },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        fadeUp: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        slideIn: {
-          '0%': { opacity: '0', transform: 'translateX(-10px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
-        shimmer: {
-          '0%, 100%': { opacity: '0.4' },
-          '50%': { opacity: '0.8' },
-        },
-        ticker: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' },
-        },
-        scoresScroll: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' },
-        },
-      },
-      backdropBlur: {
-        xs: '2px',
-      },
-      boxShadow: {
-        'glow': '0 0 20px rgba(232,50,60,.3)',
-        'glow-lg': '0 0 40px rgba(232,50,60,.4)',
-        'card': '0 4px 24px rgba(0,0,0,.4)',
-        'card-hover': '0 12px 40px rgba(0,0,0,.6)',
-      }
-    }
-  }
-}
-</script>
 <style>
 /* Base resets & custom properties */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -107,6 +39,201 @@ tailwind.config = {
   --text:#f0eff5;--m:#6b7080;--m2:#9299a8;
   --fh:'Bebas Neue',sans-serif;--fb:'Outfit',sans-serif;
 }
+
+/* Light Mode Theme Variables — warm cream tones */
+body.light-mode{
+  --bg:#f0ece4;--surface:#f7f4ee;--card:#f9f6f0;--card-h:#f2ede5;
+  --b:rgba(0,0,0,.08);--bh:rgba(232,50,60,.5);
+  --rg:rgba(232,50,60,.06);
+  --text:#2c2825;--m:#7a756d;--m2:#5a554d;
+}
+body.light-mode nav{background:rgba(247,244,238,.96);border-bottom-color:rgba(0,0,0,.06)}
+body.light-mode nav.scrolled{border-bottom-color:rgba(232,50,60,.12)}
+body.light-mode .logo{color:#2c2825}
+body.light-mode .nav-search{background:#ede8df;border-color:rgba(0,0,0,.1)}
+body.light-mode .nav-search:focus-within{border-color:#e8323c;box-shadow:0 0 0 3px rgba(232,50,60,.12)}
+body.light-mode .nav-search input{color:#2c2825}
+body.light-mode .nav-links li button{color:#7a756d}
+body.light-mode .nav-links li button:hover{color:#2c2825}
+body.light-mode .nav-links li button.active{color:#e8323c;background:rgba(232,50,60,.06)}
+body.light-mode .mobile-menu{background:#f7f4ee;border-top-color:rgba(0,0,0,.06)}
+body.light-mode .mobile-menu button{color:#7a756d;border-bottom-color:rgba(0,0,0,.05)}
+body.light-mode .mobile-menu button:hover{color:#2c2825}
+body.light-mode .hamburger span{background:#2c2825}
+body.light-mode .ticker-bar{box-shadow:0 2px 12px rgba(232,50,60,.12)}
+body.light-mode .scores-bar{border-top-color:rgba(0,0,0,.06);border-bottom-color:rgba(0,0,0,.06)}
+body.light-mode .live-label{box-shadow:4px 0 12px rgba(232,50,60,.12)}
+body.light-mode .sof::before{background:linear-gradient(90deg,#f7f4ee,transparent)}
+body.light-mode .sof::after{background:linear-gradient(-90deg,#f7f4ee,transparent)}
+body.light-mode .si{border-right-color:rgba(0,0,0,.06)}
+body.light-mode .ad-slot{border-color:rgba(245,166,35,.18)}
+body.light-mode .ad-slot:hover{border-color:rgba(245,166,35,.3)}
+body.light-mode .hero-main{border-color:rgba(0,0,0,.06)}
+body.light-mode .hero-main:hover{border-color:rgba(232,50,60,.25)}
+body.light-mode .stack-card{border-color:rgba(0,0,0,.06);background:#f9f6f0}
+body.light-mode .stack-card:hover{border-color:rgba(232,50,60,.25);background:#f2ede5}
+body.light-mode .sc{background:linear-gradient(135deg,#f9f6f0,#f2ede5);border-color:rgba(0,0,0,.06)}
+body.light-mode .sc:hover{border-color:rgba(232,50,60,.25)}
+body.light-mode .sc-team .pts{color:#2c2825}
+body.light-mode .sc-team.win .pts{color:#c4940a}
+body.light-mode .ac{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .ac:hover{border-color:rgba(232,50,60,.25)}
+body.light-mode .ct{background:#ede8df;border-bottom-color:rgba(0,0,0,.05)}
+body.light-mode .cb{background:#f9f6f0}
+body.light-mode .sb{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .anc{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .anc:hover{border-color:rgba(245,166,35,.35)}
+body.light-mode .anph{background:#ede8df}
+body.light-mode .news-card{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .news-card:hover{border-color:rgba(232,50,60,.25)}
+body.light-mode .news-card-img{background:#ede8df}
+body.light-mode .news-card-body{background:#f9f6f0}
+body.light-mode .filter-chip{border-color:rgba(0,0,0,.08);color:#7a756d;background:transparent}
+body.light-mode .filter-chip:hover{color:#2c2825;border-color:rgba(232,50,60,.25)}
+body.light-mode .filter-chip.active{background:rgba(232,50,60,.06);border-color:rgba(232,50,60,.35);color:#e8323c}
+body.light-mode .sports-genre-chip{border-color:rgba(0,0,0,.08);color:#7a756d}
+body.light-mode .sports-genre-chip:hover{color:#2c2825;border-color:rgba(232,50,60,.25)}
+body.light-mode .sports-genre-chip.active{background:rgba(232,50,60,.06);border-color:rgba(232,50,60,.35);color:#e8323c}
+body.light-mode .nl-box{background:linear-gradient(135deg,#f9f6f0,#f2ede5);border-color:rgba(0,0,0,.06)}
+body.light-mode .nl-form input{background:#ede8df;border-color:rgba(0,0,0,.08);color:#2c2825}
+body.light-mode .nl-form input:focus{border-color:#e8323c}
+body.light-mode .nl-form input::placeholder{color:#a8a098}
+body.light-mode .nl-form button{box-shadow:0 4px 12px rgba(232,50,60,.18)}
+body.light-mode .plan-card{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .plan-card:hover{border-color:rgba(232,50,60,.25)}
+body.light-mode .plan-card.featured{border-color:rgba(232,50,60,.35)}
+body.light-mode .form-group input,.light-mode .form-group textarea,.light-mode .form-group select{background:#ede8df;border-color:rgba(0,0,0,.08);color:#2c2825}
+body.light-mode .form-group input:focus,.light-mode .form-group textarea:focus{border-color:#e8323c}
+body.light-mode .form-group input::placeholder,.light-mode .form-group textarea::placeholder{color:#a8a098}
+body.light-mode .form-submit{box-shadow:0 4px 16px rgba(232,50,60,.18)}
+body.light-mode .game-hero{background:linear-gradient(135deg,#f9f6f0,#f2ede5);border-color:rgba(0,0,0,.06)}
+body.light-mode .game-info-card{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .game-info-card:hover{border-color:rgba(232,50,60,.25)}
+body.light-mode .game-team-name{color:#2c2825}
+body.light-mode .game-team-pts{color:#c4940a}
+body.light-mode .game-vs{color:#a8a098}
+body.light-mode .game-status.live{background:rgba(232,50,60,.08);border-color:rgba(232,50,60,.25)}
+body.light-mode .game-status.final{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.08)}
+body.light-mode .game-status.soon{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.18)}
+body.light-mode .leader-pill{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .leader-pill:hover{border-color:rgba(232,50,60,.25)}
+body.light-mode .injury-row,.light-mode .insight-row{background:#ede8df;border-color:rgba(0,0,0,.06)}
+body.light-mode .injury-row:hover,.light-mode .insight-row:hover{border-color:rgba(232,50,60,.25);background:#f2ede5}
+body.light-mode .stream-card{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .stream-card:hover{border-color:rgba(232,50,60,.25)}
+body.light-mode .stream-card .t{background:#f9f6f0}
+body.light-mode .stream-thumb{background:#ede8df}
+body.light-mode .anime-synopsis{color:#5a554d}
+body.light-mode .anime-detail-meta-row span{background:rgba(0,0,0,.03)}
+body.light-mode .anime-detail-meta-row span:hover{background:rgba(0,0,0,.06)}
+body.light-mode .ep-table th{color:#7a756d}
+body.light-mode .ep-table th,.ep-table td{border-bottom-color:rgba(0,0,0,.05)}
+body.light-mode .ep-table tr:hover td{background:rgba(0,0,0,.02)}
+body.light-mode .ap-body{color:#5a554d}
+body.light-mode .ap-body h3{color:#2c2825}
+body.light-mode .ap-body strong{color:#2c2825}
+body.light-mode .ap-body .highlight{background:rgba(232,50,60,.04);border-left-color:#e8323c;color:#2c2825}
+body.light-mode .share-btn{border-color:rgba(0,0,0,.08);background:#f9f6f0;color:#7a756d}
+body.light-mode .share-btn:hover{color:#2c2825;border-color:rgba(232,50,60,.25);background:#f2ede5}
+body.light-mode .ap-hero-img{background:#ede8df;border-color:rgba(0,0,0,.06)}
+body.light-mode .ap-external-wrap{background:rgba(245,166,35,.04);border-color:rgba(245,166,35,.12);color:#7a756d}
+body.light-mode .read-btn{box-shadow:0 4px 16px rgba(232,50,60,.18)}
+body.light-mode .nz-pager-btn{background:#f9f6f0;border-color:rgba(0,0,0,.06);color:#2c2825}
+body.light-mode .nz-pager-btn:hover:not(:disabled){border-color:rgba(232,50,60,.25);background:#f2ede5}
+body.light-mode .nz-pager-btn:disabled{opacity:.3}
+body.light-mode .nz-pager-info{background:#f9f6f0;border-color:rgba(0,0,0,.06);color:#7a756d}
+body.light-mode .ranking-item:hover{border-color:rgba(232,50,60,.25)}
+body.light-mode .ranking-item{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode footer{background:#f7f4ee;border-top-color:rgba(0,0,0,.06)}
+body.light-mode .fcol h4{color:#7a756d}
+body.light-mode .fcol ul li button{color:#7a756d}
+body.light-mode .fcol ul li button:hover{color:#e8323c}
+body.light-mode .fbot{border-top-color:rgba(0,0,0,.05);color:#7a756d}
+body.light-mode .ti:hover{background:rgba(0,0,0,.02)}
+body.light-mode .tt{color:#2c2825}
+body.light-mode .tm{color:#7a756d}
+body.light-mode .tn{color:#e8323c}
+body.light-mode .ap-back{border-color:rgba(0,0,0,.06);color:#7a756d;background:transparent}
+body.light-mode .ap-back:hover{color:#2c2825;border-color:rgba(232,50,60,.25);background:rgba(0,0,0,.02)}
+body.light-mode .ap-author{color:#2c2825}
+body.light-mode .ap-date{color:#7a756d}
+body.light-mode .ap-read{color:#7a756d}
+body.light-mode .sk{background:linear-gradient(90deg,#e8e2d9 25%,#d9d2c8 50%,#e8e2d9 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+body.light-mode .nz-modal-box{background:#f9f6f0;border-color:rgba(232,50,60,.25)}
+body.light-mode .nz-modal-text{color:#7a756d}
+body.light-mode .nz-modal-text strong{color:#2c2825}
+body.light-mode .adblock-box{background:#f9f6f0;border-color:#e8323c}
+body.light-mode .adblock-box h2{color:#2c2825}
+body.light-mode .adblock-box p{color:#7a756d}
+body.light-mode .adbox-box strong{color:#2c2825}
+body.light-mode .adblock-steps{background:rgba(232,50,60,.03);border-color:rgba(232,50,60,.12)}
+body.light-mode .adblock-steps h3{color:#e8323c}
+body.light-mode .adblock-steps li{color:#7a756d}
+body.light-mode .adblock-note{color:#a8a098!important}
+body.light-mode .inner-page h1{color:#2c2825}
+body.light-mode .inner-page .subtitle{color:#7a756d;border-bottom-color:rgba(0,0,0,.06)}
+body.light-mode .inner-page h2{color:#2c2825}
+body.light-mode .inner-page p{color:#7a756d}
+body.light-mode .inner-page ul li{color:#7a756d}
+body.light-mode .success-page h1{color:#2c2825}
+body.light-mode .success-page p{color:#7a756d}
+body.light-mode .search-title{color:#2c2825}
+body.light-mode .search-count{color:#7a756d}
+body.light-mode .live-page-intro{color:#7a756d}
+body.light-mode .anime-filters{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .filter-label{color:#7a756d}
+body.light-mode .sports-genre-selector{background:#f9f6f0;border-color:rgba(0,0,0,.06)}
+body.light-mode .tab{color:#7a756d;border-bottom-color:transparent}
+body.light-mode .tab:hover{color:#2c2825}
+body.light-mode .tab.active{color:#e8323c}
+body.light-mode .tab::after{background:#e8323c}
+body.light-mode .sec-head h2{color:#2c2825}
+body.light-mode .apibadge{background:rgba(80,200,120,.06);border-color:rgba(80,200,120,.18);color:#3da35d}
+body.light-mode .api-pill{border-color:rgba(0,0,0,.08);color:#7a756d}
+body.light-mode .api-pill.ld{border-color:rgba(245,166,35,.25);color:#c4940a}
+body.light-mode .api-pill.ok{border-color:rgba(80,200,120,.25);color:#3da35d}
+body.light-mode .api-pill.er{border-color:rgba(232,50,60,.25);color:#e8323c}
+body.light-mode .api-pill.is-filter{background:rgba(80,200,120,.08);border-color:rgba(80,200,120,.4);color:#3da35d!important}
+body.light-mode .lu{color:#7a756d}
+body.light-mode .spin{border-color:rgba(0,0,0,.08);border-top-color:#3da35d}
+body.light-mode .hero-badge{box-shadow:0 4px 12px rgba(232,50,60,.18)}
+body.light-mode .hero-title{color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.5)}
+body.light-mode .hero-excerpt{color:#fff;font-weight:600;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+body.light-mode .hero-meta{color:#5a554d}
+body.light-mode .author{color:#5a554d;font-weight:600}
+body.light-mode .cat-tag{background:rgba(245,166,35,.08);color:#c4940a}
+body.light-mode .stag.anime{color:#c4940a}
+body.light-mode .stag.sports{color:#e8323c}
+body.light-mode .stitle{color:#2c2825}
+body.light-mode .stime{color:#7a756d}
+body.light-mode .news-card-tag{color:#e8323c}
+body.light-mode .news-card-title{color:#2c2825}
+body.light-mode .news-card-meta{color:#7a756d}
+body.light-mode .ctitle{color:#2c2825}
+body.light-mode .cf{color:#7a756d}
+body.light-mode .antitle{color:#2c2825}
+body.light-mode .anmeta{color:#7a756d}
+body.light-mode .anscore{color:#c4940a}
+body.light-mode .sc-lg{color:#7a756d}
+body.light-mode .team-logo{background:rgba(0,0,0,.02)}
+body.light-mode .adblock-overlay{background:rgba(240,236,228,.97)}
+body.light-mode .adblock-btn{box-shadow:0 4px 16px rgba(232,50,60,.18)}
+body.light-mode .plan-name{color:#2c2825}
+body.light-mode .plan-price{color:#c4940a}
+body.light-mode .plan-price span{color:#7a756d}
+body.light-mode .plan-features li{color:#7a756d}
+body.light-mode .plan-features li::before{color:#3da35d}
+body.light-mode .plan-btn{border-color:rgba(0,0,0,.08);color:#2c2825;background:transparent}
+body.light-mode .plan-btn:hover{background:#e8323c;border-color:#e8323c;color:#fff}
+body.light-mode .nl-text h3{color:#2c2825}
+body.light-mode .nl-text p{color:#7a756d}
+body.light-mode .fb-desc{color:#7a756d}
+body.light-mode .anime-detail-title-wrap{background:linear-gradient(180deg,transparent,rgba(240,236,228,.95))}
+body.light-mode .anime-detail-title{color:#2c2825}
+body.light-mode .anime-detail-sub{color:#7a756d}
+body.light-mode .anime-detail-banner-fallback{background:#ede8df}
+body.light-mode .stream-card .t{color:#2c2825}
+
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:17px;line-height:1.65;overflow-x:hidden;min-height:100vh}
 a{text-decoration:none;color:inherit;cursor:pointer}
@@ -151,6 +278,17 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7);border-color:rgba(232,50,60,.2
 .nav-search:focus-within{border-color:var(--red);box-shadow:0 0 0 3px rgba(232,50,60,.15)}
 .nav-search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--fb);font-size:14px;width:160px}
 .nav-search input::placeholder{color:var(--m)}
+
+/* Theme Toggle Button */
+.theme-toggle{display:flex!important;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:2px solid rgba(232,50,60,.4);background:rgba(232,50,60,.08);cursor:pointer;transition:all .25s;font-size:20px;flex-shrink:0;z-index:10;position:relative;line-height:1;color:var(--text)}
+.theme-toggle:hover{border-color:var(--red);background:rgba(232,50,60,.15);transform:scale(1.08);box-shadow:0 0 16px rgba(232,50,60,.3)}
+.theme-toggle .theme-icon-light{display:none!important}
+.theme-toggle .theme-icon-dark{display:inline!important}
+body.light-mode .theme-toggle .theme-icon-dark{display:none!important}
+body.light-mode .theme-toggle .theme-icon-light{display:inline!important}
+body.light-mode .theme-toggle{border-color:rgba(232,50,60,.3);background:rgba(232,50,60,.06)}
+body.light-mode .theme-toggle:hover{border-color:var(--red);background:rgba(232,50,60,.12);box-shadow:0 0 12px rgba(232,50,60,.2)}
+
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;transition:transform .2s}
 .hamburger:hover{transform:scale(1.1)}
 .hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;display:block;transition:all .3s}
@@ -194,10 +332,10 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7);border-color:rgba(232,50,60,.2
 .hero-main:hover{border-color:var(--bh);box-shadow:var(--glow-lg);transform:translateY(-2px)}
 .hero-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 12px;border-radius:6px;margin-bottom:16px;animation:pulse 2s ease-in-out infinite;box-shadow:0 4px 12px rgba(232,50,60,.4)}
 .hero-badge::before{content:'●';font-size:7px}
-.hero-title{font-family:var(--fh);font-size:58px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:16px;position:relative;z-index:1}
-.hero-excerpt{color:var(--m2);font-size:17px;line-height:1.8;max-width:520px;margin-bottom:24px;position:relative;z-index:1}
+.hero-title{font-family:var(--fh);font-size:58px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:16px;position:relative;z-index:1;text-shadow:0 2px 20px rgba(0,0,0,.5)}
+.hero-excerpt{color:var(--text);font-size:18px;line-height:1.8;max-width:520px;margin-bottom:24px;position:relative;z-index:1;font-weight:500;text-shadow:0 1px 8px rgba(0,0,0,.4)}
 .hero-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:relative;z-index:1}
-.author{font-size:13px;color:var(--m);font-weight:500}
+.author{font-size:14px;color:var(--m2);font-weight:600}
 .cat-tag{font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;background:rgba(245,166,35,.15);color:var(--gold);text-transform:uppercase;letter-spacing:.5px}
 .read-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;font-size:14px;font-weight:600;padding:12px 24px;border-radius:10px;transition:all .2s;margin-top:24px;border:none;font-family:var(--fb);box-shadow:0 4px 16px rgba(232,50,60,.3)}
 .read-btn:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 6px 20px rgba(232,50,60,.4)}
@@ -433,6 +571,27 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:64px}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
 .reveal.vis{opacity:1;transform:translateY(0)}
 
+/* Reading Progress Bar */
+.reading-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--red),#ff4757);z-index:9999;width:0;transition:width .1s linear;box-shadow:0 0 8px rgba(232,50,60,.4)}
+
+/* Back to Top Button */
+.back-to-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;visibility:hidden;transform:translateY(12px);transition:all .3s;box-shadow:0 4px 16px rgba(232,50,60,.3)}
+.back-to-top.visible{opacity:1;visibility:visible;transform:translateY(0)}
+.back-to-top:hover{transform:translateY(-3px);box-shadow:0 6px 24px rgba(232,50,60,.4)}
+body.light-mode .back-to-top{box-shadow:0 4px 16px rgba(232,50,60,.2)}
+body.light-mode .back-to-top:hover{box-shadow:0 6px 24px rgba(232,50,60,.3)}
+
+/* Cookie Consent Banner */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9998;background:var(--card);border-top:1px solid var(--b);padding:16px 24px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;box-shadow:0 -4px 24px rgba(0,0,0,.4);transform:translateY(100%);transition:transform .4s ease}
+.cookie-banner.visible{transform:translateY(0)}
+.cookie-banner p{font-size:14px;color:var(--m2);max-width:600px;line-height:1.6}
+.cookie-banner p a{color:var(--red);text-decoration:underline}
+.cookie-banner button{padding:10px 24px;border-radius:8px;font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
+.cookie-accept{background:var(--red);color:#fff;box-shadow:0 2px 8px rgba(232,50,60,.3)}
+.cookie-accept:hover{opacity:.9;transform:translateY(-1px)}
+.cookie-dismiss{background:transparent;color:var(--m);border:1px solid var(--b)!important}
+.cookie-dismiss:hover{color:var(--text);border-color:var(--bh)!important}
+
 /* Theme Modal */
 .nz-modal{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:all .28s ease}
 .nz-modal.open{opacity:1;visibility:visible}
@@ -453,9 +612,15 @@ footer{background:var(--surface);border-top:1px solid var(--b);margin-top:64px}
 
 /* Hero Background */
 .hero-main{position:relative}
-.hero-bg-layer{position:absolute;inset:0;background-size:cover;background-position:center top;opacity:.22;pointer-events:none;z-index:0;border-radius:20px;transition:opacity .4s}
-.hero-main.has-img .hero-bg-layer{opacity:.35}
+.hero-bg-layer{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.3;pointer-events:none;z-index:0;border-radius:20px;transition:opacity .4s}
+.hero-main.has-img .hero-bg-layer{opacity:.45}
+.hero-main::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(22,22,31,.85),rgba(28,28,40,.7));pointer-events:none;z-index:0;border-radius:20px}
+.hero-main::after{content:'';position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:radial-gradient(circle,rgba(232,50,60,.12) 0%,transparent 70%);pointer-events:none;z-index:0}
 .hero-main > *:not(.hero-bg-layer){position:relative;z-index:1}
+body.light-mode .hero-bg-layer{opacity:.35}
+body.light-mode .hero-main.has-img .hero-bg-layer{opacity:.5}
+body.light-mode .hero-main::before{background:linear-gradient(135deg,rgba(44,40,37,.55),rgba(44,40,37,.35))}
+body.light-mode .hero-main::after{background:radial-gradient(circle,rgba(232,50,60,.06) 0%,transparent 70%)}
 
 /* ESPN News Feed - Fixed 3 Column Flex */
 .news-intro{color:var(--m2);font-size:17px;margin-bottom:24px;max-width:840px;line-height:1.7}
@@ -587,6 +752,7 @@ input:-webkit-autofill:active {
   .nl-form input{width:100%}
   .nav-links,.nav-search{display:none}
   .hamburger{display:flex}
+  .theme-toggle{width:36px;height:36px;font-size:18px;margin-left:auto;margin-right:8px}
   .game-teams{gap:24px}
   .game-team-pts{font-size:56px}
   .advertise-plans{grid-template-columns:1fr}
@@ -613,8 +779,7 @@ input:-webkit-autofill:active {
      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
      ══════════════════════════════════════ -->
 
-<!-- PWA Manifest -->
-<link rel="manifest" href="/manifest.json">
+<!-- PWA Meta Tags -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -645,6 +810,19 @@ input:-webkit-autofill:active {
 </script>
 </head>
 <body>
+
+<!-- Reading Progress Bar -->
+<div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top" title="Back to top">↑</button>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieBanner" class="cookie-banner" role="dialog" aria-label="Cookie consent">
+  <p>We use cookies to enhance your experience and analyze site traffic. By continuing, you agree to our use of cookies. <a href="#privacy" onclick="nav('privacy')">Learn more</a></p>
+  <button class="cookie-accept" onclick="acceptCookies()">Accept All</button>
+  <button class="cookie-dismiss" onclick="dismissCookies()">Essential Only</button>
+</div>
 
 <!-- ════ THEME MODAL (replaces browser alert) ════ -->
 <div id="nzModal" class="nz-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="nzModalMsg">
@@ -701,10 +879,15 @@ input:-webkit-autofill:active {
       <li><button class="nav-cta" onclick="nav('subscribe')">Subscribe</button></li>
     </ul>
      <div class="nav-search">
-      <input type="text" placeholder="Search..." id="searchInput" 
+      <input type="text" placeholder="Search..." id="searchInput"
              onkeyup="if(event.key==='Enter') executeSearch(this.value)">
       <span style="cursor:pointer" onclick="executeSearch(document.getElementById('searchInput').value)">🔍</span>
     </div>
+
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode" title="Toggle theme">
+      <span class="theme-icon-dark">🌙</span>
+      <span class="theme-icon-light">☀️</span>
+    </button>
 
     <button class="hamburger" onclick="document.getElementById('mMenu').classList.toggle('open')">
       <span></span><span></span><span></span>
@@ -723,6 +906,9 @@ input:-webkit-autofill:active {
     <button onclick="nav('articles');document.getElementById('mMenu').classList.remove('open')">Articles</button>
     <button onclick="nav('subscribe');document.getElementById('mMenu').classList.remove('open')">Subscribe</button>
     <button onclick="nav('about');document.getElementById('mMenu').classList.remove('open')">About</button>
+    <button onclick="toggleTheme();document.getElementById('mMenu').classList.remove('open')" style="display:flex;align-items:center;gap:10px;justify-content:center;">
+      <span class="theme-icon-dark">🌙</span><span class="theme-icon-light">☀️</span> Toggle Theme
+    </button>
   </div>
 </nav>
 
@@ -868,13 +1054,21 @@ input:-webkit-autofill:active {
 ════════════════════════════════════════ -->
 <div id="page-news-detail" class="page">
   <div class="inner-page news-detail-wrap">
-    <button class="ap-back" onclick="nav('home')">← Back to Home</button>
+    <button class="ap-back" onclick="goBack()">← Back</button>
     <div id="newsDetailTag" class="news-card-tag" style="margin-bottom:12px;"></div>
     <h1 class="ap-title" id="newsDetailTitle" style="font-size:clamp(1.8rem,4vw,2.8rem);"></h1>
     <p id="newsDetailMeta" class="news-detail-meta-line"></p>
     <img id="newsDetailImg" class="news-detail-hero-img" alt="" style="display:none;width:100%;max-height:420px;object-fit:cover;border-radius:16px;border:1px solid var(--b);margin:20px 0;">
     <div id="newsDetailSynopsis" class="anime-synopsis"></div>
     <a class="read-btn" id="newsDetailReadFull" href="#" target="_blank" rel="noopener">Read full story on ESPN →</a>
+    <div class="ap-share" style="margin-top:36px;padding-top:28px;border-top:1px solid var(--b);">
+      <h4>Share this story</h4>
+      <div class="share-btns">
+        <button class="share-btn" onclick="shareNewsArticle('twitter')">𝕏 Twitter / X</button>
+        <button class="share-btn" onclick="shareNewsArticle('reddit')">Reddit</button>
+        <button class="share-btn" onclick="shareNewsArticle('copy')">🔗 Copy Link</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -883,7 +1077,7 @@ input:-webkit-autofill:active {
 ════════════════════════════════════════ -->
 <div id="page-article" class="page">
   <div class="article-page">
-    <button class="ap-back" onclick="history.back()">← Back</button>
+    <button class="ap-back" onclick="goBack()">← Back</button>
     <div class="ap-cat ts" id="ap-cat">Sports</div>
     <h1 class="ap-title" id="ap-title">Article Title</h1>
     <div class="ap-meta">
@@ -922,7 +1116,7 @@ input:-webkit-autofill:active {
 ════════════════════════════════════════ -->
 <div id="page-game" class="page">
   <div class="game-page">
-    <button class="ap-back" onclick="history.back()">← Back to Scores</button>
+    <button class="ap-back" onclick="goBack()">← Back to Scores</button>
     <div class="game-hero">
       <div class="game-teams" id="gameTeams">Loading game...</div>
       <div class="game-status" id="gameStatus">Loading</div>
@@ -1066,7 +1260,7 @@ input:-webkit-autofill:active {
 ════════════════════════════════════════ -->
 <div id="page-anime-detail" class="page">
   <div class="anime-detail-page">
-    <button class="ap-back" onclick="nav('anime')">← Back to Anime</button>
+    <button class="ap-back" onclick="goBack()">← Back</button>
     <div class="anime-detail-hero" id="animeDetailHero">
       <div class="anime-detail-banner-fallback" id="animeDetailBannerPh">🎌</div>
     </div>
@@ -1395,8 +1589,10 @@ input:-webkit-autofill:active {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered'))
+    // Cache version — bump this to force SW cache invalidation on deploy
+    const SW_VERSION = 'v2';
+    navigator.serviceWorker.register('/sw.js?v=' + SW_VERSION)
+      .then(reg => {})
       .catch(() => {}); // Silently fail on local dev
   });
 }

@@ -154,7 +154,7 @@ coverImage:'https://images.unsplash.com/photo-1614583224978-f05ce51ef5fa?w=900&q
     title:'2025 NFL Draft: Top 10 Picks and What They Mean',
     excerpt:"The 2025 NFL Draft is here. We analyze every top-10 pick, what each team needed, and who won and lost draft day.",
     date:'3d ago', views:'7.8k', author:'NexZone NFL Desk', readTime:'5 min read',
-    coverImage:'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=900&q=85',
+    coverImage:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=85',
     externalReadUrl:'https://www.espn.com/nfl/',
     content:`
       <h3>Draft Day Breakdown</h3>

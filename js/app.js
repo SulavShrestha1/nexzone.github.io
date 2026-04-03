@@ -1,11 +1,45 @@
 /**
  * NexZone — SPA router, UI, ESPN + Jikan + AniList
+ * Production build — security hardened
  */
 /* global ARTICLES, fetchESPNNews, fetchGameSummary, fetchJikanAnimeFull, fetchJikanEpisodesAll, fetchJikanGenres, fetchJikanAnimeList, fetchTopAiringAnime, fetchAniListByMalId */
 
-const NZ_MAIL_URL = 'https://script.google.com/macros/s/AKfycbzz5MygSn6Nja4GOJS7Ydg9xldZZ_i05VRjJ3c--bWCafTQAC8uaGzQ17mRGdF6k6vM/exec'; 
+// ════════════════════════════════════════
+// PRODUCTION SECURITY
+// ════════════════════════════════════════
+
+// Suppress console in production
+(function(){'use strict';var _l=console.log;console.log=function(){};console.warn=function(){};console.error=function(){};})();
+
+// Rate limiter for form submissions
+const NZ_RATE_LIMIT = {
+  maxAttempts: 3,
+  windowMs: 60000, // 1 minute
+  attempts: {},
+  check(key) {
+    const now = Date.now();
+    if (!this.attempts[key]) this.attempts[key] = [];
+    this.attempts[key] = this.attempts[key].filter(t => now - t < this.windowMs);
+    if (this.attempts[key].length >= this.maxAttempts) {
+      return false; // Rate limited
+    }
+    this.attempts[key].push(now);
+    return true;
+  }
+};
+
+// Sanitize user input
+function nzSanitize(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/[<>\"'&]/g, c => ({
+    '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', '&': '&amp;'
+  })[c]);
+}
+
+const NZ_MAIL_URL = 'https://script.google.com/macros/s/AKfycbyk6mgpDBtitPwyfDFBVBm2ULTT9UKIluOjAiD_axYcrcanzTOPnt5zKzCJmro68PgA/exec'; 
 const NZ_PAGE_SIZE = 6;
 let currentPage = 'home';
+let lastPage = 'home';
 let currentArticleId = null;
 let currentGameData = null;
 let allSportsData = [];
@@ -29,6 +63,45 @@ function escapeAttr(s) {
   if (s == null) return '';
   return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 }
+function calcReadTime(text) {
+  const words = text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+  const mins = Math.max(1, Math.ceil(words / 200));
+  return `${mins} min read`;
+}
+// ════════════════════════════════════════
+// THEME TOGGLE (Dark ↔ Light) with Cookies
+// ════════════════════════════════════════
+function setCookie(name, value, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + (days * 86400000));
+  document.cookie = name + '=' + value + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+}
+function getCookie(name) {
+  const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return v ? v.pop() : null;
+}
+function applyTheme(mode) {
+  if (mode === 'light') {
+    document.body.classList.add('light-mode');
+  } else {
+    document.body.classList.remove('light-mode');
+  }
+}
+function toggleTheme() {
+  const isLight = document.body.classList.contains('light-mode');
+  const next = isLight ? 'dark' : 'light';
+  applyTheme(next);
+  setCookie('nz-theme', next, 365);
+  try { localStorage.setItem('nz-theme', next); } catch(_) {}
+}
+// Restore saved theme on load (localStorage first, fallback to cookie)
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('nz-theme'); } catch(_) {}
+  if (!saved) saved = getCookie('nz-theme');
+  if (saved) applyTheme(saved);
+})();
+
 function nzAlert(msg, type) {
   const modal = document.getElementById('nzModal');
   const iconEl = document.getElementById('nzModalIcon');
@@ -196,6 +269,31 @@ function showNewsDetailPage(a, setHash = true) {
   document.getElementById('nl-home')?.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
+  // If no data passed in (e.g. navigated via hash without data), show loading skeleton
+  if (!a) {
+    try {
+      const raw = sessionStorage.getItem('nzNewsArticle');
+      if (raw) a = JSON.parse(raw);
+    } catch (_) {}
+  }
+
+  if (!a) {
+    // Show loading skeleton while we try to resolve
+    document.getElementById('newsDetailTag').textContent = '';
+    document.getElementById('newsDetailTitle').innerHTML = '<div class="sk" style="height:32px;width:80%;border-radius:8px;"></div>';
+    document.getElementById('newsDetailMeta').innerHTML = '<div class="sk" style="height:16px;width:40%;border-radius:6px;"></div>';
+    const imEl = document.getElementById('newsDetailImg');
+    imEl.style.display = 'none';
+    document.getElementById('newsDetailSynopsis').innerHTML = `
+      <div class="sk" style="height:16px;width:100%;border-radius:6px;margin-bottom:12px;"></div>
+      <div class="sk" style="height:16px;width:90%;border-radius:6px;margin-bottom:12px;"></div>
+      <div class="sk" style="height:16px;width:95%;border-radius:6px;margin-bottom:12px;"></div>
+      <div class="sk" style="height:16px;width:60%;border-radius:6px;"></div>`;
+    document.getElementById('newsDetailReadFull').href = '#';
+    document.title = 'Loading… — NexZone';
+    return;
+  }
+
   const tag = a?.category?.description || a?.categories?.[0]?.description || 'ESPN';
   const pub = a.published ? new Date(a.published).toLocaleString() : '';
   const img = newsImage(a);
@@ -222,7 +320,7 @@ function buildAnimeCardsHTML(items) {
   return items.map(a => {
     const img = bestAnimeImage(a);
     return `
-    <div class="anc" onclick="showAnimeDetailPage(${a.mal_id},true)">
+    <div class="anc" onclick="showAnimeDetailPage(${a.mal_id},true)" tabindex="0" role="button" aria-label="View anime: ${escapeAttr(a.title)}" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),showAnimeDetailPage(${a.mal_id},true)">
       ${img
         ? `<img class="animg" src="${escapeAttr(img)}" alt="${escapeAttr(a.title)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'anph',innerHTML:'🎌'}))">`
         : `<div class="anph">🎌</div>`}
@@ -247,7 +345,7 @@ function paintHomeAnime() {
   pageHomeAnime = Math.min(Math.max(1, pageHomeAnime), total);
   const slice = items.slice((pageHomeAnime - 1) * NZ_PAGE_SIZE, pageHomeAnime * NZ_PAGE_SIZE);
   grid.innerHTML = buildAnimeCardsHTML(slice);
-  renderPager('homeAnimePager', pageHomeAnime, total, p => { pageHomeAnime = p; paintHomeAnime(); });
+  renderPager('homeAnimePager', pageHomeAnime, total, p => { pageHomeAnime = p; try { sessionStorage.setItem('nzPageHomeAnime', p); } catch(_){} paintHomeAnime(); });
 }
 
 function paintAnimePageGrid() {
@@ -263,10 +361,13 @@ function paintAnimePageGrid() {
   pageAnimeGrid = Math.min(Math.max(1, pageAnimeGrid), total);
   const slice = items.slice((pageAnimeGrid - 1) * NZ_PAGE_SIZE, pageAnimeGrid * NZ_PAGE_SIZE);
   grid.innerHTML = buildAnimeCardsHTML(slice);
-  renderPager('animePagePager', pageAnimeGrid, total, p => { pageAnimeGrid = p; paintAnimePageGrid(); });
+  renderPager('animePagePager', pageAnimeGrid, total, p => { pageAnimeGrid = p; try { sessionStorage.setItem('nzPageAnimeGrid', p); } catch(_){} paintAnimePageGrid(); });
 }
 
 function nav(page, data) {
+  // Track navigation history for back button
+  if (currentPage && currentPage !== page) lastPage = currentPage;
+
   // Reset ALL pagination when navigating
   pageHomeSports = 1;
   pageLiveSports = 1;
@@ -359,6 +460,11 @@ function nav(page, data) {
   if (page === 'articles') populateAllArticles();
   if (page === 'live') populateLivePage();
   if (page === 'home') {
+    // Restore saved anime pagination state
+    try {
+      const savedHome = sessionStorage.getItem('nzPageHomeAnime');
+      if (savedHome) pageHomeAnime = parseInt(savedHome, 10) || 1;
+    } catch(_) {}
     paintScoresOnly();
     paintHomeAnime();
     renderEspnNews(allEspnNews);
@@ -387,7 +493,12 @@ window.addEventListener('hashchange', () => {
     nav('home');
     return;
   }
-  if (h && document.getElementById('page-' + h)) nav(h);
+  if (h && document.getElementById('page-' + h)) {
+    nav(h);
+  } else if (h) {
+    // Unknown hash — redirect to home
+    window.location.hash = 'home';
+  }
 });
 
 window.addEventListener('load', () => {
@@ -403,7 +514,12 @@ window.addEventListener('load', () => {
     } catch (_) {
       nav('home');
     }
-  } else if (h && document.getElementById('page-' + h)) nav(h);
+  } else if (h && document.getElementById('page-' + h)) {
+    nav(h);
+  } else if (h) {
+    // Unknown hash on load — redirect to home
+    window.location.hash = 'home';
+  }
   buildArticlesGrid();
 });
 
@@ -412,7 +528,11 @@ function makeCard(a, clickFn) {
   d.className = 'ac';
   d.dataset.cat = a.cat;
   d.dataset.title = a.title.toLowerCase();
-  
+  d.setAttribute('tabindex', '0');
+  d.setAttribute('role', 'button');
+  d.setAttribute('aria-label', `Read article: ${a.title}`);
+  d.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); (clickFn || (() => nav('article', a)))(); } };
+
   // Image fallback system with demo images
   let imgHTML = '';
   if (a.coverImage) {
@@ -421,7 +541,7 @@ function makeCard(a, clickFn) {
   } else {
     imgHTML = `<div class="ct">${a.emoji || '📰'}</div>`;
   }
-  
+
   d.innerHTML = `
     ${imgHTML}
     <div class="cb">
@@ -570,6 +690,11 @@ function filterSportsByGenre(genre, btn) {
 }
 
 function populateAnimePage() {
+  // Restore saved pagination state
+  try {
+    const savedGrid = sessionStorage.getItem('nzPageAnimeGrid');
+    if (savedGrid) pageAnimeGrid = parseInt(savedGrid, 10) || 1;
+  } catch(_) {}
   paintAnimePageGrid();
   // Ensure genre filters are initialized
   if (!document.getElementById('animeFilterChips')?.dataset?.ready) {
@@ -678,7 +803,7 @@ function openArticle(a) {
   document.getElementById('ap-title').textContent = a.title;
   document.getElementById('ap-author').textContent = a.author || 'NexZone Team';
   document.getElementById('ap-date').textContent = a.date;
-  document.getElementById('ap-read').innerHTML = `📖 ${a.readTime}`;
+  document.getElementById('ap-read').innerHTML = `📖 ${calcReadTime(a.content)}`;
   const apImg = document.getElementById('ap-img');
   const extWrap = document.getElementById('ap-external-wrap');
   if (a.coverImage) {
@@ -1050,7 +1175,7 @@ function renderEspnNews(articles) {
     const tag = a?.category?.description || a?.categories?.[0]?.description || 'ESPN';
     const pub = a.published ? new Date(a.published).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
     return `
-      <article class="news-card" onclick="openNewsDetail(${globalIdx})">
+      <article class="news-card" onclick="openNewsDetail(${globalIdx})" tabindex="0" role="button" aria-label="Read news: ${escapeAttr(a.headline || 'Headline')}" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),openNewsDetail(${globalIdx})">
         ${img ? `<img class="news-card-img" src="${escapeAttr(img)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${fallbackImg}';this.onerror=function(){this.style.display='none'}">` : `<img class="news-card-img" src="${fallbackImg}" alt="" loading="lazy">`}
         <div class="news-card-body">
           <div class="news-card-tag">${escapeHtml(tag)}</div>
@@ -1097,7 +1222,7 @@ function buildScoreCardsHTML(data, max) {
     const homeRecord = home?.records?.[0]?.summary || '';
     const awayRecord = away?.records?.[0]?.summary || '';
     
-    return `<div class="sc ${st.cls === 'live' ? 'islive' : ''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
+    return `<div class="sc ${st.cls === 'live' ? 'islive' : ''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))" tabindex="0" role="button" aria-label="View game: ${escapeHtml(home?.team?.shortDisplayName || 'Home')} vs ${escapeHtml(away?.team?.shortDisplayName || 'Away')}" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
       <div class="sc-lg">
         <span>${emoji} ${sport}</span>
         ${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px;font-weight:700" class="animate-pulse">● LIVE</span>' : ''}
@@ -1474,7 +1599,7 @@ async function initAnimeGenreFilters() {
       return;
     }
   } catch (e) {
-    console.log('Genre fetch failed, using defaults');
+    // Genre fetch failed, using defaults
   }
   
   // Use default genres if API fails
@@ -1527,14 +1652,18 @@ function updateTicker(sports, anime) {
 async function subscribe() {
   const v = document.getElementById('nlEmail')?.value;
   if (!v || !v.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
+  if (!NZ_RATE_LIMIT.check('subscribe')) { nzAlert('Too many attempts. Please wait a minute.', 'error'); return; }
   try {
     await fetch(NZ_MAIL_URL, {
       method: 'POST',
-      body: JSON.stringify({ type: 'subscribe', name: 'Subscriber', email: v, interest: 'Sports + Anime (Everything)' })
+      redirect: 'follow',
+      body: JSON.stringify({ type: 'subscribe', name: 'Subscriber', email: nzSanitize(v), interest: 'Sports + Anime (Everything)' })
     });
-  } catch (_) {}
-  document.getElementById('nlEmail').value = '';
-  nav('subscribed');
+    document.getElementById('nlEmail').value = '';
+    nav('subscribed');
+  } catch (_) {
+    nzAlert('Subscription failed. Please try again later.', 'error');
+  }
 }
 
 async function submitSubscribe() {
@@ -1542,16 +1671,20 @@ async function submitSubscribe() {
   const email = document.getElementById('subEmail')?.value;
   const interest = document.getElementById('subInterest')?.value;
   if (!email || !email.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
+  if (!NZ_RATE_LIMIT.check('subForm')) { nzAlert('Too many attempts. Please wait a minute.', 'error'); return; }
   try {
     await fetch(NZ_MAIL_URL, {
       method: 'POST',
-      body: JSON.stringify({ type: 'subscribe', name, email, interest })
+      redirect: 'follow',
+      body: JSON.stringify({ type: 'subscribe', name: nzSanitize(name), email: nzSanitize(email), interest: nzSanitize(interest) })
     });
-  } catch (_) {}
-  document.getElementById('subName').value = '';
-  document.getElementById('subEmail').value = '';
-  document.getElementById('subInterest').selectedIndex = 0;
-  nav('subscribed');
+    document.getElementById('subName').value = '';
+    document.getElementById('subEmail').value = '';
+    document.getElementById('subInterest').selectedIndex = 0;
+    nav('subscribed');
+  } catch (_) {
+    nzAlert('Subscription failed. Please try again later.', 'error');
+  }
 }
 
 async function submitContact() {
@@ -1561,17 +1694,21 @@ async function submitContact() {
   const msg = document.getElementById('cMessage')?.value;
   if (!email || !email.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
   if (!msg) { nzAlert('Please write a message before sending.', 'error'); return; }
+  if (!NZ_RATE_LIMIT.check('contact')) { nzAlert('Too many attempts. Please wait a minute.', 'error'); return; }
   try {
     await fetch(NZ_MAIL_URL, {
       method: 'POST',
-      body: JSON.stringify({ type: 'contact', name, email, subject, message: msg })
+      redirect: 'follow',
+      body: JSON.stringify({ type: 'contact', name: nzSanitize(name), email: nzSanitize(email), subject: nzSanitize(subject), message: nzSanitize(msg) })
     });
-  } catch (_) {}
-  nzAlert(`Message sent! We'll get back to you at ${email} within 2 business days.`, 'success');
-  document.getElementById('cName').value = '';
-  document.getElementById('cEmail').value = '';
-  document.getElementById('cMessage').value = '';
-  document.getElementById('cSubject').selectedIndex = 0;
+    nzAlert('Message sent! We\'ll get back to you within 2 business days.', 'success');
+    document.getElementById('cName').value = '';
+    document.getElementById('cEmail').value = '';
+    document.getElementById('cMessage').value = '';
+    document.getElementById('cSubject').selectedIndex = 0;
+  } catch (_) {
+    nzAlert('Failed to send message. Please try again later.', 'error');
+  }
 }
 
 function shareArticle(platform) {
@@ -1580,6 +1717,24 @@ function shareArticle(platform) {
   if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, '_blank');
   else if (platform === 'reddit') window.open(`https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
   else { navigator.clipboard?.writeText(url).then(() => nzAlert('Link copied to your clipboard.', 'success')).catch(() => nzAlert('Copy this link: ' + url, 'info')); }
+}
+
+function shareNewsArticle(platform) {
+  const title = document.getElementById('newsDetailTitle')?.textContent || 'News';
+  const url = window.location.href;
+  if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, '_blank');
+  else if (platform === 'reddit') window.open(`https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
+  else { navigator.clipboard?.writeText(url).then(() => nzAlert('Link copied to your clipboard.', 'success')).catch(() => nzAlert('Copy this link: ' + url, 'info')); }
+}
+
+function goBack() {
+  const target = lastPage || 'home';
+  // Don't go back to detail pages — always fall back to home
+  if (['animeDetail', 'newsDetail', 'article', 'game'].includes(target)) {
+    nav('home');
+  } else {
+    nav(target);
+  }
 }
 
 const ro = new IntersectionObserver(entries =>
@@ -1600,21 +1755,126 @@ function executeSearch(query) {
   if (!grid || !titleEl || !countEl) return;
   titleEl.textContent = `Results for: "${query}"`;
   grid.innerHTML = '';
-  const allContent = document.querySelectorAll('.ac, .anc, .sc, .stack-card');
-  let foundCount = 0;
-  allContent.forEach(item => {
-    if (item.innerText.toLowerCase().includes(q)) {
-      const clone = item.cloneNode(true);
-      clone.style.display = '';
-      clone.style.opacity = '1';
-      grid.appendChild(clone);
-      foundCount++;
+
+  let results = [];
+
+  // 1. Search ARTICLES array (always in memory)
+  ARTICLES.forEach(a => {
+    const searchable = `${a.title} ${a.excerpt} ${a.tag} ${a.content}`.toLowerCase();
+    if (searchable.includes(q)) {
+      results.push({ type: 'article', data: a });
     }
   });
-  countEl.textContent = `Found ${foundCount} match${foundCount !== 1 ? 'es' : ''}.`;
-  if (foundCount === 0) {
+
+  // 2. Search allEspnNews array
+  allEspnNews.forEach((a, i) => {
+    const searchable = `${a.headline || ''} ${a.description || ''} ${a.category?.description || ''}`.toLowerCase();
+    if (searchable.includes(q)) {
+      results.push({ type: 'news', data: a, index: i });
+    }
+  });
+
+  // 3. Search allAnimeData array
+  allAnimeData.forEach(a => {
+    const searchable = `${a.title} ${a.title_english || ''} ${a.title_japanese || ''} ${(a.genres || []).map(g => g.name).join(' ')} ${a.synopsis || ''}`.toLowerCase();
+    if (searchable.includes(q)) {
+      results.push({ type: 'anime', data: a });
+    }
+  });
+
+  // 4. Search allSportsData array
+  allSportsData.forEach(item => {
+    const comp = item.ev?.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    const searchable = `${home?.team?.name || ''} ${away?.team?.name || ''} ${item.sport} ${item.league}`.toLowerCase();
+    if (searchable.includes(q)) {
+      results.push({ type: 'sports', data: item });
+    }
+  });
+
+  // 5. Also search visible DOM cards as fallback (catches anything not in arrays)
+  const seenIds = new Set(results.filter(r => r.data?.id).map(r => r.data.id));
+  document.querySelectorAll('.ac, .anc, .sc, .stack-card').forEach(item => {
+    const text = item.innerText.toLowerCase();
+    if (text.includes(q)) {
+      const id = item.dataset?.title || item.dataset?.cat;
+      if (!id || !seenIds.has(id)) {
+        results.push({ type: 'dom', element: item });
+      }
+    }
+  });
+
+  // Render results
+  if (!results.length) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m2);font-size:17px;">No results for "${escapeHtml(query)}".</div>`;
+    countEl.textContent = 'Found 0 matches.';
+    return;
   }
+
+  countEl.textContent = `Found ${results.length} match${results.length !== 1 ? 'es' : ''}.`;
+
+  results.forEach((r, i) => {
+    let card;
+    if (r.type === 'article') {
+      card = makeCard(r.data);
+    } else if (r.type === 'news') {
+      const img = newsImage(r.data);
+      const fallbackImg = DEMO_IMAGES[0];
+      const tag = r.data?.category?.description || r.data?.categories?.[0]?.description || 'ESPN';
+      const pub = r.data.published ? new Date(r.data.published).toLocaleString([], { month: 'short', day: 'numeric' }) : '';
+      card = document.createElement('article');
+      card.className = 'news-card';
+      card.onclick = () => openNewsDetail(r.index);
+      card.innerHTML = `
+        ${img ? `<img class="news-card-img" src="${escapeAttr(img)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${fallbackImg}';this.onerror=function(){this.style.display='none'}">` : `<img class="news-card-img" src="${fallbackImg}" alt="" loading="lazy">`}
+        <div class="news-card-body">
+          <div class="news-card-tag">${escapeHtml(tag)}</div>
+          <h3 class="news-card-title">${escapeHtml(r.data.headline || 'Headline')}</h3>
+          <div class="news-card-meta">${escapeHtml(pub)} · ESPN</div>
+        </div>`;
+    } else if (r.type === 'anime') {
+      const img = bestAnimeImage(r.data);
+      card = document.createElement('div');
+      card.className = 'anc';
+      card.onclick = () => showAnimeDetailPage(r.data.mal_id, true);
+      card.innerHTML = `
+        ${img
+          ? `<img class="animg" src="${escapeAttr(img)}" alt="${escapeAttr(r.data.title)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'anph',innerHTML:'🎌'}))">`
+          : `<div class="anph">🎌</div>`}
+        <div class="anb">
+          <div class="antitle">${escapeHtml(r.data.title)}</div>
+          <div class="anmeta"><span>${escapeHtml(r.data.type ?? 'TV')} · ${r.data.episodes ?? '?'} eps</span><span class="anscore">⭐ ${r.data.score ?? 'N/A'}</span></div>
+        </div>`;
+    } else if (r.type === 'sports') {
+      const comp = r.data.ev?.competitions?.[0];
+      const [home, away] = comp?.competitors || [];
+      const st = gameStatus(r.data.ev);
+      const gId = r.data.ev.id;
+      card = document.createElement('div');
+      card.className = `sc ${st.cls === 'live' ? 'islive' : ''}`;
+      card.onclick = () => nav('game', allSportsData.find(x => x.ev.id === gId));
+      const hl = logoUrl(home?.team);
+      const al = logoUrl(away?.team);
+      card.innerHTML = `
+        <div class="sc-lg"><span>${r.data.emoji} ${r.data.sport}</span>${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px;font-weight:700">● LIVE</span>' : ''}</div>
+        <div class="sc-teams">
+          <div class="sc-team"><div style="display:flex;align-items:center;gap:10px"><span>${home?.team?.shortDisplayName || home?.team?.abbreviation || 'Home'}</span><span class="pts">${home?.score ?? '—'}</span></div></div>
+          <div class="sc-team"><div style="display:flex;align-items:center;gap:10px"><span>${away?.team?.shortDisplayName || away?.team?.abbreviation || 'Away'}</span><span class="pts">${away?.score ?? '—'}</span></div></div>
+        </div>
+        <div class="sc-st ${st.cls === 'live' ? 'lv' : ''}">${st.label}</div>`;
+    } else if (r.type === 'dom') {
+      card = r.element.cloneNode(true);
+      card.style.display = '';
+      card.style.opacity = '1';
+    }
+
+    if (card) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      grid.appendChild(card);
+      setTimeout(() => { card.style.opacity = '1'; card.style.transform = ''; }, 200 + i * 60);
+    }
+  });
 }
 
 function restoreFromCache() {
@@ -1723,15 +1983,48 @@ async function initFresh() {
     allEspnNews = news;
     renderEspnNews(allEspnNews);
     setHeroFromNews(allEspnNews);
+  } else {
+    // Error boundary: ESPN news failed — show retry
+    const newsEl = document.getElementById('espnNewsFeed');
+    if (newsEl && !newsEl.dataset.errorShown) {
+      newsEl.dataset.errorShown = '1';
+      newsEl.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m2);font-size:17px;">
+        <div style="font-size:48px;margin-bottom:12px;opacity:.5">📡</div>
+        Could not load ESPN headlines. This may be a network issue or API change.<br>
+        <button onclick="this.parentElement.innerHTML='<div style=\\'padding:24px;color:var(--m)\\'>Refreshing…</div>';setTimeout(()=>location.reload(),500)" style="margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-family:var(--fb);font-size:15px;font-weight:600;cursor:pointer;">🔄 Retry</button>
+      </div>`;
+    }
   }
 
   if (sports.length) {
     renderSports(sports);
+  } else {
+    // Error boundary: Sports API failed — show retry
+    const grid = document.getElementById('scoresGrid');
+    if (grid && !grid.dataset.errorShown) {
+      grid.dataset.errorShown = '1';
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m2);font-size:17px;">
+        <div style="font-size:48px;margin-bottom:12px;opacity:.5">🏟️</div>
+        Could not load live scores. ESPN may be unreachable.<br>
+        <button onclick="this.parentElement.innerHTML='<div style=\\'padding:24px;color:var(--m)\\'>Refreshing…</div>';setTimeout(()=>location.reload(),500)" style="margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-family:var(--fb);font-size:15px;font-weight:600;cursor:pointer;">🔄 Retry</button>
+      </div>`;
+    }
   }
 
   // Load anime in background (slowest API)
   setTimeout(() => {
-    fetchAnime().catch(() => {});
+    fetchAnime().catch(() => {
+      // Error boundary: Anime API failed
+      const grid = document.getElementById('animeGrid');
+      if (grid && !grid.dataset.errorShown) {
+        grid.dataset.errorShown = '1';
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m2);font-size:17px;">
+          <div style="font-size:48px;margin-bottom:12px;opacity:.5">🎌</div>
+          Could not load anime data from Jikan/AniList.<br>
+          <button onclick="this.parentElement.innerHTML='<div style=\\'padding:24px;color:var(--m)\\'>Refreshing…</div>';setTimeout(()=>location.reload(),500)" style="margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-family:var(--fb);font-size:15px;font-weight:600;cursor:pointer;">🔄 Retry</button>
+        </div>`;
+      }
+    });
     initAnimeGenreFilters().catch(() => {});
   }, 500);
 
@@ -1739,15 +2032,84 @@ async function initFresh() {
     const status = [];
     if (sports.length) status.push(`${sports.length} games`);
     if (news.length) status.push(`${news.length} headlines`);
-    luEl.textContent = status.length 
+    luEl.textContent = status.length
       ? `✅ ${status.join(' · ')} · ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
       : `⚠️ APIs slow · ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   }
 }
 
+// ════════════════════════════════════════
+// READING PROGRESS BAR
+// ════════════════════════════════════════
+(function readingProgress() {
+  const bar = document.getElementById('readingProgress');
+  if (!bar) return;
+  function update() {
+    const articlePages = ['article', 'newsDetail', 'animeDetail', 'game'];
+    if (!articlePages.includes(currentPage)) { bar.style.width = '0'; return; }
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+// ════════════════════════════════════════
+// BACK TO TOP BUTTON
+// ════════════════════════════════════════
+(function backToTop() {
+  const btn = document.getElementById('backToTop');
+  if (!btn) return;
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+})();
+
+// ════════════════════════════════════════
+// COOKIE CONSENT (GDPR)
+// ════════════════════════════════════════
+function acceptCookies() {
+  try { localStorage.setItem('nz-cookies', 'accepted'); } catch(_) {}
+  const banner = document.getElementById('cookieBanner');
+  if (banner) banner.classList.remove('visible');
+}
+function dismissCookies() {
+  try { localStorage.setItem('nz-cookies', 'essential'); } catch(_) {}
+  const banner = document.getElementById('cookieBanner');
+  if (banner) banner.classList.remove('visible');
+}
+(function initCookieBanner() {
+  try {
+    if (localStorage.getItem('nz-cookies')) return;
+  } catch(_) { return; }
+  const banner = document.getElementById('cookieBanner');
+  if (banner) {
+    setTimeout(() => banner.classList.add('visible'), 1500);
+  }
+})();
+
 setupLiveInteractions();
 init();
 setInterval(init, 90000);
+
+// ════════════════════════════════════════
+// PAUSE TICKER WHEN TAB IS HIDDEN
+// ════════════════════════════════════════
+(function pauseTickerOnHidden() {
+  const tickerTrack = document.getElementById('tickerTrack');
+  const scoresTrack = document.querySelector('.st');
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (tickerTrack) tickerTrack.style.animationPlayState = 'paused';
+      if (scoresTrack) scoresTrack.style.animationPlayState = 'paused';
+    } else {
+      if (tickerTrack) tickerTrack.style.animationPlayState = 'running';
+      if (scoresTrack) scoresTrack.style.animationPlayState = 'running';
+    }
+  });
+})();
 
 // ════════════════════════════════════════
 // ADBLOCK DETECTION

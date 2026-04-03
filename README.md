@@ -28,7 +28,7 @@ Your #1 source for live sports scores, NBA, EPL, NFL, and top anime news, review
 
 ### 🎨 Modern UI/UX
 - **Dark theme** with red accent gradients
-- **Tailwind CSS** for responsive, beautiful design
+- **Custom CSS** with CSS variables for theming and responsive design
 - **Smooth animations** and page transitions
 - **Mobile-first responsive** design
 - **PWA enabled** for offline support
@@ -42,7 +42,7 @@ Your #1 source for live sports scores, NBA, EPL, NFL, and top anime news, review
 ## 🚀 Tech Stack
 
 - **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+)
-- **Styling**: Tailwind CSS (CDN) + Custom CSS
+- **Styling**: Custom CSS3 with CSS Variables (no frameworks)
 - **APIs**: ESPN, Jikan (MyAnimeList), AniList GraphQL
 - **PWA**: Service Worker with offline caching
 - **Hosting**: GitHub Pages
@@ -55,7 +55,7 @@ nexzone/
 ├── manifest.json       # PWA manifest
 ├── sw.js              # Service Worker
 ├── css/
-│   └── nexzone.css    # Custom styles (merged with Tailwind)
+│   └── nexzone.css    # Custom styles (legacy overrides)
 ├── js/
 │   ├── app.js         # Main app logic, routing, UI
 │   ├── api.js         # API helpers (ESPN, Jikan, AniList)
@@ -66,7 +66,7 @@ nexzone/
 ## 🎯 Recent Improvements (2026)
 
 ### UI/UX Enhancements
-✅ **Tailwind CSS Integration** - Modern, utility-first styling
+✅ **Custom CSS Overhaul** - CSS variables, gradients, responsive design
 ✅ **Smooth Page Transitions** - Fade animations between pages
 ✅ **Enhanced Score Cards** - Team records, venue, broadcast info
 ✅ **Better Ad Placements** - Gradient cards with badges
