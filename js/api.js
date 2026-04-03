@@ -139,11 +139,68 @@
   };
 
   global.fetchTopAiringAnime = async function fetchTopAiringAnime(limit = 25) {
+    // Try Jikan first
     try {
-      const r = await fetchWithTimeout(`https://api.jikan.moe/v4/top/anime?limit=${limit}&filter=airing`);
-      if (!r.ok) return null;
-      return r.json();
-    } catch { return null; }
+      const r = await fetchWithTimeout(`https://api.jikan.moe/v4/seasons/now?limit=${limit}&order_by=score&sort=desc&sfw=true`);
+      if (r.ok) {
+        const d = await r.json();
+        if (d.data && d.data.length) return d;
+      }
+    } catch {}
+
+    // Fallback 1: Kitsu
+    try {
+      const kitsuItems = await global.fetchKitsuTopAnime(limit);
+      if (kitsuItems.length) {
+        return { data: kitsuItems };
+      }
+    } catch {}
+
+    // Fallback 2: AniList GraphQL — top airing anime
+    try {
+      const query = `query($page: Int, $perPage: Int) {
+        Page(page: $page, perPage: $perPage) {
+          media(type: ANIME, status: RELEASING, sort: [SCORE_DESC]) {
+            idMal
+            title { romaji english native }
+            averageScore
+            episodes
+            format
+            genres
+            coverImage { large extraLarge }
+            siteUrl
+          }
+        }
+      }`;
+      const r = await fetchWithTimeout('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ query, variables: { page: 1, perPage: limit } })
+      });
+      if (r.ok) {
+        const d = await r.json();
+        const items = d.data?.Page?.media || [];
+        if (items.length) {
+          return {
+            data: items.map(a => ({
+              mal_id: a.idMal || 0,
+              title: a.title?.english || a.title?.romaji || 'Unknown',
+              score: a.averageScore ? a.averageScore / 10 : null,
+              episodes: a.episodes,
+              type: a.format || 'TV',
+              genres: (a.genres || []).map(g => ({ name: g })),
+              images: {
+                jpg: { image_url: a.coverImage?.large || '' },
+                webp: { image_url: a.coverImage?.extraLarge || '' }
+              },
+              url: a.siteUrl || ''
+            }))
+          };
+        }
+      }
+    } catch {}
+
+    return { data: [] };
   };
 
   // ════════════════════════════════════════

@@ -46,7 +46,8 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - Stale-While-Revalidate strategy
+// Serves cached version immediately, fetches fresh in background
 self.addEventListener('fetch', (event) => {
   // Skip non-http(s) requests
   if (!event.request.url.startsWith('http://') && !event.request.url.startsWith('https://')) {
@@ -62,29 +63,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first strategy for static assets
+  // Skip non-GET requests
   if (event.request.method !== 'GET') return;
 
+  // Stale-While-Revalidate: serve cache, update in background
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) return response;
-        return fetch(event.request).then((response) => {
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(event.request).then((cached) => {
+        // Fetch fresh version in background
+        const fetchPromise = fetch(event.request).then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            cache.put(event.request, response.clone());
           }
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
           return response;
-        });
-      })
-      .catch(() => {
-        // Offline fallback
-        if (event.request.headers.get('Accept')?.includes('text/html')) {
-          return caches.match('/index.html');
-        }
-      })
+        }).catch(() => cached); // If fetch fails, return cached
+
+        // Return cached immediately (or fresh if no cache)
+        return cached || fetchPromise;
+      });
+    })
   );
 });

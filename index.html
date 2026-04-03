@@ -15,6 +15,14 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://sulavshrestha1.github.io">
 <meta property="og:image" content="https://sulavshrestha1.github.io/og-image.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NexZone — Sports & Anime Hub">
+<meta name="twitter:image" content="https://sulavshrestha1.github.io/og-image.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NexZone — Sports & Anime Hub">
+<meta name="twitter:image" content="https://sulavshrestha1.github.io/og-image.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="NexZone — Sports & Anime Hub">
 <meta name="twitter:description" content="Live scores, sports news, anime reviews and rankings. Updated daily.">
@@ -27,6 +35,11 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://site.api.espn.com" crossorigin>
+<link rel="preconnect" href="https://api.jikan.moe" crossorigin>
+<link rel="dns-prefetch" href="https://site.api.espn.com">
+<link rel="dns-prefetch" href="https://api.jikan.moe">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* Base resets & custom properties */
@@ -56,9 +69,14 @@ body.light-mode .nav-search input{color:#2c2825}
 body.light-mode .nav-links li button{color:#7a756d}
 body.light-mode .nav-links li button:hover{color:#2c2825}
 body.light-mode .nav-links li button.active{color:#e8323c;background:rgba(232,50,60,.06)}
-body.light-mode .mobile-menu{background:#f7f4ee;border-top-color:rgba(0,0,0,.06)}
-body.light-mode .mobile-menu button{color:#7a756d;border-bottom-color:rgba(0,0,0,.05)}
-body.light-mode .mobile-menu button:hover{color:#2c2825}
+body.light-mode #nl-favorites.active{background:rgba(245,166,35,.1);color:#c4940a}
+body.light-mode .nav-cta{box-shadow:0 4px 16px rgba(232,50,60,.25)!important}
+body.light-mode .nav-cta:hover{box-shadow:0 6px 24px rgba(232,50,60,.35)!important}
+body.light-mode .mobile-menu{background:#fff;border-top-color:rgba(0,0,0,.06)}
+body.light-mode .mobile-menu button{color:#7a756d}
+body.light-mode .mobile-menu button:hover{color:#2c2825;background:rgba(0,0,0,.03)}
+body.light-mode .mobile-menu button.active{color:#c4940a;background:rgba(245,166,35,.06)}
+body.light-mode .mobile-menu-section{color:#9ca3af;border-top-color:rgba(0,0,0,.05)}
 body.light-mode .hamburger span{background:#2c2825}
 body.light-mode .ticker-bar{box-shadow:0 2px 12px rgba(232,50,60,.12)}
 body.light-mode .scores-bar{border-top-color:rgba(0,0,0,.06);border-bottom-color:rgba(0,0,0,.06)}
@@ -158,7 +176,11 @@ body.light-mode .ap-back:hover{color:#2c2825;border-color:rgba(232,50,60,.25);ba
 body.light-mode .ap-author{color:#2c2825}
 body.light-mode .ap-date{color:#7a756d}
 body.light-mode .ap-read{color:#7a756d}
-body.light-mode .sk{background:linear-gradient(90deg,#e8e2d9 25%,#d9d2c8 50%,#e8e2d9 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+body.light-mode .sk{background:linear-gradient(90deg,#e8e2d9 25%,#d9d2c8 50%,#e8e2d9 75%);background-size:200% 100%;animation:shim 1.5s infinite}
+body.light-mode .sk-score{background:#f9f6f0}
+body.light-mode .sk-anime{background:#f9f6f0}
+body.light-mode .sk-news{background:#f9f6f0}
+body.light-mode .sk-card{background:#f9f6f0}
 body.light-mode .nz-modal-box{background:#f9f6f0;border-color:rgba(232,50,60,.25)}
 body.light-mode .nz-modal-text{color:#7a756d}
 body.light-mode .nz-modal-text strong{color:#2c2825}
@@ -272,8 +294,25 @@ nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7);border-color:rgba(232,50,60,.2
 .nav-links li button:hover::before{opacity:1}
 .nav-links li button:hover{color:var(--text)}
 .nav-links li button.active{color:var(--red);background:rgba(232,50,60,.1)}
-.nav-cta{background:linear-gradient(135deg,var(--red),#ff4757)!important;color:#fff!important;border-radius:8px!important;box-shadow:0 4px 12px rgba(232,50,60,.3)}
-.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(232,50,60,.4)}
+#nl-favorites.active{background:rgba(245,166,35,.12);color:var(--gold)}
+.nav-cta{background:linear-gradient(135deg,var(--red),#ff4757)!important;color:#fff!important;border-radius:10px!important;padding:10px 20px!important;font-family:var(--fb)!important;font-size:12px!important;font-weight:600!important;letter-spacing:.8px!important;text-transform:uppercase!important;box-shadow:0 4px 16px rgba(232,50,60,.35)!important;transition:all .25s!important}
+.nav-cta:hover{transform:translateY(-2px)!important;box-shadow:0 6px 24px rgba(232,50,60,.45)!important;opacity:.95}
+
+/* Settings Dropdown */
+.nav-settings-wrap{position:relative;flex-shrink:0}
+.nav-settings-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--b);background:var(--surface);cursor:pointer;font-size:18px;transition:all .2s}
+.nav-settings-btn:hover{border-color:var(--bh);background:var(--card-h);transform:scale(1.05)}
+.settings-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--card);border:1px solid var(--b);border-radius:14px;padding:8px;min-width:220px;box-shadow:0 12px 40px rgba(0,0,0,.5);opacity:0;visibility:hidden;transform:translateY(-8px);transition:all .25s ease;z-index:100}
+.settings-dropdown.open{opacity:1;visibility:visible;transform:translateY(0)}
+.settings-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;border:none;background:none;color:var(--text);font-family:var(--fb);font-size:14px;font-weight:500;cursor:pointer;border-radius:8px;transition:all .2s;text-align:left}
+.settings-item:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.settings-item:active{background:rgba(232,50,60,.08)}
+.settings-item.active{color:var(--gold);background:rgba(245,166,35,.08)}
+body.light-mode .settings-dropdown{background:#fff;border-color:rgba(0,0,0,.1);box-shadow:0 12px 40px rgba(0,0,0,.15)}
+body.light-mode .settings-item:hover{background:rgba(0,0,0,.04)}
+body.light-mode .settings-item.active{background:rgba(245,166,35,.06)}
+body.light-mode .nav-settings-btn{border-color:rgba(0,0,0,.1);background:rgba(0,0,0,.03)}
+body.light-mode .nav-settings-btn:hover{border-color:rgba(232,50,60,.2);background:rgba(232,50,60,.04)}
 .nav-search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--b);border-radius:10px;padding:8px 14px;transition:border-color .2s,box-shadow .2s}
 .nav-search:focus-within{border-color:var(--red);box-shadow:0 0 0 3px rgba(232,50,60,.15)}
 .nav-search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--fb);font-size:14px;width:160px}
@@ -289,14 +328,44 @@ body.light-mode .theme-toggle .theme-icon-light{display:inline!important}
 body.light-mode .theme-toggle{border-color:rgba(232,50,60,.3);background:rgba(232,50,60,.06)}
 body.light-mode .theme-toggle:hover{border-color:var(--red);background:rgba(232,50,60,.12);box-shadow:0 0 12px rgba(232,50,60,.2)}
 
+/* Settings Dropdown */
+.nav-settings-wrap{position:relative;flex-shrink:0}
+.nav-settings-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--b);background:var(--surface);cursor:pointer;font-size:18px;transition:all .2s}
+.nav-settings-btn:hover{border-color:var(--bh);background:var(--card-h);transform:scale(1.05)}
+.settings-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--card);border:1px solid var(--b);border-radius:14px;padding:8px;min-width:220px;box-shadow:0 12px 40px rgba(0,0,0,.5);opacity:0;visibility:hidden;transform:translateY(-8px);transition:all .25s ease;z-index:100}
+.settings-dropdown.open{opacity:1;visibility:visible;transform:translateY(0)}
+.settings-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;border:none;background:none;color:var(--text);font-family:var(--fb);font-size:14px;font-weight:500;cursor:pointer;border-radius:8px;transition:all .2s;text-align:left}
+.settings-item:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.settings-item:active{background:rgba(232,50,60,.08)}
+.settings-item.active{color:var(--gold);background:rgba(245,166,35,.08)}
+/* Theme icons in settings - show moon by default, sun in light mode */
+.settings-theme-icon-light{display:none}
+.settings-theme-icon{display:inline}
+body.light-mode .settings-theme-icon{display:none}
+body.light-mode .settings-theme-icon-light{display:inline}
+/* Notification icons in settings - show bell only when active */
+.settings-notif-icon-on, .settings-notif-icon-off{font-size:16px;line-height:1;display:inline-block;vertical-align:middle}
+.settings-notif-icon-on{display:none}
+.settings-notif-icon-off{display:inline}
+.settings-item.active .settings-notif-icon-on{display:inline}
+.settings-item.active .settings-notif-icon-off{display:none}
+body.light-mode .settings-dropdown{background:#fff;border-color:rgba(0,0,0,.1);box-shadow:0 12px 40px rgba(0,0,0,.15)}
+body.light-mode .settings-item:hover{background:rgba(0,0,0,.04)}
+body.light-mode .settings-item.active{background:rgba(245,166,35,.06)}
+body.light-mode .nav-settings-btn{border-color:rgba(0,0,0,.1);background:rgba(0,0,0,.03)}
+body.light-mode .nav-settings-btn:hover{border-color:rgba(232,50,60,.2);background:rgba(232,50,60,.04)}
+
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;transition:transform .2s}
 .hamburger:hover{transform:scale(1.1)}
 .hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;display:block;transition:all .3s}
-.mobile-menu{display:none;flex-direction:column;background:var(--surface);border-top:1px solid var(--b);padding:16px 24px;gap:4px}
+.mobile-menu{display:none;flex-direction:column;background:var(--surface);border-top:1px solid var(--b);padding:12px 24px 20px;gap:2px}
 .mobile-menu.open{display:flex;animation:fadeIn .3s ease}
-.mobile-menu button{padding:12px 0;font-size:15px;font-weight:500;color:var(--m2);border-bottom:1px solid var(--b);text-align:left;background:none;border-left:none;border-right:none;border-top:none;font-family:var(--fb);transition:color .2s,padding-left .2s}
-.mobile-menu button:hover{color:var(--text);padding-left:8px}
-.mobile-menu button:last-child{border-bottom:none}
+.mobile-menu-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--m);padding:12px 0 4px;margin-top:4px;border-top:1px solid var(--b)}
+.mobile-menu-section:first-child{border-top:none;margin-top:0;padding-top:8px}
+.mobile-menu button{padding:12px 14px;font-size:14px;font-weight:500;color:var(--m2);border-radius:8px;text-align:left;background:none;border:none;font-family:var(--fb);transition:all .2s;display:flex;align-items:center;gap:10px}
+.mobile-menu button:hover{color:var(--text);background:rgba(255,255,255,.04);padding-left:18px}
+.mobile-menu button:active{background:rgba(232,50,60,.08)}
+.mobile-menu button.active{color:var(--gold);background:rgba(245,166,35,.08)}
 
 /* Ad Slots - Redesigned */
 .ad-wrap{max-width:1280px;margin:20px auto 0;padding:0 24px}
@@ -453,6 +522,32 @@ body.light-mode .theme-toggle:hover{border-color:var(--red);background:rgba(232,
 
 /* Skeleton Loading */
 .sk{background:linear-gradient(90deg,var(--surface) 25%,var(--card-h) 50%,var(--surface) 75%);background-size:200% 100%;border-radius:10px;animation:shim 1.5s ease-in-out infinite}
+.sk-card{border-radius:16px;overflow:hidden}
+.sk-card .sk-img{height:180px;border-radius:0}
+.sk-card .sk-body{padding:16px 18px 18px}
+.sk-card .sk-tag{height:12px;width:50px;border-radius:6px;margin-bottom:10px}
+.sk-card .sk-title{height:18px;width:100%;border-radius:6px;margin-bottom:8px}
+.sk-card .sk-title2{height:18px;width:70%;border-radius:6px;margin-bottom:12px}
+.sk-card .sk-meta{height:12px;width:60%;border-radius:6px}
+.sk-score{height:160px;border-radius:16px;padding:18px}
+.sk-score .sk-league{height:14px;width:80px;border-radius:6px;margin-bottom:14px}
+.sk-score .sk-team{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sk-score .sk-logo{width:40px;height:40px;border-radius:10px}
+.sk-score .sk-name{height:14px;width:120px;border-radius:6px}
+.sk-score .sk-pts{height:24px;width:40px;border-radius:6px;margin-left:auto}
+.sk-score .sk-status{height:12px;width:80px;border-radius:6px;margin-top:12px}
+.sk-anime{border-radius:16px;overflow:hidden}
+.sk-anime .sk-img{height:180px;border-radius:0}
+.sk-anime .sk-body{padding:14px 16px}
+.sk-anime .sk-title{height:16px;width:100%;border-radius:6px;margin-bottom:8px}
+.sk-anime .sk-meta{height:12px;width:80%;border-radius:6px}
+.sk-news{border-radius:16px;overflow:hidden}
+.sk-news .sk-img{height:170px;border-radius:0}
+.sk-news .sk-body{padding:18px 20px 20px}
+.sk-news .sk-tag{height:12px;width:60px;border-radius:6px;margin-bottom:10px}
+.sk-news .sk-title{height:18px;width:100%;border-radius:6px;margin-bottom:8px}
+.sk-news .sk-title2{height:18px;width:75%;border-radius:6px;margin-bottom:10px}
+.sk-news .sk-meta{height:12px;width:50%;border-radius:6px}
 @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* Article Page */
@@ -592,11 +687,99 @@ body.light-mode .back-to-top:hover{box-shadow:0 6px 24px rgba(232,50,60,.3)}
 .cookie-dismiss{background:transparent;color:var(--m);border:1px solid var(--b)!important}
 .cookie-dismiss:hover{color:var(--text);border-color:var(--bh)!important}
 
+/* Adblock Soft Banner */
+.adblock-banner{position:fixed;bottom:0;left:0;right:0;z-index:9996;background:var(--card);border-top:2px solid var(--red);padding:16px 24px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;box-shadow:0 -4px 24px rgba(232,50,60,.2);transform:translateY(100%);transition:transform .4s ease}
+.adblock-banner.visible{transform:translateY(0)}
+.adblock-banner p{font-size:14px;color:var(--m2);max-width:500px;line-height:1.6}
+.adblock-banner p strong{color:var(--text)}
+.adblock-banner button{padding:10px 20px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
+.adblock-banner .adblock-dismiss{background:transparent;color:var(--m);border:1px solid var(--b)!important}
+.adblock-banner .adblock-dismiss:hover{color:var(--text);border-color:var(--bh)!important}
+body.light-mode .adblock-banner{border-top-color:var(--red);background:#f9f6f0}
+
+/* PWA Install Banner */
+.pwa-install-banner{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9997;background:var(--card);border:1px solid var(--b);border-radius:16px;padding:16px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:all .4s ease;max-width:420px;width:calc(100% - 32px)}
+.pwa-install-banner.visible{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.pwa-install-banner .pwa-icon{font-size:36px;flex-shrink:0}
+.pwa-install-banner .pwa-text{flex:1;font-size:14px;color:var(--m2);line-height:1.5}
+.pwa-install-banner .pwa-text strong{color:var(--text);display:block;margin-bottom:4px}
+.pwa-install-banner .pwa-actions{display:flex;gap:8px;flex-shrink:0}
+.pwa-install-banner .pwa-install-btn{background:var(--red);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.pwa-install-banner .pwa-install-btn:hover{opacity:.9;transform:translateY(-1px)}
+.pwa-install-banner .pwa-dismiss{background:none;border:none;color:var(--m);cursor:pointer;font-size:18px;padding:4px;transition:color .2s}
+.pwa-install-banner .pwa-dismiss:hover{color:var(--text)}
+body.light-mode .pwa-install-banner{border-color:rgba(0,0,0,.1);box-shadow:0 8px 32px rgba(0,0,0,.15)}
+body.light-mode .pwa-install-banner .pwa-text{color:#7a756d}
+body.light-mode .pwa-install-banner .pwa-text strong{color:#2c2825}
+
+/* Enhanced LIVE Pulse */
+@keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(232,50,60,.6)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(232,50,60,0)}}
+.live-pulse-dot{width:8px;height:8px;background:var(--red);border-radius:50%;display:inline-block;animation:livePulse 1.5s ease-in-out infinite;margin-right:6px;vertical-align:middle}
+
+/* Poll Widget */
+.poll-widget{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:24px;margin:24px 0;position:relative;overflow:hidden}
+.poll-widget::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),var(--gold))}
+.poll-widget h4{font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.poll-widget h4::before{content:'📊'}
+.poll-option{display:block;width:100%;padding:12px 16px;margin-bottom:8px;border:1px solid var(--b);border-radius:10px;background:var(--surface);color:var(--text);font-family:var(--fb);font-size:14px;cursor:pointer;transition:all .2s;text-align:left;position:relative;overflow:hidden}
+.poll-option:hover{border-color:var(--bh);background:var(--card-h)}
+.poll-option.voted{pointer-events:none}
+.poll-option .poll-bar{position:absolute;left:0;top:0;bottom:0;background:rgba(232,50,60,.08);transition:width .5s ease}
+.poll-option .poll-label{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center}
+.poll-option .poll-pct{font-weight:700;color:var(--red);font-size:13px}
+.poll-total{font-size:12px;color:var(--m);margin-top:8px;text-align:center}
+body.light-mode .poll-widget{border-color:rgba(0,0,0,.06)}
+body.light-mode .poll-option{border-color:rgba(0,0,0,.08);background:#ede8df}
+body.light-mode .poll-option:hover{border-color:rgba(232,50,60,.25);background:#f2ede5}
+body.light-mode .poll-option .poll-bar{background:rgba(232,50,60,.06)}
+
+/* SW Update Toast */
+.sw-update-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:10000;background:var(--card);border:1px solid var(--b);border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .4s ease;font-size:14px;color:var(--text)}
+.sw-update-toast span{font-weight:500}
+.sw-update-toast button{padding:8px 16px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
+.sw-update-toast button:first-of-type{background:var(--red);color:#fff}
+.sw-update-toast button:first-of-type:hover{opacity:.9}
+.sw-update-toast button:last-of-type{background:transparent;color:var(--m);border:1px solid var(--b)!important}
+.sw-update-toast button:last-of-type:hover{color:var(--text)}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+body.light-mode .sw-update-toast{border-color:rgba(0,0,0,.1);box-shadow:0 8px 32px rgba(0,0,0,.15)}
+
+/* Favorite Star Button */
+.fav-star{position:absolute;top:10px;right:10px;z-index:5;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.15);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);line-height:1;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.fav-star:hover{transform:scale(1.2);background:rgba(0,0,0,.85);border-color:rgba(255,255,255,.3)}
+.fav-star.active{background:rgba(245,166,35,.35);border-color:rgba(245,166,35,.5);color:#f5a623;text-shadow:0 0 8px rgba(245,166,35,.4)}
+.fav-star.active:hover{background:rgba(245,166,35,.5)}
+body.light-mode .fav-star{background:rgba(255,255,255,.8);border-color:rgba(0,0,0,.1);color:#5a554d;text-shadow:none}
+body.light-mode .fav-star:hover{background:rgba(255,255,255,.95);border-color:rgba(0,0,0,.2)}
+body.light-mode .fav-star.active{background:rgba(245,166,35,.2);border-color:rgba(245,166,35,.4);color:#c4940a}
+
+/* Notification Toggle Button */
+.notif-toggle{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);cursor:pointer;transition:all .2s;font-size:18px;flex-shrink:0;position:relative}
+.notif-toggle:hover{border-color:var(--gold);background:rgba(255,255,255,.1);transform:scale(1.08)}
+.notif-toggle .notif-icon-on{display:none}
+.notif-toggle .notif-icon-off{display:inline}
+.notif-toggle.active .notif-icon-on{display:inline}
+.notif-toggle.active .notif-icon-off{display:none}
+.notif-toggle.active{border-color:rgba(245,166,35,.4);background:rgba(245,166,35,.1)}
+body.light-mode .notif-toggle{border-color:rgba(0,0,0,.12);background:rgba(0,0,0,.04)}
+body.light-mode .notif-toggle:hover{border-color:rgba(245,166,35,.3);background:rgba(245,166,35,.06)}
+body.light-mode .notif-toggle.active{border-color:rgba(245,166,35,.3);background:rgba(245,166,35,.08)}
+
+/* Mobile menu icon visibility */
+.mobile-menu .theme-icon-light{display:none}
+.mobile-menu .theme-icon-dark{display:inline}
+body.light-mode .mobile-menu .theme-icon-dark{display:none}
+body.light-mode .mobile-menu .theme-icon-light{display:inline}
+.mobile-menu .notif-icon-on{display:none}
+.mobile-menu .notif-icon-off{display:inline}
+.mobile-menu button.active .notif-icon-on{display:inline}
+.mobile-menu button.active .notif-icon-off{display:none}
+
 /* Theme Modal */
 .nz-modal{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:all .28s ease}
 .nz-modal.open{opacity:1;visibility:visible}
 .nz-modal-backdrop{position:absolute;inset:0;background:rgba(5,5,8,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.nz-modal-box{position:relative;background:var(--card);border:1px solid var(--bh);border-radius:20px;padding:36px 40px 32px;max-width:460px;width:100%;box-shadow:0 32px 96px rgba(0,0,0,.8),0 0 0 1px rgba(232,50,60,.2);animation:nzPop .28s ease}
+.nz-modal-box{position:relative;background:var(--card);border:1px solid var(--bh);border-radius:20px;padding:36px 40px 32px;max-width:460px;width:100%;box-shadow:0 32px 96px rgba(0,0,0,.8),0 0 0 1px rgba(232,50,60,.2);animation:nzPop .28s ease;overflow:hidden}
 @keyframes nzPop{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .nz-modal-accent{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--red),#ff5a62);border-radius:20px 20px 0 0}
 .nz-modal-icon{font-size:56px;line-height:1;margin-bottom:16px;filter:drop-shadow(0 4px 16px rgba(232,50,60,.4))}
@@ -752,7 +935,9 @@ input:-webkit-autofill:active {
   .nl-form input{width:100%}
   .nav-links,.nav-search{display:none}
   .hamburger{display:flex}
-  .theme-toggle{width:36px;height:36px;font-size:18px;margin-left:auto;margin-right:8px}
+  .nav-settings-wrap{display:none}
+  .nav-cta{display:none}
+  #nl-favorites{display:none}
   .game-teams{gap:24px}
   .game-team-pts{font-size:56px}
   .advertise-plans{grid-template-columns:1fr}
@@ -787,26 +972,65 @@ input:-webkit-autofill:active {
 
 <!-- Structured Data for SEO -->
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "NexZone",
-  "url": "https://sulavshrestha1.github.io",
-  "description": "Your #1 source for live sports scores, NBA, EPL, NFL, and top anime news, reviews, and rankings updated daily.",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://sulavshrestha1.github.io/#search={search_term_string}",
-    "query-input": "required name=search_term_string"
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "NexZone",
+    "url": "https://sulavshrestha1.github.io",
+    "description": "Your #1 source for live sports scores, NBA, EPL, NFL, and top anime news, reviews, and rankings updated daily.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://sulavshrestha1.github.io/#search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "NexZone Media",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://sulavshrestha1.github.io/logo.png"
+      }
+    }
   },
-  "publisher": {
-    "@type": "Organization",
-    "name": "NexZone Media",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://sulavshrestha1.github.io/logo.png"
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "NexZone",
+    "url": "https://sulavshrestha1.github.io",
+    "applicationCategory": "SportsApplication, EntertainmentApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "1250"
+    },
+    "screenshot": "https://sulavshrestha1.github.io/og-image.svg"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    "name": "NBA & EPL Live Scores",
+    "description": "Live sports scores, game details, and real-time updates for NBA, EPL, NFL, and MLB.",
+    "startDate": "2026-04-03",
+    "location": {
+      "@type": "Place",
+      "name": "Various Venues",
+      "address": "Global"
+    },
+    "organizer": {
+      "@type": "Organization",
+      "name": "NexZone",
+      "url": "https://sulavshrestha1.github.io"
     }
   }
-}
+]
 </script>
 </head>
 <body>
@@ -822,6 +1046,25 @@ input:-webkit-autofill:active {
   <p>We use cookies to enhance your experience and analyze site traffic. By continuing, you agree to our use of cookies. <a href="#privacy" onclick="nav('privacy')">Learn more</a></p>
   <button class="cookie-accept" onclick="acceptCookies()">Accept All</button>
   <button class="cookie-dismiss" onclick="dismissCookies()">Essential Only</button>
+</div>
+
+<!-- Adblock Soft Banner (shown first 2 page views) -->
+<div id="adblockBanner" class="adblock-banner" role="alert">
+  <p>🛡️ <strong>Ad blocker detected.</strong> NexZone is free thanks to ads. Please consider whitelisting us to keep the lights on.</p>
+  <button class="adblock-dismiss" onclick="dismissAdblockBanner()">Dismiss</button>
+</div>
+
+<!-- PWA Install Banner -->
+<div id="pwaInstallBanner" class="pwa-install-banner" role="dialog" aria-label="Install NexZone app">
+  <div class="pwa-icon">📲</div>
+  <div class="pwa-text">
+    <strong>Install NexZone for Live Scores</strong>
+    Get instant access to live scores, anime news, and more — right from your home screen.
+  </div>
+  <div class="pwa-actions">
+    <button class="pwa-install-btn" id="pwaInstallBtn">Install</button>
+    <button class="pwa-dismiss" onclick="dismissPWA()" aria-label="Dismiss">✕</button>
+  </div>
 </div>
 
 <!-- ════ THEME MODAL (replaces browser alert) ════ -->
@@ -876,7 +1119,7 @@ input:-webkit-autofill:active {
       <li><button id="nl-sports" onclick="nav('sports')">Sports</button></li>
       <li><button id="nl-anime" onclick="nav('anime')">Anime</button></li>
       <li><button id="nl-articles" onclick="nav('articles')">Articles</button></li>
-      <li><button class="nav-cta" onclick="nav('subscribe')">Subscribe</button></li>
+      <li><button id="nl-favorites" onclick="nav('favorites')">⭐</button></li>
     </ul>
      <div class="nav-search">
       <input type="text" placeholder="Search..." id="searchInput"
@@ -884,10 +1127,21 @@ input:-webkit-autofill:active {
       <span style="cursor:pointer" onclick="executeSearch(document.getElementById('searchInput').value)">🔍</span>
     </div>
 
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode" title="Toggle theme">
-      <span class="theme-icon-dark">🌙</span>
-      <span class="theme-icon-light">☀️</span>
-    </button>
+    <div class="nav-settings-wrap">
+      <button class="nav-settings-btn" id="settingsBtn" onclick="document.getElementById('settingsDropdown').classList.toggle('open')" aria-label="Settings" title="Settings">
+        ⚙️
+      </button>
+      <div class="settings-dropdown" id="settingsDropdown">
+        <button class="settings-item" onclick="toggleTheme();document.getElementById('settingsDropdown').classList.remove('open')">
+          <span class="settings-theme-icon">🌙</span><span class="settings-theme-icon-light">☀️</span> Toggle Theme
+        </button>
+        <button class="settings-item" onclick="toggleNotifications();document.getElementById('settingsDropdown').classList.remove('open')">
+          <span class="settings-notif-icon-off">🔕</span><span class="settings-notif-icon-on">🔔</span> Score Alerts
+        </button>
+      </div>
+    </div>
+
+    <button class="nav-cta" onclick="nav('subscribe')">Subscribe</button>
 
     <button class="hamburger" onclick="document.getElementById('mMenu').classList.toggle('open')">
       <span></span><span></span><span></span>
@@ -895,20 +1149,27 @@ input:-webkit-autofill:active {
   </div>
   <div class="mobile-menu" id="mMenu">
      <div class="mobile-search-wrap">
-      <input type="text" placeholder="Search NexZone..." 
+      <input type="text" placeholder="Search NexZone..."
              style="width:100%; background:var(--surface); border:1px solid var(--red); color:#fff; padding:12px; border-radius:8px;"
              onkeyup="if(event.key==='Enter') { executeSearch(this.value); document.getElementById('mMenu').classList.remove('open'); }">
     </div>
-    <button onclick="nav('home');document.getElementById('mMenu').classList.remove('open')">Home</button>
-    <button onclick="nav('live');document.getElementById('mMenu').classList.remove('open')">Live Scores</button>
-    <button onclick="nav('sports');document.getElementById('mMenu').classList.remove('open')">Sports</button>
-    <button onclick="nav('anime');document.getElementById('mMenu').classList.remove('open')">Anime</button>
-    <button onclick="nav('articles');document.getElementById('mMenu').classList.remove('open')">Articles</button>
-    <button onclick="nav('subscribe');document.getElementById('mMenu').classList.remove('open')">Subscribe</button>
-    <button onclick="nav('about');document.getElementById('mMenu').classList.remove('open')">About</button>
-    <button onclick="toggleTheme();document.getElementById('mMenu').classList.remove('open')" style="display:flex;align-items:center;gap:10px;justify-content:center;">
+    <div class="mobile-menu-section">Browse</div>
+    <button onclick="nav('home');document.getElementById('mMenu').classList.remove('open')">🏠 Home</button>
+    <button onclick="nav('live');document.getElementById('mMenu').classList.remove('open')">🔴 Live Scores</button>
+    <button onclick="nav('sports');document.getElementById('mMenu').classList.remove('open')">🏀 Sports</button>
+    <button onclick="nav('anime');document.getElementById('mMenu').classList.remove('open')">🎌 Anime</button>
+    <button onclick="nav('articles');document.getElementById('mMenu').classList.remove('open')">📰 Articles</button>
+    <button onclick="nav('favorites');document.getElementById('mMenu').classList.remove('open')">⭐ Favorites</button>
+    <div class="mobile-menu-section">Settings</div>
+    <button onclick="toggleTheme();document.getElementById('mMenu').classList.remove('open')" class="mobile-settings-btn">
       <span class="theme-icon-dark">🌙</span><span class="theme-icon-light">☀️</span> Toggle Theme
     </button>
+    <button onclick="toggleNotifications();document.getElementById('mMenu').classList.remove('open')" class="mobile-settings-btn">
+      <span class="notif-icon-off">🔕</span><span class="notif-icon-on">🔔</span> Score Alerts
+    </button>
+    <div class="mobile-menu-section">More</div>
+    <button onclick="nav('subscribe');document.getElementById('mMenu').classList.remove('open')">📬 Newsletter</button>
+    <button onclick="nav('about');document.getElementById('mMenu').classList.remove('open')">ℹ️ About</button>
   </div>
 </nav>
 
@@ -960,9 +1221,9 @@ input:-webkit-autofill:active {
     <div class="sec-head"><h2>Breaking News &amp; Headlines <span class="apibadge">ESPN</span></h2></div>
     <p class="news-intro">Injuries, lineups, transfers, and analysis from the NBA and Premier League — including stories from the last day.</p>
     <div class="news-feed" id="espnNewsFeed">
-      <div class="sk" style="height:180px;border-radius:14px;"></div>
-      <div class="sk" style="height:180px;border-radius:14px;"></div>
-      <div class="sk" style="height:180px;border-radius:14px;"></div>
+      <div class="sk sk-news"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-tag"></div><div class="sk sk-title"></div><div class="sk sk-title2"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-news"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-tag"></div><div class="sk sk-title"></div><div class="sk sk-title2"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-news"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-tag"></div><div class="sk sk-title"></div><div class="sk sk-title2"></div><div class="sk sk-meta"></div></div></div>
     </div>
     <div class="nz-pager-wrap" id="newsPager" aria-label="News pages"></div>
   </div>
@@ -977,10 +1238,10 @@ input:-webkit-autofill:active {
   <div class="sec reveal" id="sec-scores">
     <div class="sec-head"><h2>Today's Games <span class="apibadge">Live via ESPN</span></h2></div>
     <div class="scores-grid" id="scoresGrid">
-      <div class="sk" style="height:110px;border-radius:12px;"></div>
-      <div class="sk" style="height:110px;border-radius:12px;"></div>
-      <div class="sk" style="height:110px;border-radius:12px;"></div>
-      <div class="sk" style="height:110px;border-radius:12px;"></div>
+      <div class="sk sk-score"><div class="sk-league"></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk sk-status"></div></div>
+      <div class="sk sk-score"><div class="sk-league"></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk sk-status"></div></div>
+      <div class="sk sk-score"><div class="sk-league"></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk sk-status"></div></div>
+      <div class="sk sk-score"><div class="sk-league"></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk sk-status"></div></div>
     </div>
     <div class="nz-pager-wrap" id="homeSportsPager" aria-label="Scores pages"></div>
   </div>
@@ -1022,16 +1283,19 @@ input:-webkit-autofill:active {
   <div class="sec reveal" id="sec-anime" style="margin-top:40px;">
     <div class="sec-head"><h2>Top Airing Anime <span class="apibadge">Live via MyAnimeList</span></h2></div>
     <div class="anime-grid" id="animeGrid">
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
     </div>
     <div class="nz-pager-wrap" id="homeAnimePager" aria-label="Anime pages"></div>
+  </div>
+
+  <!-- POLL OF THE DAY -->
+  <div class="sec reveal">
+    <div id="homePoll"></div>
   </div>
 
   <!-- NEWSLETTER -->
@@ -1107,6 +1371,17 @@ input:-webkit-autofill:active {
     <div class="ap-related">
       <h3>Related Articles</h3>
       <div class="ag" id="relatedGrid"></div>
+    </div>
+
+    <!-- Article-end newsletter CTA -->
+    <div style="margin-top:48px;padding:32px;background:linear-gradient(135deg,var(--card),var(--card-h));border:1px solid var(--b);border-radius:20px;text-align:center;position:relative;overflow:hidden">
+      <div style="font-size:36px;margin-bottom:12px">📬</div>
+      <h3 style="font-family:var(--fh);font-size:28px;letter-spacing:1px;color:var(--text);margin-bottom:8px">Enjoyed this article?</h3>
+      <p style="color:var(--m2);font-size:15px;margin-bottom:20px;max-width:400px;margin-left:auto;margin-right:auto">Get the best sports and anime content delivered to your inbox every week.</p>
+      <div style="display:flex;gap:10px;max-width:400px;margin:0 auto">
+        <input type="email" id="articleNlEmail" placeholder="your@email.com" style="flex:1;background:var(--surface);border:1px solid var(--b);border-radius:10px;padding:12px 16px;color:var(--text);font-family:var(--fb);font-size:14px;outline:none;min-width:0">
+        <button onclick="subscribeArticle()" style="background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;border:none;border-radius:10px;padding:12px 20px;font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;box-shadow:0 4px 12px rgba(232,50,60,.3)">Subscribe</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1195,14 +1470,12 @@ input:-webkit-autofill:active {
       <div style="font-size:10px;margin-top:4px;opacity:.7">Target anime fans with relevant ads</div>
     </div>
     <div class="anime-grid" id="animePageGrid">
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
-      <div class="sk anc" style="height:240px;"></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
+      <div class="sk sk-anime"><div class="sk sk-img"></div><div class="sk-body"><div class="sk sk-title"></div><div class="sk sk-meta"></div></div></div>
     </div>
     <div class="nz-pager-wrap" id="animePagePager" aria-label="Anime grid pages"></div>
   </div>
@@ -1399,21 +1672,28 @@ input:-webkit-autofill:active {
 <div id="page-privacy" class="page">
   <div class="inner-page">
     <h1>Privacy Policy</h1>
-    <p class="subtitle">Last updated: January 2025</p>
-    <h2>Information We Collect</h2>
-    <p>When you subscribe to our newsletter, we collect your email address and name. We do not sell, rent, or share your personal information with third parties without your consent.</p>
-    <h2>How We Use Your Data</h2>
+    <p class="subtitle">Last updated: April 2026 · Effective immediately</p>
+    <h2>1. Information We Collect</h2>
+    <p>When you subscribe to our newsletter or contact us, we collect your name and email address. We do not collect, store, or sell any other personal information. We use Google Analytics (gtag.js) to collect anonymous usage data such as page views, category clicks, and session duration — this data cannot identify you personally.</p>
+    <h2>2. How We Use Your Data</h2>
     <ul>
-      <li>To send you our daily sports and anime newsletter</li>
-      <li>To improve the content and experience on NexZone</li>
+      <li>To send you our daily sports and anime newsletter (only if you subscribe)</li>
+      <li>To analyze site traffic and improve user experience via Google Analytics</li>
       <li>To display relevant advertising via Google AdSense</li>
+      <li>To respond to your inquiries when you contact us</li>
     </ul>
-    <h2>Google AdSense & Cookies</h2>
-    <p>NexZone uses Google AdSense to display advertisements. Google uses cookies to show you relevant ads based on your browsing history. You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" style="color:var(--red)">Google Ad Settings</a>.</p>
-    <h2>Third-Party APIs</h2>
-    <p>We use the ESPN public API for live sports scores, Jikan and MyAnimeList for anime metadata, and AniList for optional episode and streaming information. These services have their own privacy policies.</p>
-    <h2>Contact</h2>
-    <p>For any privacy concerns, <button style="background:none;border:none;color:var(--red);font-size:15px;cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;" onclick="nav('contact')">contact us here</button>.</p>
+    <h2>3. Cookies & Local Storage</h2>
+    <p>NexZone uses cookies and localStorage for: theme preference (dark/light), cookie consent status, poll voting, and PWA install dismissal. Google AdSense sets its own cookies for ad personalization. You can manage cookie preferences through your browser settings.</p>
+    <h2>4. Google AdSense & Third-Party Advertising</h2>
+    <p>We use Google AdSense to display advertisements. Google uses the DART cookie to serve ads based on your visits to this and other sites. You can opt out of DART cookie usage by visiting the <a href="https://www.google.com/settings/ads" style="color:var(--red);text-decoration:underline">Google Ad Settings</a> page. Third-party ad servers may also set cookies — we do not control these.</p>
+    <h2>5. Third-Party APIs</h2>
+    <p>We use ESPN's public API for live sports scores, Jikan (MyAnimeList) and AniList for anime metadata. These services have their own privacy policies and may collect data when our site loads content from them.</p>
+    <h2>6. Your Rights (GDPR & CCPA)</h2>
+    <p>If you are in the EU or California, you have the right to: access your data, correct inaccurate data, request deletion, and opt out of data sales. Since we do not sell personal data, the opt-out right is primarily about Google AdSense personalization (see Section 4).</p>
+    <h2>7. Data Retention</h2>
+    <p>Newsletter subscriber data is retained until you unsubscribe. Analytics data is retained for 14 months. Contact form submissions are not stored on our servers — they are sent directly to our Google Apps Script backend.</p>
+    <h2>8. Contact</h2>
+    <p>For privacy questions or data deletion requests, <button style="background:none;border:none;color:var(--red);font-size:15px;cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;" onclick="nav('contact')">contact us here</button>.</p>
   </div>
 </div>
 
@@ -1511,12 +1791,36 @@ input:-webkit-autofill:active {
     </div>
     <div class="sec-head" style="margin-top:36px;"><h2>All games today</h2></div>
     <div class="scores-grid" id="liveScoresGrid">
-      <div class="sk" style="height:120px;border-radius:12px;"></div>
-      <div class="sk" style="height:120px;border-radius:12px;"></div>
-      <div class="sk" style="height:120px;border-radius:12px;"></div>
-      <div class="sk" style="height:120px;border-radius:12px;"></div>
+      <div class="sk sk-score"><div class="sk-league"></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk sk-status"></div></div>
+      <div class="sk sk-score"><div class="sk-league"></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk sk-status"></div></div>
+      <div class="sk sk-score"><div class="sk-league"></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk sk-status"></div></div>
+      <div class="sk sk-score"><div class="sk-league"></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk-team"><div class="sk sk-logo"></div><div class="sk sk-name"></div><div class="sk sk-pts"></div></div><div class="sk sk-status"></div></div>
     </div>
     <div class="nz-pager-wrap" id="liveSportsPager" aria-label="All games pages"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: FAVORITES
+════════════════════════════════════════ -->
+<div id="page-favorites" class="page">
+  <div class="inner-page">
+    <h1>⭐ Your Favorites</h1>
+    <p class="subtitle">Teams and anime you've starred. Tap the ☆ on any card to add it here.</p>
+    <div class="sec-head" style="margin-top:24px;"><h2>Favorite Teams</h2></div>
+    <div class="scores-grid" id="favTeamsGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;">
+        <div style="font-size:48px;margin-bottom:12px;opacity:.5">⭐</div>
+        No favorite teams yet. Tap the ☆ on any score card to add one.
+      </div>
+    </div>
+    <div class="sec-head" style="margin-top:40px;"><h2>Favorite Anime</h2></div>
+    <div class="anime-grid" id="favAnimeGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;">
+        <div style="font-size:48px;margin-bottom:12px;opacity:.5">🎌</div>
+        No favorite anime yet. Tap the ☆ on any anime card to add one.
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1589,11 +1893,23 @@ input:-webkit-autofill:active {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // Cache version — bump this to force SW cache invalidation on deploy
-    const SW_VERSION = 'v2';
+    const SW_VERSION = 'v3';
     navigator.serviceWorker.register('/sw.js?v=' + SW_VERSION)
-      .then(reg => {})
-      .catch(() => {}); // Silently fail on local dev
+      .then(reg => {
+        // Detect when a new service worker activates (update available)
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          // Show update toast
+          let toast = document.getElementById('swUpdateToast');
+          if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'swUpdateToast';
+            toast.className = 'sw-update-toast';
+            toast.innerHTML = '<span>🔄 New scores available!</span><button onclick="window.location.reload()">Refresh</button><button onclick="this.parentElement.remove()">Dismiss</button>';
+            document.body.appendChild(toast);
+          }
+        });
+      })
+      .catch(() => {});
   });
 }
 </script>

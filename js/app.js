@@ -8,8 +8,13 @@
 // PRODUCTION SECURITY
 // ════════════════════════════════════════
 
-// Suppress console in production
-(function(){'use strict';var _l=console.log;console.log=function(){};console.warn=function(){};console.error=function(){};})();
+// Dev mode flag — console stays active on localhost for debugging
+const IS_DEV = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+
+// Suppress console in production only
+if (!IS_DEV) {
+  (function(){'use strict';console.log=function(){};console.warn=function(){};console.error=function(){};})();
+}
 
 // Rate limiter for form submissions
 const NZ_RATE_LIMIT = {
@@ -317,10 +322,13 @@ function showNewsDetailPage(a, setHash = true) {
 }
 
 function buildAnimeCardsHTML(items) {
+  const favs = getFavorites();
   return items.map(a => {
     const img = bestAnimeImage(a);
+    const isFav = favs.anime.some(f => f.id === a.mal_id);
     return `
-    <div class="anc" onclick="showAnimeDetailPage(${a.mal_id},true)" tabindex="0" role="button" aria-label="View anime: ${escapeAttr(a.title)}" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),showAnimeDetailPage(${a.mal_id},true)">
+    <div class="anc" onclick="showAnimeDetailPage(${a.mal_id},true)" tabindex="0" role="button" aria-label="View anime: ${escapeAttr(a.title)}" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),showAnimeDetailPage(${a.mal_id},true)" style="position:relative">
+      <button class="fav-star${isFav ? ' active' : ''}" data-anime="${a.mal_id}" onclick="event.stopPropagation();event.preventDefault();toggleAnimeFav(${a.mal_id},'${escapeAttr(a.title)}')" aria-label="Favorite anime">${isFav ? '★' : '☆'}</button>
       ${img
         ? `<img class="animg" src="${escapeAttr(img)}" alt="${escapeAttr(a.title)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'anph',innerHTML:'🎌'}))">`
         : `<div class="anph">🎌</div>`}
@@ -365,6 +373,14 @@ function paintAnimePageGrid() {
 }
 
 function nav(page, data) {
+  // Track navigation with gtag (if available)
+  try {
+    if (typeof gtag === 'function') {
+      gtag('event', 'page_view', { page_title: page, page_location: '#' + page });
+      gtag('event', 'category_click', { category: page });
+    }
+  } catch(_) {}
+
   // Track navigation history for back button
   if (currentPage && currentPage !== page) lastPage = currentPage;
 
@@ -381,6 +397,7 @@ function nav(page, data) {
   pageMangaNews = 1;
   pageSportsScores = 1;
   pageSportsArticles = 1;
+  pageFavorites = 1;
 
   // Reset anime genre filter to "All" when navigating to anime page
   if (page === 'anime') {
@@ -459,6 +476,22 @@ function nav(page, data) {
   if (page === 'manga-news') populateMangaNews();
   if (page === 'articles') populateAllArticles();
   if (page === 'live') populateLivePage();
+  if (page === 'about') {
+    updateMeta('About NexZone — Sports & Anime Hub', 'NexZone is a fan-powered sports and anime media hub. Live NBA, EPL, NFL scores, anime reviews, rankings, and episode guides — all in one place.');
+  }
+  if (page === 'privacy') {
+    updateMeta('Privacy Policy — NexZone', 'Learn how NexZone collects, uses, and protects your data. We respect your privacy and comply with GDPR and CCPA regulations.');
+  }
+  if (page === 'terms') {
+    updateMeta('Terms of Service — NexZone', 'Terms and conditions for using NexZone. By accessing our site you agree to these terms governing content usage, API data, and community guidelines.');
+  }
+  if (page === 'contact') {
+    updateMeta('Contact NexZone — Get in Touch', 'Have a story tip, feedback, or advertising inquiry? Contact the NexZone team. We respond within 2 business days.');
+  }
+  if (page === 'favorites') {
+    updateMeta('Your Favorites — NexZone', 'View your starred teams and anime. Quick access to the content you care about most.');
+    renderFavoritesPage();
+  }
   if (page === 'home') {
     // Restore saved anime pagination state
     try {
@@ -469,6 +502,7 @@ function nav(page, data) {
     paintHomeAnime();
     renderEspnNews(allEspnNews);
     buildArticlesGrid();
+    renderPollWidget('homePoll');
   }
 }
 
@@ -615,8 +649,221 @@ function populateSportsPage() {
 
 let pageSportsScores = 1;
 let pageSportsArticles = 1;
+let pageFavorites = 1;
 let currentSportsGenre = 'all';
+
+// ════════════════════════════════════════
+// FAVORITES SYSTEM
+// ════════════════════════════════════════
+function getFavorites() {
+  try {
+    return JSON.parse(localStorage.getItem('nz-favorites') || '{"teams":[],"anime":[]}');
+  } catch(_) { return { teams: [], anime: [] }; }
+}
+function saveFavorites(favs) {
+  try { localStorage.setItem('nz-favorites', JSON.stringify(favs)); } catch(_) {}
+}
+function toggleTeamFav(teamId, teamName) {
+  const favs = getFavorites();
+  const idx = favs.teams.findIndex(t => t.id === teamId);
+  if (idx >= 0) {
+    favs.teams.splice(idx, 1);
+  } else {
+    favs.teams.push({ id: teamId, name: teamName });
+  }
+  saveFavorites(favs);
+  // Update all star buttons for this team
+  document.querySelectorAll(`.fav-star[data-team="${teamId}"]`).forEach(btn => {
+    const isFav = favs.teams.some(t => t.id === teamId);
+    btn.classList.toggle('active', isFav);
+    btn.textContent = isFav ? '★' : '☆';
+  });
+  // Track
+  try { if (typeof gtag === 'function') gtag('event', 'fav_team_toggle', { team: teamName }); } catch(_) {}
+}
+function toggleAnimeFav(malId, title) {
+  const favs = getFavorites();
+  const idx = favs.anime.findIndex(a => a.id === malId);
+  if (idx >= 0) {
+    favs.anime.splice(idx, 1);
+  } else {
+    favs.anime.push({ id: malId, title: title });
+  }
+  saveFavorites(favs);
+  document.querySelectorAll(`.fav-star[data-anime="${malId}"]`).forEach(btn => {
+    const isFav = favs.anime.some(a => a.id === malId);
+    btn.classList.toggle('active', isFav);
+    btn.textContent = isFav ? '★' : '☆';
+  });
+  try { if (typeof gtag === 'function') gtag('event', 'fav_anime_toggle', { mal_id: malId }); } catch(_) {}
+}
+function renderFavoritesPage() {
+  const favs = getFavorites();
+  const teamsGrid = document.getElementById('favTeamsGrid');
+  const animeGrid = document.getElementById('favAnimeGrid');
+
+  // Render favorite teams
+  if (!favs.teams.length) {
+    teamsGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">⭐</div>No favorite teams yet. Tap the ☆ on any score card to add one.</div>';
+  } else {
+    // Find matching games from allSportsData
+    const favGames = allSportsData.filter(g => {
+      const comp = g.ev?.competitions?.[0];
+      const [home, away] = comp?.competitors || [];
+      return favs.teams.some(t =>
+        home?.team?.id === t.id || away?.team?.id === t.id ||
+        home?.team?.name === t.name || away?.team?.name === t.name
+      );
+    });
+    if (favGames.length) {
+      teamsGrid.innerHTML = buildScoreCardsHTML(favGames, null);
+    } else {
+      teamsGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">🏟️</div>No games today for your favorite teams. Check back during game hours!</div>';
+    }
+  }
+
+  // Render favorite anime
+  if (!favs.anime.length) {
+    animeGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">🎌</div>No favorite anime yet. Tap the ☆ on any anime card to add one.</div>';
+  } else {
+    const favAnime = allAnimeData.filter(a => favs.anime.some(f => f.id === a.mal_id));
+    if (favAnime.length) {
+      animeGrid.innerHTML = buildAnimeCardsHTML(favAnime);
+    } else {
+      animeGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">🎌</div>Your favorite anime isn\'t currently airing. Check back later!</div>';
+    }
+  }
+}
+
+// ════════════════════════════════════════
+// SELECTIVE NOTIFICATIONS (Favorites Only)
+// ════════════════════════════════════════
+let prevScores = {};
+let notifEnabled = false;
+
+function requestNotifPermission() {
+  if (!('Notification' in window)) return;
+  Notification.requestPermission().then(p => {
+    notifEnabled = p === 'granted';
+    try { localStorage.setItem('nz-notif-enabled', notifEnabled ? '1' : '0'); } catch(_) {}
+    updateNotifToggleState();
+    if (notifEnabled) {
+      nzAlert('Score notifications enabled! You\'ll get alerts for your favorited teams.', 'success');
+    }
+  });
+}
+
+function initNotifications() {
+  try {
+    notifEnabled = localStorage.getItem('nz-notif-enabled') === '1';
+  } catch(_) {}
+  if (notifEnabled && 'Notification' in window && Notification.permission === 'granted') {
+    notifEnabled = true;
+  } else {
+    notifEnabled = false;
+  }
+  updateNotifToggleState();
+}
+
+function sendNotif(title, body, tag) {
+  if (!notifEnabled || !('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+  try {
+    new Notification(title, {
+      body: body,
+      icon: '/icons/android-chrome-192x192.png',
+      badge: '/icons/android-chrome-192x192.png',
+      tag: tag,
+      renotify: true,
+      silent: false
+    });
+  } catch(_) {}
+}
+
+function checkScoreNotifications(newData) {
+  if (!notifEnabled) return;
+  const favs = getFavorites();
+  if (!favs.teams.length) return;
+
+  newData.forEach(game => {
+    const comp = game.ev?.competitions?.[0];
+    const [home, away] = comp?.competitors || [];
+    const homeId = home?.team?.id || home?.team?.name;
+    const awayId = away?.team?.id || away?.team?.name;
+    const isFav = favs.teams.some(t => t.id === homeId || t.name === home?.team?.name || t.id === awayId || t.name === away?.team?.name);
+    if (!isFav) return;
+
+    const gId = game.ev?.id;
+    if (!gId) return;
+
+    const prev = prevScores[gId];
+    const curr = { homeScore: home?.score, awayScore: away?.score, status: gameStatus(game.ev).cls };
+
+    if (prev) {
+      // Detect score change
+      if (prev.homeScore !== curr.homeScore || prev.awayScore !== curr.awayScore) {
+        const homeName = home?.team?.shortDisplayName || home?.team?.name || 'Home';
+        const awayName = away?.team?.shortDisplayName || away?.team?.name || 'Away';
+        sendNotif(
+          `${game.emoji} ${homeName} vs ${awayName}`,
+          `Score: ${home?.score ?? '?'} – ${away?.score ?? '?'}`,
+          'score-' + gId
+        );
+      }
+      // Detect game going final
+      if (prev.status !== 'final' && curr.status === 'final') {
+        const homeName = home?.team?.shortDisplayName || home?.team?.name || 'Home';
+        const awayName = away?.team?.shortDisplayName || away?.team?.name || 'Away';
+        sendNotif(
+          `${game.emoji} Final: ${homeName} ${home?.score ?? '?'} – ${away?.score ?? '?'} ${awayName}`,
+          'Game complete. Tap for full stats.',
+          'final-' + gId
+        );
+      }
+    }
+    prevScores[gId] = curr;
+  });
+
+  // Clean up old entries
+  const currentIds = new Set(newData.map(g => g.ev?.id).filter(Boolean));
+  Object.keys(prevScores).forEach(id => {
+    if (!currentIds.has(id)) delete prevScores[id];
+  });
+}
+
+function toggleNotifications() {
+  if (!('Notification' in window)) {
+    nzAlert('Notifications not supported in this browser.', 'info');
+    return;
+  }
+  if (notifEnabled) {
+    notifEnabled = false;
+    try { localStorage.setItem('nz-notif-enabled', '0'); } catch(_) {}
+    document.getElementById('notifToggle')?.classList.remove('active');
+    nzAlert('Score notifications disabled.', 'info');
+  } else {
+    requestNotifPermission();
+  }
+}
+
+function updateNotifToggleState() {
+  // Update settings dropdown notification item
+  document.querySelectorAll('.settings-item').forEach(b => {
+    if (b.textContent.includes('Score Alerts')) {
+      b.classList.toggle('active', notifEnabled);
+    }
+  });
+  // Update mobile menu notification button
+  document.querySelectorAll('#mMenu button').forEach(b => {
+    if (b.textContent.includes('Score Alerts')) {
+      b.classList.toggle('active', notifEnabled);
+    }
+  });
+}
+
 function filterSportsByGenre(genre, btn) {
+  // Track genre filter clicks
+  try { if (typeof gtag === 'function') gtag('event', 'sports_filter', { filter: genre }); } catch(_) {}
   currentSportsGenre = genre;
   pageSportsScores = 1;
   pageSportsArticles = 1;
@@ -742,39 +989,41 @@ let pageAnimeRankings = 1;
 async function populateAnimeRankings() {
   const list = document.getElementById('animeRankingsList');
   if (!list) return;
-  
+
   list.innerHTML = '<div style="text-align:center;padding:48px;"><span class="spin"></span> Loading rankings...</div>';
-  
+
   try {
     const d = await fetchTopAiringAnime(50);
-    const items = d.data || [];
+    const items = d?.data || [];
     if (!items.length) {
-      list.innerHTML = '<div style="text-align:center;padding:48px;color:var(--m);">Could not load rankings. Try again later.</div>';
+      list.innerHTML = '<div style="text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">📊</div>Rankings temporarily unavailable. All anime APIs may be rate-limited. Try again in a minute.</div>';
       return;
     }
-    
-    // Sort by score
+
+    // Sort by score (handle null scores)
     items.sort((a, b) => (b.score || 0) - (a.score || 0));
-    
+
     list.innerHTML = items.slice(0, 25).map((a, i) => {
       const img = bestAnimeImage(a);
       const rank = i + 1;
       const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
-      return `<div class="ranking-item" onclick="showAnimeDetailPage(${a.mal_id},true)" style="display:flex;align-items:center;gap:16px;padding:14px;background:var(--card);border:1px solid var(--b);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .2s;">
+      const animeId = a.mal_id || a.id || 0;
+      return `<div class="ranking-item" onclick="showAnimeDetailPage(${animeId},true)" style="display:flex;align-items:center;gap:16px;padding:14px;background:var(--card);border:1px solid var(--b);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .2s;">
         <div style="font-family:var(--fh);font-size:28px;min-width:50px;text-align:center;color:${rank <= 3 ? 'var(--gold)' : 'var(--m)'}">${medal}</div>
-        ${img ? `<img src="${escapeAttr(img)}" alt="" style="width:60px;height:80px;object-fit:cover;border-radius:8px;" loading="lazy">` : '<div style="width:60px;height:80px;background:var(--surface);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;">🎌</div>'}
+        ${img ? `<img src="${escapeAttr(img)}" alt="" style="width:60px;height:80px;object-fit:cover;border-radius:8px;" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:60px;height:80px;background:var(--surface);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;">🎌</div>'}
         <div style="flex:1;min-width:0;">
           <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(a.title)}</div>
           <div style="font-size:13px;color:var(--m);">${escapeHtml(a.type || 'TV')} · ${a.episodes ?? '?'} eps · ${escapeHtml((a.genres || []).slice(0, 2).map(g => g.name).join(', '))}</div>
         </div>
         <div style="text-align:right;min-width:70px;">
           <div style="font-size:24px;font-family:var(--fh);color:var(--gold);">⭐ ${a.score ?? 'N/A'}</div>
-          <div style="font-size:11px;color:var(--m);">MAL Score</div>
+          <div style="font-size:11px;color:var(--m);">Score</div>
         </div>
       </div>`;
     }).join('');
-  } catch {
-    list.innerHTML = '<div style="text-align:center;padding:48px;color:var(--m);">Failed to load rankings. Check your connection and try again.</div>';
+  } catch (e) {
+    console.log('Rankings error:', e);
+    list.innerHTML = '<div style="text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">📊</div>Failed to load rankings. Check your connection and try again.</div>';
   }
 }
 
@@ -807,7 +1056,7 @@ function openArticle(a) {
   const apImg = document.getElementById('ap-img');
   const extWrap = document.getElementById('ap-external-wrap');
   if (a.coverImage) {
-    apImg.innerHTML = `<img src="${escapeAttr(a.coverImage)}" alt="" style="width:100%;max-height:380px;object-fit:cover;border-radius:12px;display:block;border:1px solid var(--b);" loading="eager">`;
+    apImg.innerHTML = `<img src="${escapeAttr(a.coverImage)}" alt="" style="width:100%;max-height:380px;object-fit:cover;border-radius:12px;display:block;border:1px solid var(--b);" loading="eager" onerror="this.parentElement.innerHTML='<span style=\\'font-size:80px\\'>${a.emoji || '📰'}</span>'">`;
   } else {
     apImg.innerHTML = `<span style="font-size:80px">${a.emoji}</span>`;
   }
@@ -819,7 +1068,9 @@ function openArticle(a) {
     extWrap.innerHTML = '';
   }
   document.getElementById('ap-body').innerHTML = a.content;
-  document.title = `${a.title} — NexZone`;
+  updateMeta(`${a.title} — NexZone`, `${a.excerpt || a.title}. Read more on NexZone — your source for sports and anime coverage.`);
+  // Track article read
+  try { if (typeof gtag === 'function') gtag('event', 'article_read', { article_id: a.id, category: a.cat }); } catch(_) {}
   const related = ARTICLES.filter(x => x.cat === a.cat && x.id !== a.id).slice(0, 3);
   const rg = document.getElementById('relatedGrid');
   rg.innerHTML = '';
@@ -866,14 +1117,14 @@ function openGame(g) {
 
   document.getElementById('gameTeams').innerHTML = `
     <div class="game-team">
-      ${hLogo ? `<img src="${escapeAttr(hLogo)}" alt="" style="width:80px;height:80px;object-fit:contain;margin:0 auto 12px;display:block;">` : ''}
+      ${hLogo ? `<img src="${escapeAttr(hLogo)}" alt="" style="width:80px;height:80px;object-fit:contain;margin:0 auto 12px;display:block;" loading="lazy" onerror="this.style.display='none'">` : ''}
       <div class="game-team-name">${home?.team?.shortDisplayName || home?.team?.name || 'Home'}</div>
       ${homeRecord ? `<div style="font-size:14px;color:var(--m);margin-top:4px">${homeRecord}</div>` : ''}
       <div class="game-team-pts">${home?.score ?? '—'}</div>
     </div>
     <div class="game-vs">${emoji}<br>VS</div>
     <div class="game-team">
-      ${aLogo ? `<img src="${escapeAttr(aLogo)}" alt="" style="width:80px;height:80px;object-fit:contain;margin:0 auto 12px;display:block;">` : ''}
+      ${aLogo ? `<img src="${escapeAttr(aLogo)}" alt="" style="width:80px;height:80px;object-fit:contain;margin:0 auto 12px;display:block;" loading="lazy" onerror="this.style.display='none'">` : ''}
       <div class="game-team-name">${away?.team?.shortDisplayName || away?.team?.name || 'Away'}</div>
       ${awayRecord ? `<div style="font-size:14px;color:var(--m);margin-top:4px">${awayRecord}</div>` : ''}
       <div class="game-team-pts">${away?.score ?? '—'}</div>
@@ -904,7 +1155,7 @@ function openGame(g) {
     const [oh, oa] = oc?.competitors || [];
     const os = gameStatus(o.ev);
     return `<div class="sc ${os.cls === 'live' ? 'islive' : ''}" onclick="nav('game', allSportsData.find(x=>x.ev.id==='${o.ev.id}'))">
-      <div class="sc-lg">${o.emoji} ${o.sport} ${os.cls === 'live' ? '<span style="color:var(--red);font-size:9px">● LIVE</span>' : ''}</div>
+      <div class="sc-lg">${o.emoji} ${o.sport} ${os.cls === 'live' ? '<span style="color:var(--red);font-size:9px"><span class="live-pulse-dot"></span>LIVE</span>' : ''}</div>
       <div class="sc-teams">
         <div class="sc-team"><span>${oh?.team?.abbreviation || '?'}</span><span class="pts">${oh?.score ?? '—'}</span></div>
         <div class="sc-team"><span>${oa?.team?.abbreviation || '?'}</span><span class="pts">${oa?.score ?? '—'}</span></div>
@@ -1221,11 +1472,18 @@ function buildScoreCardsHTML(data, max) {
     // Get team records
     const homeRecord = home?.records?.[0]?.summary || '';
     const awayRecord = away?.records?.[0]?.summary || '';
-    
-    return `<div class="sc ${st.cls === 'live' ? 'islive' : ''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))" tabindex="0" role="button" aria-label="View game: ${escapeHtml(home?.team?.shortDisplayName || 'Home')} vs ${escapeHtml(away?.team?.shortDisplayName || 'Away')}" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
+
+    // Check if either team is favorited
+    const favs = getFavorites();
+    const homeFav = favs.teams.some(t => t.id === home?.team?.id || t.name === home?.team?.name);
+    const awayFav = favs.teams.some(t => t.id === away?.team?.id || t.name === away?.team?.name);
+    const isFav = homeFav || awayFav;
+
+    return `<div class="sc ${st.cls === 'live' ? 'islive' : ''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))" tabindex="0" role="button" aria-label="View game: ${escapeHtml(home?.team?.shortDisplayName || 'Home')} vs ${escapeHtml(away?.team?.shortDisplayName || 'Away')}" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))" style="position:relative">
+      <button class="fav-star${isFav ? ' active' : ''}" data-team="${home?.team?.id || ''}" onclick="event.stopPropagation();event.preventDefault();toggleTeamFav('${home?.team?.id || ''}','${escapeAttr(home?.team?.name || '')}')" aria-label="Favorite team">${isFav ? '★' : '☆'}</button>
       <div class="sc-lg">
         <span>${emoji} ${sport}</span>
-        ${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px;font-weight:700" class="animate-pulse">● LIVE</span>' : ''}
+        ${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px;font-weight:700"><span class="live-pulse-dot"></span>LIVE</span>' : ''}
       </div>
       <div class="sc-teams">
         <div class="sc-team ${hwins ? 'win' : ''}">
@@ -1273,6 +1531,9 @@ function renderSports(data) {
   allSportsData = data;
   setupApiPills();
   updatePillFilterClass();
+
+  // Check for score notifications on favorited teams
+  checkScoreNotifications(data);
 
   // Cache sports data for faster refresh
   try {
@@ -1432,6 +1693,8 @@ function bestAnimeImage(a) {
 }
 
 function showAnimeDetailPage(malId, setHash) {
+  // Track anime detail page view
+  try { if (typeof gtag === 'function') gtag('event', 'anime_detail_view', { mal_id: malId }); } catch(_) {}
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-anime-detail').classList.add('active');
   if (setHash) window.location.hash = 'anime-' + malId;
@@ -1476,7 +1739,7 @@ async function loadAnimeDetail(malId) {
   const titleNat = anime.title_japanese || ani?.title?.native || '';
 
   hero.innerHTML = banner
-    ? `<img class="anime-detail-banner" src="${escapeAttr(banner)}" alt="" loading="eager">
+    ? `<img class="anime-detail-banner" src="${escapeAttr(banner)}" alt="" loading="eager" onerror="this.style.display='none';this.parentElement.querySelector('.anime-detail-banner-fallback').style.display='flex'">
        <div class="anime-detail-title-wrap">
          <h1 class="anime-detail-title">${escapeHtml(title)}</h1>
          <div class="anime-detail-sub">${escapeHtml(titleNat)}</div>
@@ -1556,7 +1819,7 @@ async function loadAnimeDetail(malId) {
     streamEl.innerHTML = `<div class="streaming-grid">${streams.slice(0, 12).map(s => `
       <div class="stream-card">
         <a href="${escapeAttr(s.url)}" target="_blank" rel="noopener">
-          ${s.thumbnail ? `<img class="stream-thumb" src="${escapeAttr(s.thumbnail)}" alt="">` : ''}
+          ${s.thumbnail ? `<img class="stream-thumb" src="${escapeAttr(s.thumbnail)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
           <div class="t">${escapeHtml(s.title || 'Episode')}</div>
         </a>
       </div>`).join('')}</div>`;
@@ -1610,6 +1873,8 @@ async function initAnimeGenreFilters() {
 }
 
 window.applyAnimeGenreFilter = async function (genreId, btn) {
+  // Track anime genre filter clicks
+  try { if (typeof gtag === 'function') gtag('event', 'anime_genre_filter', { genre: genreId || 'all' }); } catch(_) {}
   document.querySelectorAll('#animeFilterChips .filter-chip').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   pill('pill-anime', 'ld', '<span class="spin"></span> Filtering…');
@@ -1661,6 +1926,27 @@ async function subscribe() {
     });
     document.getElementById('nlEmail').value = '';
     nav('subscribed');
+    // Track newsletter subscription
+    try { if (typeof gtag === 'function') gtag('event', 'newsletter_subscribe', { source: 'footer' }); } catch(_) {}
+  } catch (_) {
+    nzAlert('Subscription failed. Please try again later.', 'error');
+  }
+}
+
+async function subscribeArticle() {
+  const v = document.getElementById('articleNlEmail')?.value;
+  if (!v || !v.includes('@')) { nzAlert('Please enter a valid email address.', 'error'); return; }
+  if (!NZ_RATE_LIMIT.check('articleSub')) { nzAlert('Too many attempts. Please wait a minute.', 'error'); return; }
+  try {
+    await fetch(NZ_MAIL_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      body: JSON.stringify({ type: 'subscribe', name: 'Reader', email: nzSanitize(v), interest: 'Article Newsletter' })
+    });
+    document.getElementById('articleNlEmail').value = '';
+    nzAlert('Subscribed! Check your inbox for a welcome email.', 'success');
+    // Track article-end newsletter subscription
+    try { if (typeof gtag === 'function') gtag('event', 'newsletter_subscribe', { source: 'article_end' }); } catch(_) {}
   } catch (_) {
     nzAlert('Subscription failed. Please try again later.', 'error');
   }
@@ -1744,6 +2030,15 @@ document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
 
 window.addEventListener('scroll', () =>
   document.getElementById('mainNav').classList.toggle('scrolled', scrollY > 40));
+
+// Close settings dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('settingsDropdown');
+  const btn = document.getElementById('settingsBtn');
+  if (dropdown && btn && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+    dropdown.classList.remove('open');
+  }
+});
 
 function executeSearch(query) {
   if (!query || query.trim() === '') return;
@@ -1856,7 +2151,7 @@ function executeSearch(query) {
       const hl = logoUrl(home?.team);
       const al = logoUrl(away?.team);
       card.innerHTML = `
-        <div class="sc-lg"><span>${r.data.emoji} ${r.data.sport}</span>${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px;font-weight:700">● LIVE</span>' : ''}</div>
+        <div class="sc-lg"><span>${r.data.emoji} ${r.data.sport}</span>${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px;font-weight:700"><span class="live-pulse-dot"></span>LIVE</span>' : ''}</div>
         <div class="sc-teams">
           <div class="sc-team"><div style="display:flex;align-items:center;gap:10px"><span>${home?.team?.shortDisplayName || home?.team?.abbreviation || 'Home'}</span><span class="pts">${home?.score ?? '—'}</span></div></div>
           <div class="sc-team"><div style="display:flex;align-items:center;gap:10px"><span>${away?.team?.shortDisplayName || away?.team?.abbreviation || 'Away'}</span><span class="pts">${away?.score ?? '—'}</span></div></div>
@@ -2090,6 +2385,171 @@ function dismissCookies() {
   }
 })();
 
+// ════════════════════════════════════════
+// PWA INSTALL PROMPT
+// ════════════════════════════════════════
+let pwaDeferredPrompt = null;
+let liveVisitCount = 0;
+(function initPWAInstall() {
+  const banner = document.getElementById('pwaInstallBanner');
+  const installBtn = document.getElementById('pwaInstallBtn');
+  if (!banner || !installBtn) return;
+
+  // Check if user already dismissed
+  try { if (localStorage.getItem('nz-pwa-dismissed')) return; } catch(_) {}
+
+  // Listen for beforeinstallprompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    pwaDeferredPrompt = e;
+  });
+
+  // Show banner after 30 seconds OR 2 Live section visits
+  const showBanner = () => {
+    if (!pwaDeferredPrompt) return;
+    banner.classList.add('visible');
+  };
+
+  // 30-second timer
+  setTimeout(showBanner, 30000);
+
+  // Track Live section visits
+  const origNav = window.nav;
+  const _origNav = nav;
+  // We'll track via the nav function's page parameter
+})();
+
+// Override nav to track Live visits for PWA prompt
+(function trackLiveVisits() {
+  const origNav = window.nav;
+  window.nav = function(page, data) {
+    if (page === 'live') {
+      liveVisitCount++;
+      if (liveVisitCount >= 2 && pwaDeferredPrompt) {
+        try {
+          if (!localStorage.getItem('nz-pwa-dismissed')) {
+            const banner = document.getElementById('pwaInstallBanner');
+            if (banner) banner.classList.add('visible');
+          }
+        } catch(_) {}
+      }
+    }
+    return origNav(page, data);
+  };
+})();
+
+function dismissPWA() {
+  const banner = document.getElementById('pwaInstallBanner');
+  if (banner) banner.classList.remove('visible');
+  try { localStorage.setItem('nz-pwa-dismissed', '1'); } catch(_) {}
+}
+
+// Install button click handler
+(function initPWAInstallBtn() {
+  const installBtn = document.getElementById('pwaInstallBtn');
+  if (!installBtn) return;
+  installBtn.onclick = async () => {
+    if (!pwaDeferredPrompt) return;
+    pwaDeferredPrompt.prompt();
+    const { outcome } = await pwaDeferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      const banner = document.getElementById('pwaInstallBanner');
+      if (banner) banner.classList.remove('visible');
+    }
+    pwaDeferredPrompt = null;
+  };
+})();
+
+// ════════════════════════════════════════
+// DYNAMIC META DESCRIPTION
+// ════════════════════════════════════════
+function updateMeta(title, description) {
+  document.title = title;
+  let metaDesc = document.querySelector('meta[name="description"]');
+  if (!metaDesc) {
+    metaDesc = document.createElement('meta');
+    metaDesc.name = 'description';
+    document.head.appendChild(metaDesc);
+  }
+  metaDesc.content = description;
+}
+
+// ════════════════════════════════════════
+// POLL OF THE DAY
+// ════════════════════════════════════════
+const NZ_POLLS = [
+  {
+    id: 'poll-nd-derby',
+    question: 'Who wins the North London Derby?',
+    options: ['Arsenal', 'Tottenham', 'Draw'],
+    votes: [0, 0, 0]
+  },
+  {
+    id: 'poll-mvp',
+    question: 'NBA MVP this season?',
+    options: ['Jokic', 'Giannis', 'Tatum', 'Luka'],
+    votes: [0, 0, 0, 0]
+  },
+  {
+    id: 'poll-anime',
+    question: 'Best anime of the season?',
+    options: ['Solo Leveling', 'Frieren', 'Demon Slayer', 'One Piece'],
+    votes: [0, 0, 0, 0]
+  }
+];
+
+function renderPollWidget(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  // Pick a poll based on the day
+  const dayIndex = Math.floor(Date.now() / 86400000) % NZ_POLLS.length;
+  const poll = NZ_POLLS[dayIndex];
+
+  // Check if user already voted
+  let votedOption = null;
+  try { votedOption = parseInt(localStorage.getItem('nz-poll-' + poll.id)); } catch(_) {}
+
+  if (votedOption !== null && !isNaN(votedOption)) {
+    poll.votes[votedOption]++;
+  }
+
+  const total = poll.votes.reduce((a, b) => a + b, 0) || 1;
+
+  container.innerHTML = `
+    <div class="poll-widget">
+      <h4>${poll.question}</h4>
+      ${poll.options.map((opt, i) => {
+        const pct = votedOption !== null ? Math.round((poll.votes[i] / total) * 100) : 0;
+        return `<button class="poll-option${votedOption !== null ? ' voted' : ''}" data-poll="${poll.id}" data-index="${i}" onclick="votePoll('${poll.id}', ${i})">
+          <div class="poll-bar" style="width:${votedOption !== null ? pct : 0}%"></div>
+          <div class="poll-label">
+            <span>${opt}</span>
+            ${votedOption !== null ? `<span class="poll-pct">${pct}%</span>` : ''}
+          </div>
+        </button>`;
+      }).join('')}
+      ${votedOption !== null ? `<div class="poll-total">${total} votes</div>` : '<div class="poll-total">Tap to vote</div>'}
+    </div>`;
+}
+
+function votePoll(pollId, optionIndex) {
+  const key = 'nz-poll-' + pollId;
+  try {
+    if (localStorage.getItem(key)) return; // Already voted
+    localStorage.setItem(key, optionIndex);
+    // Track poll vote
+    try { if (typeof gtag === 'function') gtag('event', 'poll_vote', { poll_id: pollId, option: optionIndex }); } catch(_) {}
+  } catch(_) { return; }
+
+  // Re-render all poll widgets
+  document.querySelectorAll('.poll-widget').forEach(el => {
+    const parent = el.parentElement;
+    if (parent.id) renderPollWidget(parent.id);
+  });
+}
+
+initNotifications();
 setupLiveInteractions();
 init();
 setInterval(init, 90000);
@@ -2112,14 +2572,14 @@ setInterval(init, 90000);
 })();
 
 // ════════════════════════════════════════
-// ADBLOCK DETECTION
+// ADBLOCK DETECTION (Soft Wall → Hard Wall)
 // ════════════════════════════════════════
 let adblockDetected = false;
 let adblockCheckInterval = null;
+let adblockPageCount = 0;
 
 function nzDetectAdblock() {
   return new Promise((resolve) => {
-    // Method 1: Create bait element that adblockers typically block
     const bait = document.createElement('div');
     bait.innerHTML = '&nbsp;';
     bait.className = 'adsbox ad-banner ad-content textads banner-ads banner ad-zone adspace';
@@ -2136,42 +2596,63 @@ function nzDetectAdblock() {
 
       if (document.body.contains(bait)) bait.remove();
 
-      // Method 2: Quick check for common adblocker globals
-      const hasAdblocker = typeof window.adsbygoogle !== 'undefined' &&
-                           typeof window.google_jobrunner === 'undefined';
+      const adSenseBlocked = typeof window.adsbygoogle === 'undefined' &&
+                             document.querySelector('script[src*="googlesyndication"]') !== null;
 
-      resolve(baitBlocked || hasAdblocker);
+      resolve(baitBlocked || adSenseBlocked);
     }, 200);
   });
 }
 
-async function nzCheckAdblock() {
-  const overlay = document.getElementById('adblockOverlay');
-  if (!overlay) return;
+// Soft wall: show dismissible banner first
+function showAdblockBanner() {
+  adblockDetected = true;
+  const banner = document.getElementById('adblockBanner');
+  if (banner) banner.classList.add('visible');
+}
 
+// Hard wall: full overlay after 3+ page views with adblocker
+function showAdblockOverlay() {
+  adblockDetected = true;
+  const overlay = document.getElementById('adblockOverlay');
+  if (overlay) {
+    overlay.style.display = 'flex';
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
+  document.body.style.height = '100%';
+  document.body.style.touchAction = 'none';
+}
+
+async function nzCheckAdblock() {
   const isBlocked = await nzDetectAdblock();
 
   if (isBlocked) {
-    adblockDetected = true;
-    overlay.style.display = 'flex';
-    overlay.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.height = '100%';
-    document.body.style.touchAction = 'none';
+    try { adblockPageCount = parseInt(localStorage.getItem('nz-adblock-pages') || '0'); } catch(_) {}
+    adblockPageCount++;
+    try { localStorage.setItem('nz-adblock-pages', adblockPageCount); } catch(_) {}
 
-    // Start periodic re-check
+    if (adblockPageCount >= 3) {
+      showAdblockOverlay();
+    } else {
+      showAdblockBanner();
+    }
+
     if (adblockCheckInterval) clearInterval(adblockCheckInterval);
     adblockCheckInterval = setInterval(async () => {
       const stillBlocked = await nzDetectAdblock();
-      if (!stillBlocked) {
-        nzRemoveAdblockOverlay();
-      }
-    }, 3000);
+      if (!stillBlocked) nzRemoveAdblockOverlay();
+    }, 5000);
   } else {
     nzRemoveAdblockOverlay();
   }
+}
+
+function dismissAdblockBanner() {
+  const banner = document.getElementById('adblockBanner');
+  if (banner) banner.classList.remove('visible');
 }
 
 function nzRemoveAdblockOverlay() {
@@ -2180,7 +2661,11 @@ function nzRemoveAdblockOverlay() {
     overlay.style.display = 'none';
     overlay.setAttribute('aria-hidden', 'true');
   }
+  const banner = document.getElementById('adblockBanner');
+  if (banner) banner.classList.remove('visible');
   adblockDetected = false;
+  adblockPageCount = 0;
+  try { localStorage.removeItem('nz-adblock-pages'); } catch(_) {}
   document.body.style.overflow = '';
   document.body.style.position = '';
   document.body.style.width = '';
