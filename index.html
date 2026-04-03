@@ -5,21 +5,627 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="NexZone — Your #1 source for live sports scores, NBA, EPL, NFL, and top anime news, reviews, and rankings updated daily.">
 <meta name="keywords" content="sports news, anime news, NBA scores, EPL scores, anime reviews, live sports">
+<meta name="author" content="NexZone Media">
+<meta name="robots" content="index, follow">
 <meta property="og:title" content="NexZone — Sports & Anime Hub">
 <meta property="og:description" content="Live scores, sports news, anime reviews and rankings. Updated daily.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://sulavshrestha1.github.io">
+<meta property="og:image" content="https://sulavshrestha1.github.io/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NexZone — Sports & Anime Hub">
+<meta name="twitter:description" content="Live scores, sports news, anime reviews and rankings. Updated daily.">
 <meta name="theme-color" content="#e8323c">
 <title>NexZone — Sports & Anime Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        nz: {
+          bg: '#0a0a0c',
+          surface: '#111118',
+          card: '#16161f',
+          cardh: '#1c1c28',
+          red: '#e8323c',
+          redglow: 'rgba(232,50,60,.15)',
+          gold: '#f5a623',
+          green: '#50c878',
+          blue: '#7eb8f7',
+          text: '#f0eff5',
+          muted: '#6b7080',
+          muted2: '#9299a8',
+          border: 'rgba(255,255,255,.07)',
+          borderhover: 'rgba(232,50,60,.4)',
+        }
+      },
+      fontFamily: {
+        heading: ['Bebas Neue', 'sans-serif'],
+        body: ['Outfit', 'sans-serif'],
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.4s ease-out',
+        'fade-up': 'fadeUp 0.5s ease-out',
+        'slide-in': 'slideIn 0.3s ease-out',
+        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'bounce-slow': 'bounce 2s infinite',
+        'shimmer': 'shimmer 1.5s ease-in-out infinite',
+        'ticker': 'ticker 70s linear infinite',
+        'scores-scroll': 'scoresScroll 45s linear infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideIn: {
+          '0%': { opacity: '0', transform: 'translateX(-10px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        shimmer: {
+          '0%, 100%': { opacity: '0.4' },
+          '50%': { opacity: '0.8' },
+        },
+        ticker: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        scoresScroll: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
+      boxShadow: {
+        'glow': '0 0 20px rgba(232,50,60,.3)',
+        'glow-lg': '0 0 40px rgba(232,50,60,.4)',
+        'card': '0 4px 24px rgba(0,0,0,.4)',
+        'card-hover': '0 12px 40px rgba(0,0,0,.6)',
+      }
+    }
+  }
+}
+</script>
+<style>
+/* Base resets & custom properties */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0c;--surface:#111118;--card:#16161f;--card-h:#1c1c28;
+  --b:rgba(255,255,255,.07);--bh:rgba(232,50,60,.4);
+  --red:#e8323c;--rg:rgba(232,50,60,.15);--gold:#f5a623;
+  --green:#50c878;--blue:#7eb8f7;
+  --text:#f0eff5;--m:#6b7080;--m2:#9299a8;
+  --fh:'Bebas Neue',sans-serif;--fb:'Outfit',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:17px;line-height:1.65;overflow-x:hidden;min-height:100vh}
+a{text-decoration:none;color:inherit;cursor:pointer}
+button{cursor:pointer}
+img{max-width:100%}
+
+/* Page System with smooth transitions */
+.page{display:none;opacity:0;transform:translateY(12px);transition:opacity 0.35s ease, transform 0.35s ease}
+.page.active{display:block;opacity:1;transform:translateY(0)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Ticker Bar */
+.ticker-bar{background:linear-gradient(90deg,#e8323c,#ff4757);overflow:hidden;min-height:44px;display:flex;align-items:center;flex-shrink:0;box-shadow:0 2px 12px rgba(232,50,60,.3)}
+.ticker-label{background:rgba(0,0,0,.2);color:#fff;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 18px;height:100%;min-height:44px;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;gap:6px;cursor:pointer;transition:background .2s,filter .2s;user-select:none}
+.ticker-label:hover,.ticker-label:focus-visible{background:rgba(0,0,0,.3)}
+.ticker-of{overflow:hidden;flex:1;position:relative}
+.ticker-of::before,.ticker-of::after{content:'';position:absolute;top:0;bottom:0;width:40px;z-index:2;pointer-events:none}
+.ticker-of::before{left:0;background:linear-gradient(90deg,#e8323c,transparent)}
+.ticker-of::after{right:0;background:linear-gradient(-90deg,#ff4757,transparent)}
+.ticker-track{display:flex;animation:ticker 60s linear infinite;white-space:nowrap;will-change:transform}
+.ticker-track .tck-item,.ticker-track .tck-empty{display:inline-block;padding:0 24px;font-size:14px;font-weight:500;color:#fff}
+.ticker-track .tck-item{cursor:pointer;transition:opacity .15s}
+.ticker-track .tck-item:hover{opacity:.85}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Navigation */
+nav{position:sticky;top:0;z-index:200;background:rgba(10,10,12,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b);transition:box-shadow .3s,border-color .3s}
+nav.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.7);border-color:rgba(232,50,60,.2)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-family:var(--fh);font-size:32px;letter-spacing:3px;color:var(--text);flex-shrink:0;cursor:pointer;transition:transform .2s}
+.logo:hover{transform:scale(1.05)}
+.logo span{color:var(--red)}
+.nav-links{display:flex;gap:4px;list-style:none}
+.nav-links li button{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--m2);padding:8px 14px;border-radius:8px;transition:all .2s;background:none;border:none;font-family:var(--fb);position:relative;overflow:hidden}
+.nav-links li button::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,50,60,.1),transparent);opacity:0;transition:opacity .2s}
+.nav-links li button:hover::before{opacity:1}
+.nav-links li button:hover{color:var(--text)}
+.nav-links li button.active{color:var(--red);background:rgba(232,50,60,.1)}
+.nav-cta{background:linear-gradient(135deg,var(--red),#ff4757)!important;color:#fff!important;border-radius:8px!important;box-shadow:0 4px 12px rgba(232,50,60,.3)}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(232,50,60,.4)}
+.nav-search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--b);border-radius:10px;padding:8px 14px;transition:border-color .2s,box-shadow .2s}
+.nav-search:focus-within{border-color:var(--red);box-shadow:0 0 0 3px rgba(232,50,60,.15)}
+.nav-search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--fb);font-size:14px;width:160px}
+.nav-search input::placeholder{color:var(--m)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;transition:transform .2s}
+.hamburger:hover{transform:scale(1.1)}
+.hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;display:block;transition:all .3s}
+.mobile-menu{display:none;flex-direction:column;background:var(--surface);border-top:1px solid var(--b);padding:16px 24px;gap:4px}
+.mobile-menu.open{display:flex;animation:fadeIn .3s ease}
+.mobile-menu button{padding:12px 0;font-size:15px;font-weight:500;color:var(--m2);border-bottom:1px solid var(--b);text-align:left;background:none;border-left:none;border-right:none;border-top:none;font-family:var(--fb);transition:color .2s,padding-left .2s}
+.mobile-menu button:hover{color:var(--text);padding-left:8px}
+.mobile-menu button:last-child{border-bottom:none}
+
+/* Ad Slots - Redesigned */
+.ad-wrap{max-width:1280px;margin:20px auto 0;padding:0 24px}
+.ad-slot{border:2px dashed rgba(245,166,35,.25);border-radius:12px;background:linear-gradient(135deg,rgba(245,166,35,.05),rgba(232,50,60,.03));display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--m);font-size:12px;letter-spacing:.5px;text-transform:uppercase;font-weight:600;text-align:center;transition:border-color .3s,box-shadow .3s;position:relative;overflow:hidden}
+.ad-slot::before{content:'';position:absolute;inset:0;background:linear-gradient(45deg,transparent,rgba(245,166,35,.08),transparent);opacity:0;transition:opacity .3s}
+.ad-slot:hover::before{opacity:1}
+.ad-slot:hover{border-color:rgba(245,166,35,.4);box-shadow:0 4px 20px rgba(245,166,35,.15)}
+.ad-slot.lb{height:100px}
+.ad-slot.rect{height:280px;width:100%}
+.ad-slot.inline{height:100px;margin:24px 0}
+.ad-badge{position:absolute;top:8px;right:12px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(245,166,35,.15);padding:2px 8px;border-radius:4px}
+
+/* API Status Pills */
+.api-bar{max-width:1280px;margin:12px auto 0;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.api-pill{font-size:11px;font-weight:600;padding:6px 12px;border-radius:20px;display:flex;align-items:center;gap:6px;border:1px solid var(--b);color:var(--m2);transition:all .2s;cursor:default}
+.api-pill.ld{border-color:rgba(245,166,35,.3);color:var(--gold)}
+.api-pill.ok{border-color:rgba(80,200,120,.3);color:var(--green)}
+.api-pill.er{border-color:rgba(232,50,60,.3);color:var(--red)}
+.api-dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.api-pill.api-click{cursor:pointer}
+.api-pill.api-click:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.35)}
+.api-pill.is-filter{background:rgba(80,200,120,.15);border-color:rgba(80,200,120,.6);color:var(--green)!important;box-shadow:0 0 12px rgba(80,200,120,.2)}
+.api-pill.is-filter .api-dot{background:var(--green)}
+.lu{font-size:12px;color:var(--m);margin-left:auto;display:flex;align-items:center;gap:6px}
+.spin{width:12px;height:12px;border:2px solid var(--b);border-top-color:var(--green);border-radius:50%;display:inline-block;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* Hero Section */
+.hero{max-width:1280px;margin:28px auto 0;padding:0 24px;display:grid;grid-template-columns:1fr 360px;gap:20px}
+.hero-main{background:linear-gradient(135deg,var(--card),var(--card-h));border-radius:20px;border:1px solid var(--b);padding:40px;position:relative;overflow:hidden;transition:all .3s;cursor:pointer}
+.hero-main::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 10% 80%,rgba(232,50,60,.15) 0%,transparent 60%);pointer-events:none}
+.hero-main::after{content:'';position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:radial-gradient(circle,rgba(232,50,60,.08) 0%,transparent 70%);pointer-events:none}
+.hero-main:hover{border-color:var(--bh);box-shadow:var(--glow-lg);transform:translateY(-2px)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 12px;border-radius:6px;margin-bottom:16px;animation:pulse 2s ease-in-out infinite;box-shadow:0 4px 12px rgba(232,50,60,.4)}
+.hero-badge::before{content:'●';font-size:7px}
+.hero-title{font-family:var(--fh);font-size:58px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:16px;position:relative;z-index:1}
+.hero-excerpt{color:var(--m2);font-size:17px;line-height:1.8;max-width:520px;margin-bottom:24px;position:relative;z-index:1}
+.hero-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:relative;z-index:1}
+.author{font-size:13px;color:var(--m);font-weight:500}
+.cat-tag{font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;background:rgba(245,166,35,.15);color:var(--gold);text-transform:uppercase;letter-spacing:.5px}
+.read-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;font-size:14px;font-weight:600;padding:12px 24px;border-radius:10px;transition:all .2s;margin-top:24px;border:none;font-family:var(--fb);box-shadow:0 4px 16px rgba(232,50,60,.3)}
+.read-btn:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 6px 20px rgba(232,50,60,.4)}
+.hero-stack{display:flex;flex-direction:column;gap:14px}
+.stack-card{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.stack-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--red),transparent);opacity:0;transition:opacity .2s}
+.stack-card:hover::before{opacity:1}
+.stack-card:hover{border-color:var(--bh);background:var(--card-h);transform:translateX(6px);box-shadow:var(--card)}
+.stag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.stag.anime{color:var(--gold)}.stag.sports{color:var(--red)}
+.stitle{font-size:15px;font-weight:600;line-height:1.45;color:var(--text)}
+.stime{font-size:11px;color:var(--m);margin-top:6px}
+
+/* Live Scores Bar */
+.scores-bar{background:var(--surface);border-top:1px solid var(--b);border-bottom:1px solid var(--b);overflow:hidden;min-height:56px;display:flex;align-items:center;margin-top:32px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+.live-label{background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:0 20px;min-height:56px;height:100%;display:flex;align-items:center;flex-shrink:0;gap:8px;cursor:pointer;transition:background .2s;user-select:none;box-shadow:4px 0 12px rgba(232,50,60,.3)}
+.live-label:hover{background:linear-gradient(135deg,#c42a32,#e8323c)}
+.live-dot{width:8px;height:8px;background:#fff;border-radius:50%;animation:lp 1.4s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.sof{overflow:hidden;flex:1;position:relative}
+.sof::before,.sof::after{content:'';position:absolute;top:0;bottom:0;width:30px;z-index:2;pointer-events:none}
+.sof::before{left:0;background:linear-gradient(90deg,var(--surface),transparent)}
+.sof::after{right:0;background:linear-gradient(-90deg,var(--surface),transparent)}
+.st{display:flex;animation:scoresScroll 50s linear infinite;white-space:nowrap;will-change:transform}
+.si{padding:0 28px;font-size:14px;font-weight:500;color:var(--text);border-right:1px solid var(--b);min-height:56px;height:56px;display:inline-flex;align-items:center;gap:10px;flex-shrink:0;transition:background .15s}
+.si[data-ev]{cursor:pointer}
+.si[data-ev]:hover{background:rgba(232,50,60,.1)}
+.sv{font-weight:700;color:var(--gold)}
+.slive{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:3px 6px;border-radius:4px;text-transform:uppercase;animation:pulse 1.5s infinite}
+.sfin{background:rgba(255,255,255,.1);color:var(--m2);font-size:9px;font-weight:700;padding:3px 6px;border-radius:4px}
+.ssoon{background:rgba(245,166,35,.2);color:var(--gold);font-size:9px;font-weight:700;padding:3px 6px;border-radius:4px}
+@keyframes scoresScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Sections */
+.sec{max-width:1280px;margin:40px auto 0;padding:0 24px}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.sec-head h2{font-family:var(--fh);font-size:32px;letter-spacing:1px;color:var(--text)}
+.sec-head::before{content:'';width:5px;height:28px;background:linear-gradient(180deg,var(--red),#ff4757);border-radius:3px;flex-shrink:0;box-shadow:0 0 12px rgba(232,50,60,.4)}
+.apibadge{font-size:10px;background:rgba(80,200,120,.1);color:var(--green);border:1px solid rgba(80,200,120,.3);padding:2px 10px;border-radius:12px;font-weight:600;font-family:var(--fb)}
+
+/* Score Cards - Fixed 3 Column Flex */
+.scores-grid{display:flex!important;flex-wrap:wrap!important;gap:16px!important;justify-content:flex-start}
+.scores-grid .sc{flex:0 0 calc(33.333% - 11px)!important;max-width:calc(33.333% - 11px)!important;min-width:260px;min-height:160px;display:flex;flex-direction:column}
+.sc{background:linear-gradient(135deg,var(--card),var(--card-h));border:1px solid var(--b);border-radius:16px;padding:18px;transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),var(--gold));opacity:0;transition:opacity .3s}
+.sc.islive{border-color:rgba(232,50,60,.4);box-shadow:0 0 20px rgba(232,50,60,.15)}
+.sc.islive::before{opacity:1}
+.sc:hover{transform:translateY(-4px);box-shadow:var(--card-hover);border-color:var(--bh)}
+.sc:hover::before{opacity:1}
+.sc-lg{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--m);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.sc-teams{display:flex;flex-direction:column;gap:8px}
+.sc-team{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:500;padding:6px 0}
+.sc-team .pts{font-family:var(--fh);font-size:24px;color:var(--text)}
+.sc-team.win .pts{color:var(--gold);text-shadow:0 0 12px rgba(245,166,35,.4)}
+.sc-st{font-size:11px;color:var(--m);margin-top:10px;text-align:center;padding-top:10px;border-top:1px solid var(--b)}
+.sc-st.lv{color:var(--red);font-weight:700}
+
+/* Team Logos */
+.sc-teamline{display:flex;align-items:center;gap:10px}
+.team-logo{width:40px;height:40px;object-fit:contain;flex-shrink:0;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;transition:transform .2s}
+.sc:hover .team-logo{transform:scale(1.1)}
+
+/* Article Grid (Flexbox) */
+.content-layout{display:grid;grid-template-columns:1fr 320px;gap:32px}
+.tabs{display:flex;border-bottom:2px solid var(--b);margin-bottom:28px;gap:4px}
+.tab{padding:14px 24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--m);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;background:none;border-left:none;border-right:none;border-top:none;font-family:var(--fb);position:relative}
+.tab::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:3px;background:var(--red);transform:scaleX(0);transition:transform .2s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--red)}
+.tab.active::after{transform:scaleX(1)}
+.ag{display:flex!important;flex-wrap:wrap!important;gap:18px!important;justify-content:flex-start}
+.ag .ac{flex:0 0 calc(33.333% - 12px)!important;max-width:calc(33.333% - 12px)!important;min-width:260px;min-height:280px;display:flex;flex-direction:column}
+.ac{background:var(--card);border:1px solid var(--b);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .3s;position:relative}
+.ac::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,50,60,.05),transparent);opacity:0;transition:opacity .3s;pointer-events:none}
+.ac:hover{border-color:var(--bh);box-shadow:var(--card-hover);transform:translateY(-4px)}
+.ac:hover::before{opacity:1}
+.ct{height:180px;display:flex;align-items:center;justify-content:center;font-size:44px;background:var(--surface);border-bottom:1px solid var(--b);position:relative;overflow:hidden}
+.ct::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.4));pointer-events:none}
+.cb{padding:16px 18px 18px}
+.ctag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.ts{color:var(--red)}.ta{color:var(--gold)}.tr{color:var(--blue)}
+.ctitle{font-size:16px;font-weight:600;line-height:1.45;color:var(--text);margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cf{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--m)}
+
+/* Sidebar */
+.sidebar{display:flex;flex-direction:column;gap:24px}
+.sb{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:20px;position:relative;overflow:hidden}
+.sb::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),var(--gold))}
+.sb h3{font-family:var(--fh);font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--b)}
+.tl{display:flex;flex-direction:column;gap:10px}
+.ti{display:flex;align-items:flex-start;gap:12px;padding:10px;border-radius:10px;cursor:pointer;transition:all .2s}
+.ti:hover{background:rgba(255,255,255,.04);transform:translateX(4px)}
+.tn{font-family:var(--fh);font-size:28px;color:var(--red);line-height:1;min-width:28px}
+.tt{font-size:13px;font-weight:600;color:var(--text);line-height:1.35}
+.tm{font-size:11px;color:var(--m);margin-top:3px}
+
+/* Anime Grid - Fixed 3 Column Flex */
+.anime-grid{display:flex!important;flex-wrap:wrap!important;gap:18px!important;justify-content:flex-start}
+.anime-grid .anc{flex:0 0 calc(33.333% - 12px)!important;max-width:calc(33.333% - 12px)!important;min-width:220px;min-height:300px;display:flex;flex-direction:column}
+.animg{width:100%;height:140px;object-fit:cover;display:block;transition:transform .4s}
+.anc:hover .animg{transform:scale(1.08)}
+.anph{width:100%;height:140px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:48px;transition:transform .3s}
+.anc{background:var(--card);border:1px solid var(--b);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .3s;position:relative}
+.anc::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.6));opacity:0;transition:opacity .3s;pointer-events:none;z-index:1}
+.anc:hover{border-color:rgba(245,166,35,.5);box-shadow:0 12px 40px rgba(0,0,0,.5);transform:translateY(-4px) scale(1.02)}
+.anc:hover::before{opacity:1}
+.animg{width:100%;height:180px;object-fit:cover;display:block;transition:transform .4s}
+.anc:hover .animg{transform:scale(1.08)}
+.anph{width:100%;height:180px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:48px;transition:transform .3s}
+.anc:hover .anph{transform:scale(1.05)}
+.anb{padding:14px 16px;position:relative;z-index:2}
+.antitle{font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.anmeta{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--m)}
+.anscore{color:var(--gold);font-weight:600;display:flex;align-items:center;gap:4px}
+
+/* Skeleton Loading */
+.sk{background:linear-gradient(90deg,var(--surface) 25%,var(--card-h) 50%,var(--surface) 75%);background-size:200% 100%;border-radius:10px;animation:shim 1.5s ease-in-out infinite}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Article Page */
+.article-page{max-width:840px;margin:0 auto;padding:36px 24px}
+.ap-back{display:inline-flex;align-items:center;gap:8px;color:var(--m2);font-size:14px;font-weight:500;margin-bottom:32px;padding:10px 16px;border-radius:10px;border:1px solid var(--b);transition:all .2s;background:none;font-family:var(--fb)}
+.ap-back:hover{color:var(--text);border-color:var(--bh);background:rgba(255,255,255,.04);transform:translateX(-2px)}
+.ap-cat{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
+.ap-title{font-family:var(--fh);font-size:56px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-bottom:20px}
+.ap-meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:18px 0;border-top:1px solid var(--b);border-bottom:1px solid var(--b);margin-bottom:36px}
+.ap-author{font-size:14px;font-weight:600;color:var(--text)}
+.ap-date{font-size:13px;color:var(--m)}
+.ap-read{font-size:13px;color:var(--m);display:flex;align-items:center;gap:6px}
+.ap-hero-img{width:100%;height:340px;background:var(--card);border-radius:18px;border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:80px;margin-bottom:36px;position:relative;overflow:hidden}
+.ap-hero-img::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(232,50,60,.1) 0%,transparent 70%)}
+.ap-body{font-size:18px;line-height:1.9;color:var(--m2)}
+.ap-body h3{font-family:var(--fh);font-size:30px;letter-spacing:.5px;color:var(--text);margin:40px 0 16px}
+.ap-body p{margin-bottom:22px}
+.ap-body strong{color:var(--text);font-weight:600}
+.ap-body ul{padding-left:22px;margin-bottom:22px}
+.ap-body ul li{margin-bottom:10px}
+.ap-body .highlight{background:rgba(232,50,60,.08);border-left:4px solid var(--red);padding:18px 22px;border-radius:0 12px 12px 0;margin:28px 0;color:var(--text)}
+.ap-share{margin-top:44px;padding-top:36px;border-top:1px solid var(--b)}
+.ap-share h4{font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px}
+.share-btns{display:flex;gap:12px;flex-wrap:wrap}
+.share-btn{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid var(--b);background:var(--card);color:var(--m2);transition:all .2s;font-family:var(--fb)}
+.share-btn:hover{color:var(--text);border-color:var(--bh);background:var(--card-h);transform:translateY(-2px)}
+.ap-related{margin-top:52px}
+.ap-related h3{font-family:var(--fh);font-size:28px;letter-spacing:1px;color:var(--text);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.ap-related h3::before{content:'';width:5px;height:28px;background:var(--red);border-radius:3px}
+
+/* Game Page */
+.game-page{max-width:960px;margin:0 auto;padding:36px 24px}
+.game-hero{background:linear-gradient(135deg,var(--card),var(--card-h));border:1px solid var(--b);border-radius:20px;padding:48px;text-align:center;position:relative;overflow:hidden;margin-bottom:32px}
+.game-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 110%,rgba(232,50,60,.18) 0%,transparent 60%);pointer-events:none}
+.game-teams{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap;margin-bottom:28px}
+.game-team{text-align:center}
+.game-team-name{font-family:var(--fh);font-size:36px;letter-spacing:1px;color:var(--text)}
+.game-team-pts{font-family:var(--fh);font-size:80px;color:var(--gold);line-height:1;text-shadow:0 0 20px rgba(245,166,35,.3)}
+.game-vs{font-family:var(--fh);font-size:24px;color:var(--m);margin-top:18px}
+.game-status{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;padding:8px 18px;border-radius:24px}
+.game-status.live{background:rgba(232,50,60,.15);color:var(--red);border:1px solid rgba(232,50,60,.4);animation:pulse 1.5s infinite}
+.game-status.final{background:rgba(255,255,255,.06);color:var(--m2);border:1px solid var(--b)}
+.game-status.soon{background:rgba(245,166,35,.1);color:var(--gold);border:1px solid rgba(245,166,35,.3)}
+.game-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.game-info-card{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:20px;text-align:center;transition:all .2s}
+.game-info-card:hover{border-color:var(--bh);transform:translateY(-2px)}
+.game-info-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--m);margin-bottom:8px}
+.game-info-val{font-family:var(--fh);font-size:30px;color:var(--text);letter-spacing:.5px}
+.game-summary{font-size:18px;line-height:1.9;color:var(--m2)}
+
+/* Inner Pages */
+.inner-page{max-width:840px;margin:0 auto;padding:52px 24px}
+.inner-page h1{font-family:var(--fh);font-size:56px;letter-spacing:1px;color:var(--text);margin-bottom:14px}
+.inner-page .subtitle{font-size:17px;color:var(--m2);margin-bottom:44px;padding-bottom:32px;border-bottom:1px solid var(--b)}
+.inner-page h2{font-family:var(--fh);font-size:30px;letter-spacing:.5px;color:var(--text);margin:40px 0 16px}
+.inner-page p{font-size:17px;color:var(--m2);line-height:1.85;margin-bottom:20px}
+.inner-page ul{padding-left:22px;margin-bottom:22px}
+.inner-page ul li{font-size:15px;color:var(--m2);line-height:1.8;margin-bottom:10px}
+.contact-form{display:flex;flex-direction:column;gap:18px;margin-top:32px}
+.form-group{display:flex;flex-direction:column;gap:8px}
+.form-group label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--m)}
+.form-group input,.form-group textarea,.form-group select{background:var(--surface);border:1px solid var(--b);border-radius:10px;padding:14px 18px;color:var(--text);font-family:var(--fb);font-size:15px;outline:none;transition:all .2s;width:100%}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(232,50,60,.15)}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--m)}
+.form-group textarea{resize:vertical;min-height:130px}
+.form-submit{background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-family:var(--fb);font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;align-self:flex-start;box-shadow:0 4px 16px rgba(232,50,60,.3)}
+.form-submit:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 6px 20px rgba(232,50,60,.4)}
+.advertise-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:32px}
+.plan-card{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:28px;transition:all .3s;position:relative;display:flex;flex-direction:column}
+.plan-card:hover{border-color:var(--bh);transform:translateY(-4px);box-shadow:var(--card-hover)}
+.plan-card.featured{border-color:rgba(232,50,60,.5);box-shadow:var(--glow)}
+.plan-best{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;border-radius:20px;white-space:nowrap;box-shadow:0 4px 12px rgba(232,50,60,.4)}
+.plan-name{font-family:var(--fh);font-size:24px;letter-spacing:.5px;color:var(--text);margin-bottom:8px}
+.plan-price{font-family:var(--fh);font-size:44px;color:var(--gold);margin-bottom:16px}
+.plan-price span{font-size:15px;color:var(--m);font-family:var(--fb);font-weight:400}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:20px;flex:1}
+.plan-features li{font-size:14px;color:var(--m2);display:flex;align-items:center;gap:10px}
+.plan-features li::before{content:'✓';color:var(--green);font-weight:700;font-size:13px}
+.plan-btn{width:100%;padding:12px;border-radius:10px;font-family:var(--fb);font-size:14px;font-weight:600;border:1px solid var(--b);background:transparent;color:var(--text);transition:all .2s;margin-top:auto}
+.plan-btn:hover{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 4px 12px rgba(232,50,60,.3)}
+
+/* Newsletter */
+.nl-section{max-width:1280px;margin:40px auto;padding:0 24px}
+.nl-box{background:linear-gradient(135deg,var(--card),var(--card-h));border:1px solid var(--b);border-radius:20px;padding:40px 48px;display:flex;align-items:center;justify-content:space-between;gap:36px;position:relative;overflow:hidden}
+.nl-box::before{content:'';position:absolute;right:-80px;top:-80px;width:280px;height:280px;background:radial-gradient(circle,rgba(232,50,60,.1) 0%,transparent 70%);pointer-events:none}
+.nl-box::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,50,60,.05),transparent);pointer-events:none}
+.nl-text h3{font-family:var(--fh);font-size:36px;letter-spacing:1px;color:var(--text);margin-bottom:8px;position:relative;z-index:1}
+.nl-text p{font-size:15px;color:var(--m2);position:relative;z-index:1}
+.nl-form{display:flex;gap:12px;flex-shrink:0;position:relative;z-index:1}
+.nl-form input{background:var(--surface);border:1px solid var(--b);border-radius:10px;padding:13px 18px;color:var(--text);font-family:var(--fb);font-size:14px;outline:none;width:250px;transition:all .2s}
+.nl-form input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(232,50,60,.15)}
+.nl-form input::placeholder{color:var(--m)}
+.nl-form button{background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;border:none;border-radius:10px;padding:13px 24px;font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;box-shadow:0 4px 12px rgba(232,50,60,.3)}
+.nl-form button:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 6px 16px rgba(232,50,60,.4)}
+
+/* Success Page */
+.success-page{max-width:600px;margin:100px auto;padding:0 24px;text-align:center}
+.success-icon{font-size:72px;margin-bottom:28px;animation:bounce .6s ease}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.success-page h1{font-family:var(--fh);font-size:56px;color:var(--text);margin-bottom:14px;letter-spacing:1px}
+.success-page p{font-size:16px;color:var(--m2);line-height:1.8;margin-bottom:32px}
+
+/* Footer */
+footer{background:var(--surface);border-top:1px solid var(--b);margin-top:64px}
+.fi{max-width:1280px;margin:0 auto;padding:48px 24px 28px}
+.fg{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:36px}
+.fb-desc{font-size:14px;color:var(--m2);line-height:1.7;max-width:260px;margin-top:10px}
+.fcol h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--m);margin-bottom:16px}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.fcol ul li button{font-size:14px;color:var(--m2);transition:all .2s;background:none;border:none;font-family:var(--fb);padding:0;text-align:left;cursor:pointer}
+.fcol ul li button:hover{color:var(--red);transform:translateX(4px)}
+.fbot{display:flex;align-items:center;justify-content:space-between;padding-top:24px;border-top:1px solid var(--b);font-size:13px;color:var(--m);flex-wrap:wrap;gap:12px}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.vis{opacity:1;transform:translateY(0)}
+
+/* Theme Modal */
+.nz-modal{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:all .28s ease}
+.nz-modal.open{opacity:1;visibility:visible}
+.nz-modal-backdrop{position:absolute;inset:0;background:rgba(5,5,8,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.nz-modal-box{position:relative;background:var(--card);border:1px solid var(--bh);border-radius:20px;padding:36px 40px 32px;max-width:460px;width:100%;box-shadow:0 32px 96px rgba(0,0,0,.8),0 0 0 1px rgba(232,50,60,.2);animation:nzPop .28s ease}
+@keyframes nzPop{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.nz-modal-accent{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--red),#ff5a62);border-radius:20px 20px 0 0}
+.nz-modal-icon{font-size:56px;line-height:1;margin-bottom:16px;filter:drop-shadow(0 4px 16px rgba(232,50,60,.4))}
+.nz-modal-text{font-size:18px;color:var(--m2);line-height:1.7;margin-bottom:28px}
+.nz-modal-text strong{color:var(--text)}
+.nz-modal-btn{background:linear-gradient(135deg,var(--red),#ff4757);color:#fff;border:none;border-radius:12px;padding:14px 40px;font-family:var(--fb);font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(232,50,60,.3)}
+.nz-modal-btn:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 6px 20px rgba(232,50,60,.4)}
+
+/* Search */
+.search-title{font-family:var(--fh);font-size:clamp(2.4rem,5vw,3.8rem);letter-spacing:1px;color:var(--text)}
+.search-count{font-size:18px;color:var(--m2);margin-bottom:28px}
+.live-page-intro{font-size:18px;color:var(--m2);line-height:1.75;margin-bottom:12px;max-width:760px}
+
+/* Hero Background */
+.hero-main{position:relative}
+.hero-bg-layer{position:absolute;inset:0;background-size:cover;background-position:center top;opacity:.22;pointer-events:none;z-index:0;border-radius:20px;transition:opacity .4s}
+.hero-main.has-img .hero-bg-layer{opacity:.35}
+.hero-main > *:not(.hero-bg-layer){position:relative;z-index:1}
+
+/* ESPN News Feed - Fixed 3 Column Flex */
+.news-intro{color:var(--m2);font-size:17px;margin-bottom:24px;max-width:840px;line-height:1.7}
+.news-feed{display:flex!important;flex-wrap:wrap!important;gap:18px!important;justify-content:flex-start}
+.news-feed .news-card{flex:0 0 calc(33.333% - 12px)!important;max-width:calc(33.333% - 12px)!important;min-width:280px;min-height:340px;display:flex;flex-direction:column}
+.news-card{background:var(--card);border:1px solid var(--b);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .3s;display:flex;flex-direction:column}
+.news-card:hover{border-color:var(--bh);transform:translateY(-3px);box-shadow:var(--card-hover)}
+.news-card-img{width:100%;height:170px;object-fit:cover;background:var(--surface);transition:transform .4s}
+.news-card:hover .news-card-img{transform:scale(1.05)}
+.news-card-body{padding:18px 20px 20px;flex:1;display:flex;flex-direction:column}
+.news-card-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:10px}
+.news-card-title{font-size:17px;font-weight:600;line-height:1.45;color:var(--text);margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.news-card-meta{font-size:13px;color:var(--m);margin-top:auto}
+
+/* Game Extra */
+.game-extra{margin-top:32px}
+.game-extra h3{font-family:var(--fh);font-size:24px;letter-spacing:.5px;margin-bottom:16px;color:var(--text)}
+.leaders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.leader-pill{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:14px 16px;font-size:15px;transition:all .2s}
+.leader-pill:hover{border-color:var(--bh);transform:translateY(-2px)}
+.leader-pill .ln{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.injury-row,.insight-row{padding:14px 16px;border:1px solid var(--b);border-radius:12px;margin-bottom:10px;background:var(--surface);font-size:15px;color:var(--m2);transition:all .2s}
+.injury-row:hover,.insight-row:hover{border-color:var(--bh);background:var(--card-h)}
+
+/* Anime Filters */
+.anime-filters{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:24px;padding:18px;background:var(--card);border:1px solid var(--b);border-radius:14px}
+.filter-label{font-size:12px;font-weight:600;color:var(--m);text-transform:uppercase;letter-spacing:.8px}
+.filter-chips{display:flex;flex-wrap:wrap;gap:10px}
+.filter-chip{font-size:13px;font-weight:600;padding:9px 16px;border-radius:24px;border:1px solid var(--b);background:transparent;color:var(--m2);cursor:pointer;transition:all .2s;font-family:var(--fb)}
+.filter-chip:hover,.filter-chip:focus-visible{color:var(--text);border-color:var(--bh)}
+.filter-chip.active{background:rgba(232,50,60,.15);border-color:rgba(232,50,60,.5);color:var(--red);box-shadow:0 0 12px rgba(232,50,60,.2)}
+.tab-filter-reset{font-size:13px;padding:9px 16px;border-radius:10px;border:1px solid var(--b);background:var(--surface);color:var(--m2);cursor:pointer;font-family:var(--fb);transition:all .2s}
+.tab-filter-reset:hover{color:var(--text);border-color:var(--bh)}
+
+/* Sports Genre Selector */
+.sports-genre-selector{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px;padding:18px;background:var(--card);border:1px solid var(--b);border-radius:14px}
+.sports-genre-chip{font-size:14px;font-weight:600;padding:10px 18px;border-radius:24px;border:1px solid var(--b);background:transparent;color:var(--m2);cursor:pointer;transition:all .2s;font-family:var(--fb)}
+.sports-genre-chip:hover{color:var(--text);border-color:var(--bh);transform:translateY(-2px)}
+.sports-genre-chip.active{background:rgba(232,50,60,.15);border-color:rgba(232,50,60,.5);color:var(--red);box-shadow:0 0 12px rgba(232,50,60,.2)}
+
+/* Anime Detail Page */
+.anime-detail-page{max-width:1000px;margin:0 auto;padding:32px 24px 52px}
+.anime-detail-hero{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--b);min-height:300px;background:var(--card);margin-bottom:32px}
+.anime-detail-banner{width:100%;height:100%;min-height:300px;object-fit:cover;display:block;transition:transform .5s}
+.anime-detail-hero:hover .anime-detail-banner{transform:scale(1.03)}
+.anime-detail-banner-fallback{width:100%;min-height:220px;display:flex;align-items:center;justify-content:center;font-size:88px;background:var(--surface)}
+.anime-detail-title-wrap{padding:28px 32px;background:linear-gradient(180deg,transparent,rgba(10,10,12,.95));position:absolute;bottom:0;left:0;right:0}
+.anime-detail-title{font-family:var(--fh);font-size:clamp(2.2rem,5vw,3.2rem);letter-spacing:1px;line-height:1.1}
+.anime-detail-sub{font-size:16px;color:var(--m2);margin-top:10px}
+.anime-detail-meta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:18px;font-size:15px;color:var(--m2)}
+.anime-detail-meta-row span{background:rgba(255,255,255,.06);padding:6px 14px;border-radius:24px;font-size:14px;transition:all .2s}
+.anime-detail-meta-row span:hover{background:rgba(255,255,255,.1)}
+.anime-synopsis{font-size:18px;line-height:1.9;color:var(--m2);margin-bottom:32px}
+.ep-table{width:100%;border-collapse:collapse;font-size:15px}
+.ep-table th,.ep-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--b)}
+.ep-table th{color:var(--m);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.ep-table tr:hover td{background:rgba(255,255,255,.03)}
+.streaming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.stream-card{border:1px solid var(--b);border-radius:12px;overflow:hidden;background:var(--card);transition:all .2s}
+.stream-card:hover{border-color:var(--bh);transform:translateY(-3px);box-shadow:var(--card)}
+.stream-card a{display:block;color:inherit;text-decoration:none}
+.stream-thumb{width:100%;height:110px;object-fit:cover;background:var(--surface);transition:transform .3s}
+.stream-card:hover .stream-thumb{transform:scale(1.05)}
+.stream-card .t{padding:12px 14px;font-size:14px;font-weight:600;line-height:1.4}
+.external-mal{display:inline-flex;margin-top:28px}
+.animg,.anime-detail-banner{image-rendering:auto}
+
+/* Pagination */
+.nz-pager-wrap{margin-top:24px;margin-bottom:12px;display:block}
+.nz-pager-wrap:empty{display:none}
+.nz-pager{display:flex!important;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}
+.nz-pager-btn{background:var(--card);border:1px solid var(--b);color:var(--text);padding:12px 24px;border-radius:12px;font-family:var(--fb);font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.nz-pager-btn:hover:not(:disabled){border-color:var(--bh);background:var(--card-h);transform:translateY(-2px)}
+.nz-pager-btn:disabled{opacity:.35;cursor:not-allowed}
+.nz-pager-info{font-size:15px;color:var(--m2);min-width:140px;text-align:center;background:var(--card);border:1px solid var(--b);padding:10px 20px;border-radius:12px}
+
+/* Rankings */
+.ranking-item:hover{border-color:var(--bh);transform:translateX(4px);box-shadow:var(--card)}
+
+/* Article Card Images */
+.ct.ct-img{padding:0;overflow:hidden;background:var(--surface)}
+.ct.ct-img img{width:100%;height:100%;min-height:100px;object-fit:cover;display:block;transition:transform .4s}
+.ac:hover .ct.ct-img img{transform:scale(1.08)}
+
+/* Autofill Fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  caret-color: var(--text) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Responsive */
+@media(max-width:1200px){
+  .scores-grid .sc{flex:0 0 calc(33.333% - 11px)!important;max-width:calc(33.333% - 11px)!important}
+  .anime-grid .anc{flex:0 0 calc(33.333% - 12px)!important;max-width:calc(33.333% - 12px)!important}
+  .ag .ac{flex:0 0 calc(50% - 9px)!important;max-width:calc(50% - 9px)!important}
+  .news-feed .news-card{flex:0 0 calc(50% - 9px)!important;max-width:calc(50% - 9px)!important}
+}
+@media(max-width:1024px){
+  .hero{grid-template-columns:1fr}.hero-title{font-size:42px}
+  .content-layout{grid-template-columns:1fr}
+  .ag .ac{flex:0 0 calc(50% - 9px)!important;max-width:calc(50% - 9px)!important}
+  .news-feed .news-card{flex:0 0 calc(50% - 9px)!important;max-width:calc(50% - 9px)!important}
+  .scores-grid .sc{flex:0 0 calc(50% - 8px)!important;max-width:calc(50% - 8px)!important}
+  .anime-grid .anc{flex:0 0 calc(50% - 9px)!important;max-width:calc(50% - 9px)!important}
+  .fg{grid-template-columns:1fr 1fr}
+  .nl-box{flex-direction:column;padding:28px}
+  .nl-form{flex-direction:column;width:100%}
+  .nl-form input{width:100%}
+  .nav-links,.nav-search{display:none}
+  .hamburger{display:flex}
+  .game-teams{gap:24px}
+  .game-team-pts{font-size:56px}
+  .advertise-plans{grid-template-columns:1fr}
+  .game-info-grid{grid-template-columns:1fr 1fr}
+  .ap-title{font-size:40px}
+}
+@media(min-width:1025px) {
+  .mobile-menu { display: none !important; }
+  .nav-search { display: flex !important; }
+}
+@media(max-width:640px){
+  .ag .ac,.anime-grid .anc,.scores-grid .sc,.news-feed .news-card{flex:0 0 100%!important;max-width:100%!important;min-width:0}
+  .hero-title{font-size:32px}
+  .fg{grid-template-columns:1fr}
+  .ap-title{font-size:32px}
+  .inner-page h1{font-size:40px}
+  .game-team-pts{font-size:48px}
+  .game-team-name{font-size:28px}
+}
+</style>
 
 <!-- ══════════════════════════════════════
      GOOGLE ADSENSE — paste your code here
      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
      ══════════════════════════════════════ -->
 
-<link rel="stylesheet" href="css/nexzone.css">
+<!-- PWA Manifest -->
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NexZone">
+
+<!-- Structured Data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "NexZone",
+  "url": "https://sulavshrestha1.github.io",
+  "description": "Your #1 source for live sports scores, NBA, EPL, NFL, and top anime news, reviews, and rankings updated daily.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://sulavshrestha1.github.io/#search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "NexZone Media",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sulavshrestha1.github.io/logo.png"
+    }
+  }
+}
+</script>
 </head>
 <body>
 
@@ -91,7 +697,11 @@
   <!-- TOP AD -->
   <div class="ad-wrap">
     <!-- PASTE ADSENSE LEADERBOARD CODE HERE -->
-    <div class="ad-slot lb">📢 Google AdSense Leaderboard (728×90) — Paste your AdSense code here to earn</div>
+    <div class="ad-slot lb">
+      <span class="ad-badge">Advertisement</span>
+      <div>📢 Google AdSense Leaderboard (728×90)</div>
+      <div style="font-size:10px;margin-top:4px;opacity:.7">Paste your AdSense code here to earn revenue</div>
+    </div>
   </div>
 
   <!-- API STATUS -->
@@ -164,6 +774,7 @@
       <div>
         <div class="sec-head"><h2>Latest Articles</h2></div>
         <div class="ag" id="articlesGrid"></div>
+        <div class="nz-pager-wrap" id="homeArticlesPager" aria-label="Articles pages"></div>
       </div>
       <div class="sidebar">
         <div class="sb">
@@ -175,7 +786,11 @@
           </div>
         </div>
         <!-- PASTE ADSENSE RECTANGLE HERE -->
-        <div class="ad-slot rect">📢 AdSense Rectangle (300×250)</div>
+        <div class="ad-slot rect">
+          <span class="ad-badge">Advertisement</span>
+          <div>📢 AdSense Rectangle (300×250)</div>
+          <div style="font-size:10px;margin-top:4px;opacity:.7">High visibility sidebar placement</div>
+        </div>
       </div>
     </div>
   </div>
@@ -243,7 +858,11 @@
     <div id="ap-external-wrap" class="ap-external" style="display:none;max-width:800px;margin:0 auto 20px;padding:16px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:12px;font-size:15px;color:var(--m2);"></div>
 
     <!-- ADSENSE IN-ARTICLE -->
-    <div class="ad-slot inline">📢 AdSense In-Article Ad — Paste code here</div>
+    <div class="ad-slot inline">
+      <span class="ad-badge">Advertisement</span>
+      <div>📢 AdSense In-Article Ad</div>
+      <div style="font-size:10px;margin-top:4px;opacity:.7">Native placement within content flow</div>
+    </div>
 
     <div class="ap-body" id="ap-body">Loading article...</div>
     <div class="ap-share">
@@ -272,7 +891,11 @@
       <div class="game-status" id="gameStatus">Loading</div>
     </div>
     <div class="game-info-grid" id="gameInfoGrid"></div>
-    <div class="ad-slot inline">📢 AdSense In-Game Ad</div>
+    <div class="ad-slot inline">
+      <span class="ad-badge">Advertisement</span>
+      <div>📢 AdSense In-Game Ad</div>
+      <div style="font-size:10px;margin-top:4px;opacity:.7">Premium placement on game detail pages</div>
+    </div>
     <div class="sec-head" style="margin-top:32px;"><h2>Game Summary</h2></div>
     <div id="gameSummary" class="game-summary"></div>
     <div id="gameLeaders" class="game-extra"></div>
@@ -286,25 +909,45 @@
 </div>
 
 <!-- ════════════════════════════════════════
-     PAGE: SPORTS
+     PAGE: SPORTS (with genre selector)
 ════════════════════════════════════════ -->
 <div id="page-sports" class="page">
   <div class="sec" style="padding-top:32px;">
     <div class="sec-head"><h2>Sports — Live Scores & News</h2></div>
-    <div class="ad-slot inline" style="margin-bottom:24px;">📢 AdSense Banner</div>
+    
+    <!-- Sports Genre Selector -->
+    <div class="sports-genre-selector" id="sportsGenreSelector">
+      <button type="button" class="sports-genre-chip active" data-sport="all" onclick="filterSportsByGenre('all', this)">🏟️ All Sports</button>
+      <button type="button" class="sports-genre-chip" data-sport="nba" onclick="filterSportsByGenre('nba', this)">🏀 NBA</button>
+      <button type="button" class="sports-genre-chip" data-sport="epl" onclick="filterSportsByGenre('epl', this)">⚽ Soccer / EPL</button>
+      <button type="button" class="sports-genre-chip" data-sport="nfl" onclick="filterSportsByGenre('nfl', this)">🏈 NFL</button>
+      <button type="button" class="sports-genre-chip" data-sport="mlb" onclick="filterSportsByGenre('mlb', this)">⚾ MLB</button>
+      <button type="button" class="sports-genre-chip" data-sport="mma" onclick="filterSportsByGenre('mma', this)">🥊 MMA / UFC</button>
+    </div>
+    
+    <div class="ad-slot inline" style="margin-bottom:28px;">
+      <span class="ad-badge">Advertisement</span>
+      <div>📢 AdSense Banner — Sports Page</div>
+      <div style="font-size:10px;margin-top:4px;opacity:.7">High engagement sports content placement</div>
+    </div>
+    
+    <div class="sec-head" style="margin-top:24px;"><h2 id="sportsSectionTitle">Today's Games</h2></div>
     <div class="scores-grid" id="sportScoresGrid">
       <div class="sk" style="height:110px;border-radius:12px;"></div>
       <div class="sk" style="height:110px;border-radius:12px;"></div>
       <div class="sk" style="height:110px;border-radius:12px;"></div>
       <div class="sk" style="height:110px;border-radius:12px;"></div>
     </div>
+    <div class="nz-pager-wrap" id="sportsScoresPager" aria-label="Sports scores pages"></div>
+
     <div class="sec-head" style="margin-top:40px;"><h2>Sports Articles</h2></div>
     <div class="ag" id="sportsArticlesGrid"></div>
+    <div class="nz-pager-wrap" id="sportsArticlesPager" aria-label="Sports articles pages"></div>
   </div>
 </div>
 
 <!-- ════════════════════════════════════════
-     PAGE: ANIME
+     PAGE: ANIME (Top Airing)
 ════════════════════════════════════════ -->
 <div id="page-anime" class="page">
   <div class="sec" style="padding-top:32px;">
@@ -315,7 +958,11 @@
       <div class="filter-chips" id="animeFilterChips"></div>
       <button type="button" class="tab-filter-reset" onclick="resetAnimeFilter()">Reset</button>
     </div>
-    <div class="ad-slot inline" style="margin-bottom:24px;">📢 AdSense Banner</div>
+    <div class="ad-slot inline" style="margin-bottom:28px;">
+      <span class="ad-badge">Advertisement</span>
+      <div>📢 AdSense Banner — Anime Page</div>
+      <div style="font-size:10px;margin-top:4px;opacity:.7">Target anime fans with relevant ads</div>
+    </div>
     <div class="anime-grid" id="animePageGrid">
       <div class="sk anc" style="height:240px;"></div>
       <div class="sk anc" style="height:240px;"></div>
@@ -327,8 +974,53 @@
       <div class="sk anc" style="height:240px;"></div>
     </div>
     <div class="nz-pager-wrap" id="animePagePager" aria-label="Anime grid pages"></div>
-    <div class="sec-head" style="margin-top:40px;"><h2>Anime Articles</h2></div>
-    <div class="ag" id="animeArticlesGrid"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ANIME REVIEWS
+════════════════════════════════════════ -->
+<div id="page-anime-reviews" class="page">
+  <div class="sec" style="padding-top:32px;">
+    <div class="sec-head"><h2>Anime — Seasonal Reviews</h2></div>
+    <p class="news-intro" style="margin-bottom:24px;">In-depth reviews and analysis of the latest anime seasons.</p>
+    <div class="ag" id="animeReviewsGrid"></div>
+    <div class="nz-pager-wrap" id="animeReviewsPager" aria-label="Reviews pages"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ANIME EPISODE GUIDES
+════════════════════════════════════════ -->
+<div id="page-anime-episodes" class="page">
+  <div class="sec" style="padding-top:32px;">
+    <div class="sec-head"><h2>Anime — Episode Guides</h2></div>
+    <p class="news-intro" style="margin-bottom:24px;">Episode breakdowns, recaps, and what to expect next.</p>
+    <div class="ag" id="animeEpisodesGrid"></div>
+    <div class="nz-pager-wrap" id="animeEpisodesPager" aria-label="Episode guides pages"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ANIME RANKINGS
+════════════════════════════════════════ -->
+<div id="page-anime-rankings" class="page">
+  <div class="sec" style="padding-top:32px;">
+    <div class="sec-head"><h2>Anime — Top Rankings <span class="apibadge">MAL Rankings</span></h2></div>
+    <p class="news-intro" style="margin-bottom:24px;">Top rated anime ranked by MyAnimeList users. Updated daily.</p>
+    <div id="animeRankingsList"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: MANGA NEWS
+════════════════════════════════════════ -->
+<div id="page-manga-news" class="page">
+  <div class="sec" style="padding-top:32px;">
+    <div class="sec-head"><h2>Manga News & Updates</h2></div>
+    <p class="news-intro" style="margin-bottom:24px;">Latest manga releases, announcements, and industry news.</p>
+    <div class="ag" id="mangaNewsGrid"></div>
+    <div class="nz-pager-wrap" id="mangaNewsPager" aria-label="Manga news pages"></div>
   </div>
 </div>
 
@@ -367,6 +1059,7 @@
       <button class="tab" onclick="filterAll('review',this)">Reviews</button>
     </div>
     <div class="ag" id="allArticlesGrid"></div>
+    <div class="nz-pager-wrap" id="allArticlesPager" aria-label="All articles pages"></div>
   </div>
 </div>
 
@@ -512,41 +1205,65 @@
       <div class="plan-card">
         <div class="plan-name">Starter</div>
         <div class="plan-price">$49<span>/month</span></div>
-        <button class="plan-btn" onclick="nav('contact')">Get Started</button>
         <ul class="plan-features">
           <li>1 sidebar rectangle ad</li>
           <li>300×250 placement</li>
           <li>Monthly reporting</li>
           <li>Direct booking</li>
         </ul>
-
+        <button class="plan-btn" onclick="nav('contact')">Get Started</button>
       </div>
       <div class="plan-card featured">
         <div class="plan-best">Most Popular</div>
         <div class="plan-name">Growth</div>
         <div class="plan-price">$149<span>/month</span></div>
-        <button class="plan-btn" onclick="nav('contact')">Get Started</button>
         <ul class="plan-features">
           <li>Leaderboard + Rectangle</li>
           <li>In-article placement</li>
           <li>Weekly analytics report</li>
           <li>Social media mention</li>
         </ul>
+        <button class="plan-btn" onclick="nav('contact')">Get Started</button>
       </div>
       <div class="plan-card">
         <div class="plan-name">Premium</div>
         <div class="plan-price">$299<span>/month</span></div>
-        <button class="plan-btn" onclick="nav('contact')">Get Started</button>
         <ul class="plan-features">
           <li>All ad placements</li>
           <li>Sponsored article</li>
           <li>Daily analytics</li>
           <li>Homepage feature</li>
         </ul>
-
+        <button class="plan-btn" onclick="nav('contact')">Get Started</button>
       </div>
     </div>
     <p style="margin-top:24px;font-size:13px;color:var(--m);">Note: You can also use Google AdSense for automatic ad placement. See our <button style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;" onclick="nav('contact')">contact page</button> for more info.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: TERMS OF SERVICE
+════════════════════════════════════════ -->
+<div id="page-terms" class="page">
+  <div class="inner-page">
+    <h1>Terms of Service</h1>
+    <p class="subtitle">Last updated: April 2026</p>
+    <h2>Acceptance of Terms</h2>
+    <p>By accessing and using NexZone, you accept and agree to be bound by these Terms of Service. If you do not agree, please do not use our website.</p>
+    <h2>Use of Content</h2>
+    <p>All content on NexZone, including articles, scores, and images, is for personal, non-commercial use only. You may not reproduce, distribute, or create derivative works without explicit permission.</p>
+    <h2>Live Data & APIs</h2>
+    <p>Live scores and sports data are provided by ESPN's public API. Anime data is sourced from Jikan (MyAnimeList) and AniList. We do not guarantee the accuracy or availability of this data at all times.</p>
+    <h2>Advertisements</h2>
+    <p>NexZone uses Google AdSense to display advertisements. By using our site, you consent to the display of ads. You can opt out of personalized advertising through Google Ad Settings.</p>
+    <h2>Newsletter</h2>
+    <p>By subscribing to our newsletter, you agree to receive email communications from NexZone. You can unsubscribe at any time using the link in each email.</p>
+    <h2>Limitation of Liability</h2>
+    <p>NexZone is provided "as is" without warranties of any kind. We are not liable for any damages arising from your use of the website or reliance on our content.</p>
+    <h2>Changes to Terms</h2>
+    <p>We may update these terms from time to time. Continued use of the site after changes constitutes acceptance of the new terms.</p>
+    <h2>Contact</h2>
+    <p>For questions about these terms, <button style="background:none;border:none;color:var(--red);font-size:15px;cursor:pointer;font-family:var(--fb);padding:0;text-decoration:underline;" onclick="nav('contact')">contact us here</button>.</p>
   </div>
 </div>
 
@@ -597,21 +1314,21 @@
         <h4>Sports</h4>
         <ul>
           <li><button onclick="nav('live')">Live Scores</button></li>
-          <li><button onclick="nav('sports')">NBA</button></li>
-          <li><button onclick="nav('sports')">Soccer / EPL</button></li>
-          <li><button onclick="nav('sports')">NFL</button></li>
-          <li><button onclick="nav('sports')">MMA / UFC</button></li>
-          <li><button onclick="nav('sports')">MLB</button></li>
+          <li><button onclick="nav('sports');setTimeout(()=>filterSportsByGenre('nba',document.querySelector('[data-sport=nba]')),100)">NBA</button></li>
+          <li><button onclick="nav('sports');setTimeout(()=>filterSportsByGenre('epl',document.querySelector('[data-sport=epl]')),100)">Soccer / EPL</button></li>
+          <li><button onclick="nav('sports');setTimeout(()=>filterSportsByGenre('nfl',document.querySelector('[data-sport=nfl]')),100)">NFL</button></li>
+          <li><button onclick="nav('sports');setTimeout(()=>filterSportsByGenre('mma',document.querySelector('[data-sport=mma]')),100)">MMA / UFC</button></li>
+          <li><button onclick="nav('sports');setTimeout(()=>filterSportsByGenre('mlb',document.querySelector('[data-sport=mlb]')),100)">MLB</button></li>
         </ul>
       </div>
       <div class="fcol">
         <h4>Anime</h4>
         <ul>
           <li><button onclick="nav('anime')">Top Airing</button></li>
-          <li><button onclick="nav('anime')">Seasonal Reviews</button></li>
-          <li><button onclick="nav('articles')">Episode Guides</button></li>
-          <li><button onclick="nav('articles')">Rankings</button></li>
-          <li><button onclick="nav('articles')">Manga News</button></li>
+          <li><button onclick="nav('anime-reviews')">Seasonal Reviews</button></li>
+          <li><button onclick="nav('anime-episodes')">Episode Guides</button></li>
+          <li><button onclick="nav('anime-rankings')">Rankings</button></li>
+          <li><button onclick="nav('manga-news')">Manga News</button></li>
         </ul>
       </div>
       <div class="fcol">
@@ -621,6 +1338,7 @@
           <li><button onclick="nav('advertise')">Advertise With Us</button></li>
           <li><button onclick="nav('contact')">Contact Us</button></li>
           <li><button onclick="nav('privacy')">Privacy Policy</button></li>
+          <li><button onclick="nav('terms')">Terms of Service</button></li>
           <li><button onclick="nav('subscribe')">Newsletter</button></li>
         </ul>
       </div>
@@ -635,5 +1353,26 @@
 <script src="js/articles.js"></script>
 <script src="js/api.js"></script>
 <script src="js/app.js"></script>
+
+<!-- PWA Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered'))
+      .catch(err => console.log('SW registration failed'));
+  });
+}
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BH19SQB53K"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BH19SQB53K');
+</script>
 </body>
 </html>

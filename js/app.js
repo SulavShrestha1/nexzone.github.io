@@ -93,11 +93,13 @@ function renderPager(wrapId, page, totalPages, onPage) {
   if (!w) return;
   if (totalPages <= 1) {
     w.innerHTML = '';
+    w.style.display = 'none';
     return;
   }
+  w.style.display = 'block';
   w.innerHTML = `<div class="nz-pager">
     <button type="button" class="nz-pager-btn" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
-    <span class="nz-pager-info">Page ${page} / ${totalPages}</span>
+    <span class="nz-pager-info">Page ${page} of ${totalPages}</span>
     <button type="button" class="nz-pager-btn" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
   </div>`;
   const btns = w.querySelectorAll('.nz-pager-btn');
@@ -109,14 +111,26 @@ function paintScoresOnly() {
   const filtered = getFilteredSports();
   const grid = document.getElementById('scoresGrid');
   const liveGrid = document.getElementById('liveScoresGrid');
-  if (!filtered.length) return;
-  const total = Math.max(1, Math.ceil(filtered.length / NZ_PAGE_SIZE));
-  pageHomeSports = Math.min(pageHomeSports, total);
-  pageLiveSports = Math.min(pageLiveSports, total);
+  
+  if (!filtered.length) {
+    const msg = '<div style="grid-column:1/-1;text-align:center;padding:36px;color:var(--m);font-size:17px;">No games available right now.</div>';
+    if (grid) grid.innerHTML = msg;
+    if (liveGrid) liveGrid.innerHTML = msg;
+    renderPager('homeSportsPager', 1, 1, () => {});
+    renderPager('liveSportsPager', 1, 1, () => {});
+    return;
+  }
+  
+  const total = Math.ceil(filtered.length / NZ_PAGE_SIZE);
+  pageHomeSports = Math.min(Math.max(1, pageHomeSports), total);
+  pageLiveSports = Math.min(Math.max(1, pageLiveSports), total);
+  
   const hs = filtered.slice((pageHomeSports - 1) * NZ_PAGE_SIZE, pageHomeSports * NZ_PAGE_SIZE);
   const ls = filtered.slice((pageLiveSports - 1) * NZ_PAGE_SIZE, pageLiveSports * NZ_PAGE_SIZE);
+  
   if (grid) grid.innerHTML = buildScoreCardsHTML(hs, null);
   if (liveGrid) liveGrid.innerHTML = buildScoreCardsHTML(ls, null);
+  
   renderPager('homeSportsPager', pageHomeSports, total, p => { pageHomeSports = p; paintScoresOnly(); });
   renderPager('liveSportsPager', pageLiveSports, total, p => { pageLiveSports = p; paintScoresOnly(); });
 }
@@ -130,25 +144,27 @@ function setupApiPills() {
   const an = document.getElementById('pill-anime');
   if (nba) {
     nba.classList.add('api-click');
-    nba.title = '🏀 Click to filter NBA-only · Click again to show all';
+    nba.title = '🏀 Click to view NBA scores';
     nba.onclick = () => {
-      sportsLeagueFilter = sportsLeagueFilter === 'nba' ? 'all' : 'nba';
-      pageHomeSports = 1;
-      pageLiveSports = 1;
-      renderSports(allSportsData);
+      nav('sports');
+      setTimeout(() => {
+        const btn = document.querySelector('.sports-genre-chip[data-sport="nba"]');
+        if (btn) filterSportsByGenre('nba', btn);
+      }, 200);
     };
   }
   if (epl) {
     epl.classList.add('api-click');
-    epl.title = '⚽ Click to filter EPL-only · Click again to show all';  
+    epl.title = '⚽ Click to view EPL scores';
     epl.onclick = () => {
-      sportsLeagueFilter = sportsLeagueFilter === 'epl' ? 'all' : 'epl';
-      pageHomeSports = 1;
-      pageLiveSports = 1;
-      renderSports(allSportsData);
+      nav('sports');
+      setTimeout(() => {
+        const btn = document.querySelector('.sports-genre-chip[data-sport="epl"]');
+        if (btn) filterSportsByGenre('epl', btn);
+      }, 200);
     };
   }
-if (an) {
+  if (an) {
     an.classList.add('api-click');
     an.title = 'Click to open the Anime hub';
     an.onclick = () => nav('anime');
@@ -223,12 +239,12 @@ function paintHomeAnime() {
   const grid = document.getElementById('animeGrid');
   if (!grid) return;
   if (!items.length) {
-    grid.innerHTML = '';
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:36px;color:var(--m);font-size:17px;">No anime data available.</div>';
     renderPager('homeAnimePager', 1, 1, () => {});
     return;
   }
-  const total = Math.max(1, Math.ceil(items.length / NZ_PAGE_SIZE));
-  pageHomeAnime = Math.min(pageHomeAnime, total);
+  const total = Math.ceil(items.length / NZ_PAGE_SIZE);
+  pageHomeAnime = Math.min(Math.max(1, pageHomeAnime), total);
   const slice = items.slice((pageHomeAnime - 1) * NZ_PAGE_SIZE, pageHomeAnime * NZ_PAGE_SIZE);
   grid.innerHTML = buildAnimeCardsHTML(slice);
   renderPager('homeAnimePager', pageHomeAnime, total, p => { pageHomeAnime = p; paintHomeAnime(); });
@@ -239,33 +255,66 @@ function paintAnimePageGrid() {
   const grid = document.getElementById('animePageGrid');
   if (!grid) return;
   if (!items.length) {
-    grid.innerHTML = '';
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:36px;color:var(--m);font-size:17px;">No anime data available.</div>';
     renderPager('animePagePager', 1, 1, () => {});
     return;
   }
-  const total = Math.max(1, Math.ceil(items.length / NZ_PAGE_SIZE));
-  pageAnimeGrid = Math.min(pageAnimeGrid, total);
+  const total = Math.ceil(items.length / NZ_PAGE_SIZE);
+  pageAnimeGrid = Math.min(Math.max(1, pageAnimeGrid), total);
   const slice = items.slice((pageAnimeGrid - 1) * NZ_PAGE_SIZE, pageAnimeGrid * NZ_PAGE_SIZE);
   grid.innerHTML = buildAnimeCardsHTML(slice);
   renderPager('animePagePager', pageAnimeGrid, total, p => { pageAnimeGrid = p; paintAnimePageGrid(); });
 }
 
 function nav(page, data) {
+  // Reset ALL pagination when navigating
   pageHomeSports = 1;
   pageLiveSports = 1;
   pageHomeAnime = 1;
   pageAnimeGrid = 1;
   pageNews = 1;
+  pageHomeArticles = 1;
+  pageAllArticles = 1;
+  pageAnimeReviews = 1;
+  pageAnimeEpisodes = 1;
+  pageMangaNews = 1;
+  pageSportsScores = 1;
+  pageSportsArticles = 1;
 
   if (page === 'animeDetail' && data != null) {
     showAnimeDetailPage(data, true);
     return;
   }
 
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const el = document.getElementById('page-' + page);
-  if (!el) return;
-  el.classList.add('active');
+  // Smooth page transition
+  const currentPageEl = document.querySelector('.page.active');
+  const nextPageEl = document.getElementById('page-' + page);
+  
+  if (!nextPageEl) return;
+  
+  // Fade out current page
+  if (currentPageEl && currentPageEl !== nextPageEl) {
+    currentPageEl.style.opacity = '0';
+    currentPageEl.style.transform = 'translateY(-12px)';
+    
+    setTimeout(() => {
+      currentPageEl.classList.remove('active');
+      
+      // Fade in new page
+      nextPageEl.classList.add('active');
+      setTimeout(() => {
+        nextPageEl.style.opacity = '1';
+        nextPageEl.style.transform = 'translateY(0)';
+      }, 50);
+    }, 200);
+  } else {
+    nextPageEl.classList.add('active');
+    setTimeout(() => {
+      nextPageEl.style.opacity = '1';
+      nextPageEl.style.transform = 'translateY(0)';
+    }, 50);
+  }
+  
   currentPage = page;
 
   document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
@@ -275,11 +324,36 @@ function nav(page, data) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
   window.location.hash = page;
 
+  // Reset pagination displays
+  renderPager('homeSportsPager', 1, 1, () => {});
+  renderPager('liveSportsPager', 1, 1, () => {});
+  renderPager('homeAnimePager', 1, 1, () => {});
+  renderPager('animePagePager', 1, 1, () => {});
+  renderPager('newsPager', 1, 1, () => {});
+  renderPager('homeArticlesPager', 1, 1, () => {});
+  renderPager('allArticlesPager', 1, 1, () => {});
+  renderPager('animeReviewsPager', 1, 1, () => {});
+  renderPager('animeEpisodesPager', 1, 1, () => {});
+  renderPager('mangaNewsPager', 1, 1, () => {});
+  renderPager('sportsScoresPager', 1, 1, () => {});
+  renderPager('sportsArticlesPager', 1, 1, () => {});
+
   if (page === 'article' && data) openArticle(data);
   if (page === 'game' && data) openGame(data);
   if (page === 'sports') populateSportsPage();
   if (page === 'anime') populateAnimePage();
+  if (page === 'anime-reviews') populateAnimeReviews();
+  if (page === 'anime-episodes') populateAnimeEpisodes();
+  if (page === 'anime-rankings') populateAnimeRankings();
+  if (page === 'manga-news') populateMangaNews();
   if (page === 'articles') populateAllArticles();
+  if (page === 'live') populateLivePage();
+  if (page === 'home') {
+    paintScoresOnly();
+    paintHomeAnime();
+    renderEspnNews(allEspnNews);
+    buildArticlesGrid();
+  }
 }
 
 window.addEventListener('hashchange', () => {
@@ -328,11 +402,18 @@ function makeCard(a, clickFn) {
   d.className = 'ac';
   d.dataset.cat = a.cat;
   d.dataset.title = a.title.toLowerCase();
-  const top = a.coverImage
-    ? `<div class="ct ct-img"><img src="${escapeAttr(a.coverImage)}" alt="" loading="lazy"></div>`
-    : `<div class="ct">${a.emoji}</div>`;
+  
+  // Image fallback system with demo images
+  let imgHTML = '';
+  if (a.coverImage) {
+    const fallbackImg = DEMO_IMAGES[Math.floor(Math.random() * DEMO_IMAGES.length)];
+    imgHTML = `<div class="ct ct-img"><img src="${escapeAttr(a.coverImage)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${fallbackImg}';this.onerror=function(){this.parentElement.innerHTML='${a.emoji || '📰'}'}"></div>`;
+  } else {
+    imgHTML = `<div class="ct">${a.emoji || '📰'}</div>`;
+  }
+  
   d.innerHTML = `
-    ${top}
+    ${imgHTML}
     <div class="cb">
       <div class="ctag ${a.tagCls}">${a.tag}</div>
       <div class="ctitle">${a.title}</div>
@@ -345,46 +426,235 @@ function makeCard(a, clickFn) {
   return d;
 }
 
+let pageHomeArticles = 1;
 function buildArticlesGrid() {
-  const grid = document.getElementById('articlesGrid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  ARTICLES.forEach((a, i) => {
-    const card = makeCard(a);
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    grid.appendChild(card);
-    setTimeout(() => { card.style.opacity = '1'; card.style.transform = ''; }, 300 + i * 80);
-  });
+  buildArticlesGridFiltered('all');
 }
 
+let pageAllArticles = 1;
 function populateAllArticles(cat = 'all') {
   const grid = document.getElementById('allArticlesGrid');
   if (!grid) return;
   grid.innerHTML = '';
-  ARTICLES.filter(a => cat === 'all' || a.cat === cat).forEach(a => grid.appendChild(makeCard(a)));
+  
+  const filtered = ARTICLES.filter(a => cat === 'all' || a.cat === cat);
+  if (!filtered.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">📝</div>No articles in this category yet.</div>';
+    renderPager('allArticlesPager', 1, 1, () => {});
+    return;
+  }
+  
+  const total = Math.ceil(filtered.length / NZ_PAGE_SIZE);
+  pageAllArticles = Math.min(Math.max(1, pageAllArticles), total);
+  const slice = filtered.slice((pageAllArticles - 1) * NZ_PAGE_SIZE, pageAllArticles * NZ_PAGE_SIZE);
+  slice.forEach(a => grid.appendChild(makeCard(a)));
+  
+  renderPager('allArticlesPager', pageAllArticles, total, p => { pageAllArticles = p; populateAllArticles(cat); });
+}
+
+function populateLivePage() {
+  const filtered = getFilteredSports();
+  const liveGrid = document.getElementById('liveScoresGrid');
+  const liveBar = document.getElementById('liveScoresBar');
+  
+  if (!filtered.length) {
+    if (liveGrid) liveGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:36px;color:var(--m);font-size:17px;">No live games right now. Check back during game hours.</div>';
+    if (liveBar) liveBar.innerHTML = '<div class="si">No games today</div>';
+    renderPager('liveSportsPager', 1, 1, () => {});
+    return;
+  }
+  
+  const total = Math.ceil(filtered.length / NZ_PAGE_SIZE);
+  pageLiveSports = Math.min(Math.max(1, pageLiveSports), total);
+  const ls = filtered.slice((pageLiveSports - 1) * NZ_PAGE_SIZE, pageLiveSports * NZ_PAGE_SIZE);
+  
+  if (liveGrid) liveGrid.innerHTML = buildScoreCardsHTML(ls, null);
+  if (liveBar) {
+    const barHTML = buildScoresBarHTML(filtered);
+    liveBar.innerHTML = barHTML;
+  }
+  
+  renderPager('liveSportsPager', pageLiveSports, total, p => { pageLiveSports = p; populateLivePage(); });
 }
 
 function populateSportsPage() {
-  const grid = document.getElementById('sportsArticlesGrid');
+  pageSportsScores = 1;
+  pageSportsArticles = 1;
+  filterSportsByGenre('all', document.querySelector('.sports-genre-chip[data-sport="all"]'));
+}
+
+let pageSportsScores = 1;
+let pageSportsArticles = 1;
+let currentSportsGenre = 'all';
+function filterSportsByGenre(genre, btn) {
+  currentSportsGenre = genre;
+  pageSportsScores = 1;
+  pageSportsArticles = 1;
+
+  // Update active chip
+  document.querySelectorAll('.sports-genre-chip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const grid = document.getElementById('sportScoresGrid');
+  const title = document.getElementById('sportsSectionTitle');
   if (!grid) return;
-  grid.innerHTML = '';
-  ARTICLES.filter(a => a.cat === 'sports').forEach(a => grid.appendChild(makeCard(a)));
-  const sg = document.getElementById('sportScoresGrid');
-  if (sg) {
-    const filtered = getFilteredSports();
-    sg.innerHTML = filtered.length
-      ? buildScoreCardsHTML(filtered, null)
-      : '<div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--m);">No games for current filter.</div>';
+
+  // Filter sports data
+  let filtered = allSportsData;
+  if (genre === 'nba') filtered = allSportsData.filter(x => x.league === 'nba');
+  else if (genre === 'epl') filtered = allSportsData.filter(x => x.league === 'epl');
+  else if (genre === 'nfl') filtered = allSportsData.filter(x => x.league === 'nfl');
+  else if (genre === 'mlb') filtered = allSportsData.filter(x => x.league === 'mlb');
+  else if (genre === 'mma') filtered = allSportsData.filter(x => x.league === 'mma');
+
+  // Update title
+  const titles = {
+    all: "Today's Games",
+    nba: '🏀 NBA Games',
+    epl: '⚽ EPL / Soccer Matches',
+    nfl: '🏈 NFL Games',
+    mlb: '⚾ MLB Games',
+    mma: '🥊 MMA / UFC Events'
+  };
+  if (title) title.textContent = titles[genre] || "Today's Games";
+
+  // Render scores with pagination
+  if (!filtered.length) {
+    const messages = {
+      all: 'No games scheduled today. Check back during game hours.',
+      nba: '🏀 No NBA games scheduled today. Check back during the NBA season.',
+      epl: '⚽ No EPL matches scheduled today. Check back during the soccer season.',
+      nfl: '🏈 No NFL games scheduled today. Check back during the NFL season.',
+      mlb: '⚾ No MLB games scheduled today. Check back during the baseball season.',
+      mma: '🥊 No MMA/UFC events scheduled today. Check back for upcoming fights.'
+    };
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;">
+      <div style="font-size:48px;margin-bottom:12px;opacity:.5">${genre === 'all' ? '🏟️' : genre === 'nba' ? '🏀' : genre === 'epl' ? '⚽' : genre === 'nfl' ? '🏈' : genre === 'mlb' ? '⚾' : '🥊'}</div>
+      ${messages[genre] || 'No games scheduled today.'}
+    </div>`;
+    renderPager('sportsScoresPager', 1, 1, () => {});
+  } else {
+    const totalScores = Math.ceil(filtered.length / NZ_PAGE_SIZE);
+    pageSportsScores = Math.min(Math.max(1, pageSportsScores), totalScores);
+    const slice = filtered.slice((pageSportsScores - 1) * NZ_PAGE_SIZE, pageSportsScores * NZ_PAGE_SIZE);
+    grid.innerHTML = buildScoreCardsHTML(slice, null);
+    renderPager('sportsScoresPager', pageSportsScores, totalScores, p => { pageSportsScores = p; filterSportsByGenre(genre, btn); });
+  }
+
+  // Filter sports articles with pagination
+  const articlesGrid = document.getElementById('sportsArticlesGrid');
+  if (articlesGrid) {
+    const sportsArticles = ARTICLES.filter(a => a.cat === 'sports');
+    if (!sportsArticles.length) {
+      articlesGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:36px;color:var(--m);">No sports articles available yet.</div>';
+      renderPager('sportsArticlesPager', 1, 1, () => {});
+    } else {
+      const totalArticles = Math.ceil(sportsArticles.length / NZ_PAGE_SIZE);
+      pageSportsArticles = Math.min(Math.max(1, pageSportsArticles), totalArticles);
+      const slice = sportsArticles.slice((pageSportsArticles - 1) * NZ_PAGE_SIZE, pageSportsArticles * NZ_PAGE_SIZE);
+      articlesGrid.innerHTML = '';
+      slice.forEach(a => articlesGrid.appendChild(makeCard(a)));
+      renderPager('sportsArticlesPager', pageSportsArticles, totalArticles, p => { pageSportsArticles = p; filterSportsByGenre(genre, btn); });
+    }
   }
 }
 
 function populateAnimePage() {
   paintAnimePageGrid();
-  const grid = document.getElementById('animeArticlesGrid');
+}
+
+let pageAnimeReviews = 1;
+function populateAnimeReviews() {
+  const grid = document.getElementById('animeReviewsGrid');
   if (!grid) return;
+  const reviews = ARTICLES.filter(a => a.cat === 'review');
+  if (!reviews.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">📝</div>No seasonal reviews available yet. Check back soon!</div>';
+    renderPager('animeReviewsPager', 1, 1, () => {});
+    return;
+  }
+  const total = Math.ceil(reviews.length / NZ_PAGE_SIZE);
+  pageAnimeReviews = Math.min(Math.max(1, pageAnimeReviews), total);
+  const slice = reviews.slice((pageAnimeReviews - 1) * NZ_PAGE_SIZE, pageAnimeReviews * NZ_PAGE_SIZE);
   grid.innerHTML = '';
-  ARTICLES.filter(a => a.cat === 'anime').forEach(a => grid.appendChild(makeCard(a)));
+  slice.forEach(a => grid.appendChild(makeCard(a)));
+  renderPager('animeReviewsPager', pageAnimeReviews, total, p => { pageAnimeReviews = p; populateAnimeReviews(); });
+}
+
+let pageAnimeEpisodes = 1;
+function populateAnimeEpisodes() {
+  const grid = document.getElementById('animeEpisodesGrid');
+  if (!grid) return;
+  const episodes = ARTICLES.filter(a => a.cat === 'episode');
+  if (!episodes.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">🎬</div>No episode guides available yet. Check back soon!</div>';
+    renderPager('animeEpisodesPager', 1, 1, () => {});
+    return;
+  }
+  const total = Math.ceil(episodes.length / NZ_PAGE_SIZE);
+  pageAnimeEpisodes = Math.min(Math.max(1, pageAnimeEpisodes), total);
+  const slice = episodes.slice((pageAnimeEpisodes - 1) * NZ_PAGE_SIZE, pageAnimeEpisodes * NZ_PAGE_SIZE);
+  grid.innerHTML = '';
+  slice.forEach(a => grid.appendChild(makeCard(a)));
+  renderPager('animeEpisodesPager', pageAnimeEpisodes, total, p => { pageAnimeEpisodes = p; populateAnimeEpisodes(); });
+}
+
+let pageAnimeRankings = 1;
+async function populateAnimeRankings() {
+  const list = document.getElementById('animeRankingsList');
+  if (!list) return;
+  
+  list.innerHTML = '<div style="text-align:center;padding:48px;"><span class="spin"></span> Loading rankings...</div>';
+  
+  try {
+    const d = await fetchTopAiringAnime(50);
+    const items = d.data || [];
+    if (!items.length) {
+      list.innerHTML = '<div style="text-align:center;padding:48px;color:var(--m);">Could not load rankings. Try again later.</div>';
+      return;
+    }
+    
+    // Sort by score
+    items.sort((a, b) => (b.score || 0) - (a.score || 0));
+    
+    list.innerHTML = items.slice(0, 25).map((a, i) => {
+      const img = bestAnimeImage(a);
+      const rank = i + 1;
+      const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+      return `<div class="ranking-item" onclick="showAnimeDetailPage(${a.mal_id},true)" style="display:flex;align-items:center;gap:16px;padding:14px;background:var(--card);border:1px solid var(--b);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .2s;">
+        <div style="font-family:var(--fh);font-size:28px;min-width:50px;text-align:center;color:${rank <= 3 ? 'var(--gold)' : 'var(--m)'}">${medal}</div>
+        ${img ? `<img src="${escapeAttr(img)}" alt="" style="width:60px;height:80px;object-fit:cover;border-radius:8px;" loading="lazy">` : '<div style="width:60px;height:80px;background:var(--surface);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;">🎌</div>'}
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(a.title)}</div>
+          <div style="font-size:13px;color:var(--m);">${escapeHtml(a.type || 'TV')} · ${a.episodes ?? '?'} eps · ${escapeHtml((a.genres || []).slice(0, 2).map(g => g.name).join(', '))}</div>
+        </div>
+        <div style="text-align:right;min-width:70px;">
+          <div style="font-size:24px;font-family:var(--fh);color:var(--gold);">⭐ ${a.score ?? 'N/A'}</div>
+          <div style="font-size:11px;color:var(--m);">MAL Score</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch {
+    list.innerHTML = '<div style="text-align:center;padding:48px;color:var(--m);">Failed to load rankings. Check your connection and try again.</div>';
+  }
+}
+
+let pageMangaNews = 1;
+function populateMangaNews() {
+  const grid = document.getElementById('mangaNewsGrid');
+  if (!grid) return;
+  const news = ARTICLES.filter(a => a.cat === 'manga');
+  if (!news.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">📚</div>No manga news available yet. Check back soon!</div>';
+    renderPager('mangaNewsPager', 1, 1, () => {});
+    return;
+  }
+  const total = Math.ceil(news.length / NZ_PAGE_SIZE);
+  pageMangaNews = Math.min(Math.max(1, pageMangaNews), total);
+  const slice = news.slice((pageMangaNews - 1) * NZ_PAGE_SIZE, pageMangaNews * NZ_PAGE_SIZE);
+  grid.innerHTML = '';
+  slice.forEach(a => grid.appendChild(makeCard(a)));
+  renderPager('mangaNewsPager', pageMangaNews, total, p => { pageMangaNews = p; populateMangaNews(); });
 }
 
 function openArticle(a) {
@@ -444,17 +714,29 @@ function openGame(g) {
 
   const hLogo = logoUrl(home?.team);
   const aLogo = logoUrl(away?.team);
+  
+  // Get additional game info
+  const venue = comp?.venue?.fullName || 'TBD';
+  const city = comp?.venue?.address?.city || '';
+  const capacity = comp?.venue?.capacity || '';
+  const attendance = comp?.attendance || '';
+  const officials = comp?.officials || [];
+  const broadcaster = comp?.broadcasts?.[0]?.names?.[0] || '';
+  const homeRecord = home?.records?.[0]?.summary || '';
+  const awayRecord = away?.records?.[0]?.summary || '';
 
   document.getElementById('gameTeams').innerHTML = `
     <div class="game-team">
-      ${hLogo ? `<img src="${escapeAttr(hLogo)}" alt="" style="width:72px;height:72px;object-fit:contain;margin:0 auto 8px;display:block;">` : ''}
+      ${hLogo ? `<img src="${escapeAttr(hLogo)}" alt="" style="width:80px;height:80px;object-fit:contain;margin:0 auto 12px;display:block;">` : ''}
       <div class="game-team-name">${home?.team?.shortDisplayName || home?.team?.name || 'Home'}</div>
+      ${homeRecord ? `<div style="font-size:14px;color:var(--m);margin-top:4px">${homeRecord}</div>` : ''}
       <div class="game-team-pts">${home?.score ?? '—'}</div>
     </div>
     <div class="game-vs">${emoji}<br>VS</div>
     <div class="game-team">
-      ${aLogo ? `<img src="${escapeAttr(aLogo)}" alt="" style="width:72px;height:72px;object-fit:contain;margin:0 auto 8px;display:block;">` : ''}
+      ${aLogo ? `<img src="${escapeAttr(aLogo)}" alt="" style="width:80px;height:80px;object-fit:contain;margin:0 auto 12px;display:block;">` : ''}
       <div class="game-team-name">${away?.team?.shortDisplayName || away?.team?.name || 'Away'}</div>
+      ${awayRecord ? `<div style="font-size:14px;color:var(--m);margin-top:4px">${awayRecord}</div>` : ''}
       <div class="game-team-pts">${away?.score ?? '—'}</div>
     </div>`;
 
@@ -464,7 +746,10 @@ function openGame(g) {
   document.getElementById('gameInfoGrid').innerHTML = `
     <div class="game-info-card"><div class="game-info-label">League</div><div class="game-info-val">${emoji} ${sport}</div></div>
     <div class="game-info-card"><div class="game-info-label">Status</div><div class="game-info-val" style="font-size:18px;">${st.label}</div></div>
-    <div class="game-info-card"><div class="game-info-label">Venue</div><div class="game-info-val" style="font-size:16px;">${comp?.venue?.fullName || 'TBD'}</div></div>`;
+    <div class="game-info-card"><div class="game-info-label">Venue</div><div class="game-info-val" style="font-size:16px;">${venue}</div></div>
+    ${city ? `<div class="game-info-card"><div class="game-info-label">Location</div><div class="game-info-val" style="font-size:16px;">${city}</div></div>` : ''}
+    ${attendance ? `<div class="game-info-card"><div class="game-info-label">Attendance</div><div class="game-info-val" style="font-size:18px;">${attendance}</div></div>` : ''}
+    ${broadcaster ? `<div class="game-info-card"><div class="game-info-label">Broadcast</div><div class="game-info-val" style="font-size:16px;">${broadcaster}</div></div>` : ''}`;
 
   document.getElementById('gameSummary').innerHTML = `
     <p>Follow <strong>${home?.team?.name}</strong> vs <strong>${away?.team?.name}</strong> on NexZone.
@@ -512,65 +797,113 @@ async function enrichGamePage(g) {
 
 function buildLeadersHTML(summary) {
   const leaders = summary.leaders;
-  if (!leaders?.length) return '';
-  let html = '<h3>Stat leaders</h3><div class="leaders-grid">';
-  for (const cat of leaders.slice(0, 4)) {
+  if (!leaders?.length) return '<p style="color:var(--m);font-size:15px;">Stat leaders not available for this event.</p>';
+  
+  let html = '';
+  let hasData = false;
+  
+  for (const cat of leaders.slice(0, 6)) {
     const label = cat.displayName || cat.name || 'Category';
     const list = cat.leaders || [];
-    for (const L of list.slice(0, 2)) {
+    if (!list.length) continue;
+    
+    hasData = true;
+    html += `<div style="margin-bottom:16px;">
+      <div style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--m2);font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--b)">${escapeHtml(label)}</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">`;
+    
+    for (const L of list.slice(0, 3)) {
       const name = L?.athlete?.displayName || L?.displayName || L?.shortName || '';
       const val = L?.displayValue ?? L?.value ?? '';
+      const team = L?.team?.abbreviation || '';
       if (name || val) {
-        html += `<div class="leader-pill"><div class="ln">${escapeHtml(label)}</div><div><strong>${escapeHtml(name)}</strong> ${escapeHtml(String(val))}</div></div>`;
+        html += `<div class="leader-pill"><div class="ln">${team ? escapeHtml(team) + ' · ' : ''}${escapeHtml(label)}</div><div><strong>${escapeHtml(name)}</strong> ${escapeHtml(String(val))}</div></div>`;
       }
     }
+    
+    html += '</div></div>';
   }
-  html += '</div>';
-  return html || '';
+  
+  return hasData ? html : '<p style="color:var(--m);font-size:15px;">Stat leaders not available for this event.</p>';
 }
 
 function buildInjuriesHTML(summary) {
   const inj = summary.injuries;
-  if (!inj?.length) return '';
-  let html = '<h3>Injuries &amp; roster notes</h3>';
+  if (!inj?.length) return '<p style="color:var(--m);font-size:15px;">No injury reports available for this event.</p>';
+  
+  let html = '';
   for (const row of inj.slice(0, 10)) {
     const t = row?.description || row?.details || row?.type?.description || row?.status || '';
-    if (t) html += `<div class="injury-row">${escapeHtml(String(t))}</div>`;
+    const athlete = row?.athlete?.fullName || row?.displayName || '';
+    if (t || athlete) {
+      html += `<div class="injury-row"><strong>${escapeHtml(athlete)}</strong>${athlete && t ? ' — ' : ''}${escapeHtml(String(t))}</div>`;
+    }
   }
-  return html;
+  return html || '<p style="color:var(--m);font-size:15px;">No injury reports available.</p>';
 }
 
 function buildInsightsHTML(summary) {
   const headlines = summary.news?.headlines || summary.headlines || [];
   const pick = summary.pickcenter || summary.predictor;
-  let html = '<h3>Headlines &amp; context</h3>';
+  
+  if (!headlines?.length && !pick?.summary) {
+    return '<p style="color:var(--m);font-size:15px;">No extra headlines or insights bundled with this event. Check the <a href="#home" onclick="nav(\'home\')" style="color:var(--red);text-decoration:underline">Breaking News section</a> on the home page.</p>';
+  }
+  
+  let html = '';
   if (headlines?.length) {
-    for (const h of headlines.slice(0, 6)) {
+    for (const h of headlines.slice(0, 8)) {
       const t = h?.headline || h?.title || h?.description || '';
-      if (t) html += `<div class="insight-row">${escapeHtml(t)}</div>`;
+      const link = h?.links?.web?.href || '#';
+      if (t) {
+        html += `<div class="insight-row">${link !== '#' ? `<a href="${escapeAttr(link)}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none">${escapeHtml(t)}</a>` : escapeHtml(t)}</div>`;
+      }
     }
   }
   if (pick?.summary) {
-    html += `<div class="insight-row" style="margin-top:12px;"><strong>Matchup:</strong> ${escapeHtml(pick.summary)}</div>`;
-  }
-  if (!headlines?.length && !pick?.summary) {
-    html += '<p style="color:var(--m);font-size:15px;">No extra headlines bundled with this event. Check the Breaking News section on the home page.</p>';
+    html += `<div class="insight-row" style="margin-top:12px;background:rgba(232,50,60,.05);border-left:3px solid var(--red);"><strong>Matchup Insight:</strong> ${escapeHtml(pick.summary)}</div>`;
   }
   return html;
 }
 
+let currentHomeCat = 'all';
 function filterCat(cat, btn) {
+  currentHomeCat = cat;
+  pageHomeArticles = 1;
   document.querySelectorAll('#articleTabs .tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('#articlesGrid .ac').forEach(c => {
-    const m = cat === 'all' || c.dataset.cat === cat;
-    c.style.opacity = m ? '1' : '0.15';
-    c.style.transform = m ? '' : 'scale(.97)';
-    c.style.pointerEvents = m ? 'auto' : 'none';
+  buildArticlesGridFiltered(cat);
+}
+
+function buildArticlesGridFiltered(cat = 'all') {
+  const grid = document.getElementById('articlesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  
+  const filtered = cat === 'all' ? ARTICLES : ARTICLES.filter(a => a.cat === cat);
+  if (!filtered.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--m);font-size:17px;"><div style="font-size:48px;margin-bottom:12px;opacity:.5">📝</div>No articles in this category yet.</div>';
+    renderPager('homeArticlesPager', 1, 1, () => {});
+    return;
+  }
+  
+  const total = Math.ceil(filtered.length / NZ_PAGE_SIZE);
+  pageHomeArticles = Math.min(Math.max(1, pageHomeArticles), total);
+  const slice = filtered.slice((pageHomeArticles - 1) * NZ_PAGE_SIZE, pageHomeArticles * NZ_PAGE_SIZE);
+  
+  slice.forEach((a, i) => {
+    const card = makeCard(a);
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    grid.appendChild(card);
+    setTimeout(() => { card.style.opacity = '1'; card.style.transform = ''; }, 300 + i * 80);
   });
+  
+  renderPager('homeArticlesPager', pageHomeArticles, total, p => { pageHomeArticles = p; buildArticlesGridFiltered(cat); });
 }
 
 function filterAll(cat, btn) {
+  pageAllArticles = 1;
   document.querySelectorAll('#page-articles .tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   populateAllArticles(cat);
@@ -633,24 +966,26 @@ function newsImage(article) {
 
 function renderEspnNews(articles) {
   const el = document.getElementById('espnNewsFeed');
-  if (!el || !articles?.length) {
-    if (el) el.innerHTML = '<p style="color:var(--m);grid-column:1/-1;">No headlines available right now.</p>';
+  if (!el) return;
+  if (!articles?.length) {
+    el.innerHTML = '<p style="color:var(--m);grid-column:1/-1;padding:36px;text-align:center;font-size:17px;">No headlines available right now.</p>';
     renderPager('newsPager', 1, 1, () => {});
     return;
   }
-  const total = Math.max(1, Math.ceil(articles.length / NZ_PAGE_SIZE));
-  pageNews = Math.min(pageNews, total);
+  const total = Math.ceil(articles.length / NZ_PAGE_SIZE);
+  pageNews = Math.min(Math.max(1, pageNews), total);
   const start = (pageNews - 1) * NZ_PAGE_SIZE;
   const pageSlice = articles.slice(start, start + NZ_PAGE_SIZE);
 
   el.innerHTML = pageSlice.map((a, i) => {
     const globalIdx = start + i;
     const img = newsImage(a);
+    const fallbackImg = DEMO_IMAGES[0]; // Sports image as fallback
     const tag = a?.category?.description || a?.categories?.[0]?.description || 'ESPN';
     const pub = a.published ? new Date(a.published).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
     return `
       <article class="news-card" onclick="openNewsDetail(${globalIdx})">
-        ${img ? `<img class="news-card-img" src="${escapeAttr(img)}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div class="news-card-img" style="display:flex;align-items:center;justify-content:center;font-size:42px;background:var(--surface);">📰</div>'}
+        ${img ? `<img class="news-card-img" src="${escapeAttr(img)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${fallbackImg}';this.onerror=function(){this.style.display='none'}">` : `<img class="news-card-img" src="${fallbackImg}" alt="" loading="lazy">`}
         <div class="news-card-body">
           <div class="news-card-tag">${escapeHtml(tag)}</div>
           <h3 class="news-card-title">${escapeHtml(a.headline || 'Headline')}</h3>
@@ -676,7 +1011,7 @@ function setHeroFromNews(articles) {
 
 function buildScoreCardsHTML(data, max) {
   const slice = max != null ? data.slice(0, max) : data;
-  return slice.map(({ emoji, sport, ev }) => {
+  return slice.map(({ emoji, sport, ev, league }) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
@@ -685,42 +1020,74 @@ function buildScoreCardsHTML(data, max) {
     const gId = ev.id;
     const hl = logoUrl(home?.team);
     const al = logoUrl(away?.team);
+    
+    // Get additional game details
+    const venue = comp?.venue?.fullName || 'TBD';
+    const broadcaster = comp?.broadcasts?.[0]?.names?.[0] || '';
+    const attendance = comp?.attendance || '';
+    const odds = comp?.details?.odds || '';
+    
+    // Get team records
+    const homeRecord = home?.records?.[0]?.summary || '';
+    const awayRecord = away?.records?.[0]?.summary || '';
+    
     return `<div class="sc ${st.cls === 'live' ? 'islive' : ''}" onclick="nav('game',allSportsData.find(x=>x.ev.id==='${gId}'))">
-      <div class="sc-lg">${emoji} ${sport} ${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px">● LIVE</span>' : ''}</div>
+      <div class="sc-lg">
+        <span>${emoji} ${sport}</span>
+        ${st.cls === 'live' ? '<span style="color:var(--red);font-size:9px;font-weight:700" class="animate-pulse">● LIVE</span>' : ''}
+      </div>
       <div class="sc-teams">
         <div class="sc-team ${hwins ? 'win' : ''}">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
             ${hl ? `<img class="team-logo" src="${escapeAttr(hl)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${home?.team?.shortDisplayName || home?.team?.abbreviation || 'Home'}</span>
+            <div style="min-width:0;flex:1">
+              <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${home?.team?.shortDisplayName || home?.team?.abbreviation || 'Home'}</div>
+              ${homeRecord ? `<div style="font-size:10px;color:var(--m);margin-top:2px">${homeRecord}</div>` : ''}
+            </div>
           </div>
           <span class="pts">${home?.score ?? '—'}</span>
         </div>
         <div class="sc-team ${awins ? 'win' : ''}">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
             ${al ? `<img class="team-logo" src="${escapeAttr(al)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${away?.team?.shortDisplayName || away?.team?.abbreviation || 'Away'}</span>
+            <div style="min-width:0;flex:1">
+              <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${away?.team?.shortDisplayName || away?.team?.abbreviation || 'Away'}</div>
+              ${awayRecord ? `<div style="font-size:10px;color:var(--m);margin-top:2px">${awayRecord}</div>` : ''}
+            </div>
           </div>
           <span class="pts">${away?.score ?? '—'}</span>
         </div>
       </div>
-      <div class="sc-st ${st.cls === 'live' ? 'lv' : ''}">${st.label}</div>
+      <div class="sc-st ${st.cls === 'live' ? 'lv' : ''}">
+        ${st.label}
+        ${venue !== 'TBD' ? `<span style="display:block;font-size:9px;margin-top:4px;opacity:.7">📍 ${venue}</span>` : ''}
+        ${broadcaster ? `<span style="display:block;font-size:9px;margin-top:2px;opacity:.7">📺 ${broadcaster}</span>` : ''}
+      </div>
     </div>`;
   }).join('');
 }
 
 function buildScoresBarHTML(data) {
-  return data.map(({ emoji, ev }) => {
+  const items = data.map(({ emoji, ev }) => {
     const comp = ev.competitions?.[0];
     const [home, away] = comp?.competitors || [];
     const st = gameStatus(ev);
     return `<div class="si" data-ev="${ev.id}" role="button" tabindex="0" title="Open full game">${emoji} ${home?.team?.abbreviation ?? '?'} vs ${away?.team?.abbreviation ?? '?'} <span class="sv">${home?.score ?? '?'}–${away?.score ?? '?'}</span> <span class="${st.cls === 'live' ? 'slive' : st.cls === 'final' ? 'sfin' : 'ssoon'}">${st.label}</span></div>`;
   }).join('');
+  // Duplicate for seamless loop
+  return items + items;
 }
 
 function renderSports(data) {
   allSportsData = data;
   setupApiPills();
   updatePillFilterClass();
+
+  // Cache sports data for faster refresh
+  try {
+    sessionStorage.setItem('nzSportsData', JSON.stringify(data));
+    sessionStorage.setItem('nzSportsTime', Date.now().toString());
+  } catch (_) {}
 
   const filtered = getFilteredSports();
   const grid = document.getElementById('scoresGrid');
@@ -755,8 +1122,8 @@ function renderSports(data) {
   }
 
   const barHTML = buildScoresBarHTML(filtered);
-  if (bar) bar.innerHTML = barHTML + barHTML;
-  if (liveBar) liveBar.innerHTML = barHTML + barHTML;
+  if (bar) bar.innerHTML = barHTML;
+  if (liveBar) liveBar.innerHTML = barHTML;
 
   paintScoresOnly();
 
@@ -822,6 +1189,13 @@ async function fetchAnime() {
     if (!items.length) throw new Error('empty');
     allAnimeData = items;
     pill('pill-anime', 'ok', `Anime — ${items.length} airing`);
+    
+    // Cache anime data for faster refresh
+    try {
+      sessionStorage.setItem('nzAnimeData', JSON.stringify(items));
+      sessionStorage.setItem('nzAnimeTime', Date.now().toString());
+    } catch (_) {}
+    
     pageHomeAnime = 1;
     pageAnimeGrid = 1;
     paintHomeAnime();
@@ -1039,9 +1413,12 @@ let tickerSports = '', tickerAnime = '';
 function updateTicker(sports, anime) {
   if (sports !== null && sports !== undefined) tickerSports = sports;
   if (anime !== null && anime !== undefined) tickerAnime = anime;
-  const combined = (tickerSports + tickerAnime) || '<span class="tck-empty">Loading…</span>';
+  const combined = (tickerSports + tickerAnime) || '<span class="tck-empty">Loading live headlines...</span>';
   const t = document.getElementById('tickerTrack');
-  if (t) t.innerHTML = combined + combined;
+  if (t) {
+    // Duplicate content for seamless loop
+    t.innerHTML = combined + combined + combined;
+  }
 }
 
 async function subscribe() {
@@ -1137,9 +1514,67 @@ function executeSearch(query) {
   }
 }
 
+function restoreFromCache() {
+  // Restore sports data from cache if recent (within 5 minutes)
+  try {
+    const raw = sessionStorage.getItem('nzSportsData');
+    const time = sessionStorage.getItem('nzSportsTime');
+    if (raw && time && (Date.now() - parseInt(time)) < 300000) {
+      const data = JSON.parse(raw);
+      if (data?.length) {
+        allSportsData = data;
+        renderSports(data);
+        return true;
+      }
+    }
+  } catch (_) {}
+  return false;
+}
+
+function restoreAnimeFromCache() {
+  // Restore anime data from cache if recent (within 10 minutes)
+  try {
+    const raw = sessionStorage.getItem('nzAnimeData');
+    const time = sessionStorage.getItem('nzAnimeTime');
+    if (raw && time && (Date.now() - parseInt(time)) < 600000) {
+      const items = JSON.parse(raw);
+      if (items?.length) {
+        allAnimeData = items;
+        pill('pill-anime', 'ok', `Anime — ${items.length} airing (cached)`);
+        pageHomeAnime = 1;
+        pageAnimeGrid = 1;
+        paintHomeAnime();
+        paintAnimePageGrid();
+        
+        const stack = document.getElementById('heroStack');
+        if (stack) {
+          stack.innerHTML = items.slice(0, 3).map(a =>
+            `<div class="stack-card" onclick="showAnimeDetailPage(${a.mal_id},true)">
+              <div class="stag anime">Anime</div>
+              <div class="stitle">${escapeHtml(a.title)}</div>
+              <div class="stime">⭐ ${a.score ?? 'N/A'} · Ep ${a.episodes ?? '?'}</div>
+            </div>`).join('');
+        }
+        return true;
+      }
+    }
+  } catch (_) {}
+  return false;
+}
+
 async function init() {
   const luEl = document.getElementById('lu');
   if (luEl) luEl.innerHTML = `<span class="spin"></span> Refreshing…`;
+
+  // Try restoring from cache first for instant display
+  const sportsCached = restoreFromCache();
+  const animeCached = restoreAnimeFromCache();
+
+  // If cache was used, still fetch fresh data in background
+  if (sportsCached || animeCached) {
+    setTimeout(init, 2000); // Refresh after 2 seconds
+    return;
+  }
 
   const [nba, epl, nNews, sNews] = await Promise.all([
     fetchNBA(),

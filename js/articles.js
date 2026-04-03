@@ -1,4 +1,14 @@
 ﻿// ── ARTICLES DATA (add new articles here!)
+// Demo fallback images array
+const DEMO_IMAGES = [
+  'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=85', // Sports
+  'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=900&q=85', // Anime
+  'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=85', // Basketball
+  'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=85', // Soccer
+  'https://images.unsplash.com/photo-1614583224978-f05ce51ef5fa?w=900&q=85', // Anime general
+  'https://images.unsplash.com/photo-1549719386-74dfcbf7a31e?w=900&q=85', // MMA
+];
+
 const ARTICLES = [
   {
     id:'nba-playoffs-2025', cat:'sports', tagCls:'ts', tag:'NBA', emoji:'🏀',
@@ -206,5 +216,252 @@ coverImage:'https://images.unsplash.com/photo-1614583224978-f05ce51ef5fa?w=900&q
       </ul>
       <h3>World Series Pick</h3>
       <p>Dodgers over Yankees in 6. It's not an exciting prediction, but the roster construction is simply on another level. Unless injury strikes, LA is the 2025 World Series champion.</p>`
+  },
+  {
+    id:'one-piece-egghead-arc', cat:'anime', tagCls:'ta', tag:'Anime', emoji:'🏴‍☠️',
+    title:'One Piece Egghead Arc: Why This Is Oda\'s Best Work Yet',
+    excerpt:'The Egghead arc has redefined One Piece for a new era. Here\'s why fans are calling it the greatest arc in the series.',
+    date:'1d ago', views:'22.1k', author:'NexZone Anime Team', readTime:'6 min read',
+    coverImage:'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/21/',
+    content:`
+      <h3>A New Era for One Piece</h3>
+      <p>Eiichiro Oda has outdone himself with the Egghead arc. The futuristic setting, Dr. Vegapunk's revelations, and the world-building implications have sent shockwaves through the fandom.</p>
+      <div class="highlight">🏴‍☠️ One Piece has been running since 1997 and continues to be the best-selling manga series of all time with over 500 million copies sold.</div>
+      <h3>What Makes Egghead Special</h3>
+      <p><strong>The World Government's secrets are finally being exposed.</strong> After 25+ years of storytelling, we're getting answers to questions we've had since the beginning.</p>
+      <p><strong>Vegapunk is the smartest character in fiction.</strong> Every revelation about the Void Century, Ancient Weapons, and the Will of D has been mind-blowing.</p>
+      <h3>Animation Quality at Toei</h3>
+      <p>The anime adaptation has stepped up with incredible episodes. The Saturn transformation and Luffy's Gear 5 sequences are animation masterpieces.</p>
+      <h3>Where Is This All Heading?</h3>
+      <p>With the final saga underway, Egghead feels like the setup for the endgame. The stakes have never been higher, and Oda is delivering.</p>`
+  },
+  {
+    id:'nba-mvp-race-2025', cat:'sports', tagCls:'ts', tag:'NBA', emoji:'🏆',
+    title:'NBA MVP Race 2025: The Tightest Battle in Years',
+    excerpt:'Jokic, Giannis, Tatum, and Luka are all making their case. We break down the numbers and make our MVP pick.',
+    date:'6h ago', views:'11.3k', author:'NexZone Sports Desk', readTime:'5 min read',
+    coverImage:'https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?w=900&q=85',
+    externalReadUrl:'https://www.espn.com/nba/',
+    content:`
+      <h3>The Contenders</h3>
+      <p>The 2025 MVP race is arguably the most competitive we've seen in the last decade. Four superstars are putting up historic numbers.</p>
+      <div class="highlight">🏆 Nikola Jokic is averaging 29.4 PPG, 13.2 RPG, and 10.8 APG — a triple-double average for the season.</div>
+      <h3>Nikola Jokic — The Case</h3>
+      <p>Three-time MVP Jokic is doing things we've never seen. His passing vision is unmatched for a big man, and he's carrying the Nuggets on his back.</p>
+      <h3>Giannis Antetokounmpo — The Case</h3>
+      <p>The Greek Freak is averaging 31.5 PPG and leading the Bucks to the best record in the East. His two-way dominance is undeniable.</p>
+      <h3>Jayson Tatum — The Case</h3>
+      <p>Tatum has elevated to another level, averaging 28.7 PPG while leading the Celtics to the league's best record. His clutch performances have been legendary.</p>
+      <h3>Our Pick</h3>
+      <p>Jokic takes it in a landslide. The numbers don't lie — a triple-double average with elite efficiency is an MVP-worthy season.</p>`
+  },
+  {
+    id:'demon-slayer-infinity-castle', cat:'anime', tagCls:'ta', tag:'Anime', emoji:'⚔️',
+    title:'Demon Slayer Infinity Castle Movie: Everything We Know',
+    excerpt:'The final arc gets the movie trilogy treatment. Release date, trailers, and what to expect from the epic conclusion.',
+    date:'2d ago', views:'28.7k', author:'NexZone Anime Team', readTime:'5 min read',
+    coverImage:'https://images.unsplash.com/photo-1541562232579-512a21360020?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/40456/',
+    content:`
+      <h3>The Final Battle Approaches</h3>
+      <p>Ufotable is bringing the Infinity Castle arc to life as a movie trilogy, and the animation quality looks absolutely insane based on the trailers.</p>
+      <div class="highlight">⚔️ Demon Slayer: Mugen Train became the highest-grossing anime film of all time with over $500M worldwide. Expectations are sky-high.</div>
+      <h3>What to Expect</h3>
+      <p><strong>Movie 1:</strong> The infiltration of Muzan's fortress and the Hashira vs Upper Moons battles begin</p>
+      <p><strong>Movie 2:</strong> The climactic fights — Tanjiro vs Muzan, and the emotional farewells</p>
+      <p><strong>Movie 3:</strong> The conclusion of the series and the modern-day epilogue</p>
+      <h3>Animation Quality</h3>
+      <p>Ufotable has raised the bar once again. The trailers show fluid combat, stunning effects, and emotional character moments that will make fans cry.</p>`
+  },
+  {
+    id:'epl-title-race-2025', cat:'sports', tagCls:'ts', tag:'Soccer', emoji:'🏆',
+    title:'EPL Title Race 2025: Arsenal vs Man City — The Ultimate Showdown',
+    excerpt:'With just 3 games left, Arsenal and Man City are separated by a single point. Who wins the title?',
+    date:'12h ago', views:'9.8k', author:'NexZone Soccer Desk', readTime:'4 min read',
+    coverImage:'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=85',
+    externalReadUrl:'https://www.espn.com/soccer/',
+    content:`
+      <h3>The Situation</h3>
+      <p>Arsenal lead by 1 point, but City have a game in hand. Sound familiar? This is the kind of pressure-cooker finish that defines generations.</p>
+      <div class="highlight">🏆 Arsenal haven't won the league since 2004 — the famous "Invincibles" season. Can Arteta finally end the drought?</div>
+      <h3>Arsenal's Run-In</h3>
+      <p>The Gunners have the easier fixture list on paper, but the pressure of being favorites is a different challenge entirely.</p>
+      <h3>Manchester City's Experience</h3>
+      <p>City have won 4 of the last 5 titles. They know how to handle pressure. Guardiola's track record in run-ins is impeccable.</p>
+      <h3>Our Prediction</h3>
+      <p>Arsenal win it by 1 point. The Emirates will erupt. Arteta gets his first league title, and Saka becomes a legend.</p>`
+  },
+  {
+    id:'solo-leveling-season-3', cat:'anime', tagCls:'ta', tag:'Anime', emoji:'🗡️',
+    title:'Solo Leveling Season 3 Confirmed: What Happens Next?',
+    excerpt:'After a blockbuster Season 2, Solo Leveling is coming back. Here\'s what the next season will cover.',
+    date:'3d ago', views:'31.2k', author:'NexZone Anime Team', readTime:'4 min read',
+    coverImage:'https://images.unsplash.com/photo-1607604276583-c1c547e5224c?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/52299/',
+    content:`
+      <h3>Sung Jinwoo Returns</h3>
+      <p>Solo Leveling Season 2 was a massive hit, and A-1 Pictures has confirmed Season 3 is already in production.</p>
+      <div class="highlight">🗡️ Solo Leveling is the most popular manhwa adaptation ever, with over 14 billion views globally.</div>
+      <h3>What Will Season 3 Cover?</h3>
+      <p>Season 3 will likely adapt the Jeju Island arc — one of the most action-packed storylines in the entire series. Jinwoo vs the Ant King is going to be spectacular.</p>
+      <h3>Animation Expectations</h3>
+      <p>A-1 Pictures has been raising the bar each season. Season 3 should feature even more fluid combat and stunning visual effects.</p>`
+  },
+  {
+    id:'champions-league-final-2025', cat:'sports', tagCls:'ts', tag:'Soccer', emoji:'🏆',
+    title:'Champions League Final 2025: Preview, Predictions & Key Battles',
+    excerpt:'The biggest match in club football is here. We preview the tactics, key players, and make our predictions.',
+    date:'1d ago', views:'14.5k', author:'NexZone Soccer Desk', readTime:'6 min read',
+    coverImage:'https://images.unsplash.com/photo-1459865264687-595d652de67e?w=900&q=85',
+    externalReadUrl:'https://www.espn.com/soccer/uefa-champions-league/',
+    content:`
+      <h3>The Stage Is Set</h3>
+      <p>Two European giants face off in what promises to be an unforgettable Champions League final.</p>
+      <div class="highlight">🏆 The Champions League final is the most-watched annual sporting event in the world with over 450 million viewers.</div>
+      <h3>Key Battles</h3>
+      <p><strong>Midfield War:</strong> The team that controls the midfield will control the game. Expect a tactical chess match.</p>
+      <p><strong>Wing Play:</strong> Both teams have dangerous wingers who can change the game in an instant.</p>
+      <h3>Our Prediction</h3>
+      <p>2-1 after extra time. A classic final that will be remembered for generations.</p>`
+  },
+  {
+    id:'manga-one-piece-chapter-1100', cat:'manga', tagCls:'ta', tag:'Manga', emoji:'📚',
+    title:'One Piece Chapter 1100: Vegapunk\'s Shocking Revelation About the Void Century',
+    excerpt:'The latest chapter drops massive lore bombs about the Ancient Kingdom and the true history of the world.',
+    date:'1d ago', views:'45.2k', author:'NexZone Manga Desk', readTime:'5 min read',
+    coverImage:'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/manga/13/',
+    content:`
+      <h3>The Void Century Revealed</h3>
+      <p>Eiichiro Oda has finally started revealing the secrets of the Void Century through Dr. Vegapunk's memories. The implications are staggering.</p>
+      <div class="highlight">📚 One Piece manga has sold over 500 million copies worldwide, making it the best-selling manga series in history.</div>
+      <h3>Key Revelations</h3>
+      <p><strong>The Ancient Kingdom:</strong> Was a highly advanced civilization that existed 800 years ago, with technology far beyond what we see today.</p>
+      <p><strong>The Will of D:</strong> Vegapunk reveals that the D. clan were the original inhabitants of this kingdom.</p>
+      <h3>What This Means for the Story</h3>
+      <p>With the final saga underway, these revelations set up the endgame perfectly. Luffy's journey is about to reach its climax.</p>`
+  },
+  {
+    id:'manga-jujutsu-kaisen-ending', cat:'manga', tagCls:'ta', tag:'Manga', emoji:'🌀',
+    title:'Jujutsu Kaisen Manga Ending: Everything We Know About the Finale',
+    excerpt:'The manga is approaching its conclusion. Here\'s what to expect from the final chapters.',
+    date:'3d ago', views:'38.7k', author:'NexZone Manga Desk', readTime:'6 min read',
+    coverImage:'https://images.unsplash.com/photo-1535016120720-40c646be5580?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/manga/113138/',
+    content:`
+      <h3>The End Is Near</h3>
+      <p>Gege Akutami has confirmed that Jujutsu Kaisen is in its final arc. After years of incredible battles and story development, we're heading toward the conclusion.</p>
+      <div class="highlight">🌀 JJK manga has over 90 million copies in circulation, making it one of the most popular modern manga series.</div>
+      <h3>What to Expect</h3>
+      <p><strong>Sukuna's Endgame:</strong> The King of Curses has been unleashed and the final battle will determine the fate of the jujutsu world.</p>
+      <p><strong>Yuji's Destiny:</strong> After everything he's been through, Yuji's final choice will define the series' message.</p>`
+  },
+  {
+    id:'manga-chainsaw-man-part-3', cat:'manga', tagCls:'ta', tag:'Manga', emoji:'🔥',
+    title:'Chainsaw Man Part 3: Release Date, Story Details & What to Expect',
+    excerpt:'Tatsuki Fujimoto continues the Chainsaw Man saga with a new part. Here\'s everything we know.',
+    date:'5d ago', views:'29.3k', author:'NexZone Manga Desk', readTime:'4 min read',
+    coverImage:'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/manga/116778/',
+    content:`
+      <h3>Chainsaw Man Continues</h3>
+      <p>After the explosive School Arc, Part 3 of Chainsaw Man is set to take the story in a completely new direction.</p>
+      <div class="highlight">🔥 Chainsaw Man has over 30 million copies in circulation and won the 66th Shogakukan Manga Award.</div>
+      <h3>What We Know</h3>
+      <p><strong>New Setting:</strong> The story moves to a new location with fresh characters alongside returning favorites.</p>
+      <p><strong>Denji's Evolution:</strong> After the events of Part 2, Denji faces new challenges that will test him like never before.</p>`
+  },
+  {
+    id:'episode-guide-solo-leveling-s2', cat:'episode', tagCls:'ta', tag:'Episode Guide', emoji:'🗡️',
+    title:'Solo Leveling Season 2 Episode Guide: Complete Breakdown',
+    excerpt:'Every episode of Season 2 analyzed, broken down, and explained. What did we miss?',
+    date:'2d ago', views:'25.1k', author:'NexZone Episode Team', readTime:'8 min read',
+    coverImage:'https://images.unsplash.com/photo-1607604276583-c1c547e5224c?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/52299/',
+    content:`
+      <h3>Season 2 Episode Breakdown</h3>
+      <p>Solo Leveling Season 2 has been absolutely incredible. Let's break down every episode and analyze what happened.</p>
+      <div class="highlight">🗡️ Solo Leveling Season 2 premiered with record-breaking viewership on Crunchyroll.</div>
+      <h3>Episode 1-3: The Jeju Island Setup</h3>
+      <p>The season opens with the setup for the Jeju Island raid. Jinwoo's growth is evident as he takes on a leadership role.</p>
+      <h3>Episode 4-6: The Ant King Awakens</h3>
+      <p>The middle episodes deliver the epic confrontation we've been waiting for. The animation quality is off the charts.</p>`
+  },
+  {
+    id:'episode-guide-demon-slayer-s4', cat:'episode', tagCls:'ta', tag:'Episode Guide', emoji:'⚔️',
+    title:'Demon Slayer Season 4 Episode Guide: Hashira Training Arc',
+    excerpt:'Every episode of the Hashira Training arc analyzed. The calm before the storm.',
+    date:'4d ago', views:'19.8k', author:'NexZone Episode Team', readTime:'7 min read',
+    coverImage:'https://images.unsplash.com/photo-1541562232579-512a21360020?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/51019/',
+    content:`
+      <h3>Hashira Training Arc Episodes</h3>
+      <p>Season 4 takes a different approach, focusing on character development and preparation for the final battle.</p>
+      <div class="highlight">⚔️ Demon Slayer Season 4 has maintained the series' signature animation quality while delivering emotional depth.</div>
+      <h3>Episode 1-4: Training Begins</h3>
+      <p>Tanjiro and the others begin their intensive training with each Hashira. Each episode focuses on a different Hashira's methods.</p>`
+  },
+  {
+    id:'anime-spy-family-movie', cat:'anime', tagCls:'ta', tag:'Anime', emoji:'🕵️',
+    title:'Spy x Family Movie: Code White — Everything We Know',
+    excerpt:'The Forger family returns in a brand new movie. Release date, trailer breakdown, and what to expect.',
+    date:'1d ago', views:'21.4k', author:'NexZone Anime Team', readTime:'4 min read',
+    coverImage:'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/53887/',
+    content:`
+      <h3>The Forger Family Returns</h3>
+      <p>After the massive success of Season 2, Spy x Family is getting a movie treatment. Anya fans are already losing their minds.</p>
+      <div class="highlight">🕵️ Spy x Family Season 2 averaged 8.5/10 on MAL with over 500k users rating it.</div>
+      <h3>What We Know</h3>
+      <p><strong>Original Story:</strong> The movie features an original story not found in the manga, supervised by Tatsuya Endo himself.</p>
+      <p><strong>WIT Studio Returns:</strong> The animation quality looks absolutely stunning based on the trailer.</p>`
+  },
+  {
+    id:'anime-oshi-no-ko-s2', cat:'anime', tagCls:'ta', tag:'Anime', emoji:'⭐',
+    title:'Oshi no Ko Season 2: The Idol Industry Exposed',
+    excerpt:'Season 2 dives deeper into the dark side of the entertainment industry. A must-watch for anime fans.',
+    date:'3d ago', views:'17.8k', author:'NexZone Anime Team', readTime:'5 min read',
+    coverImage:'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/55701/',
+    content:`
+      <h3>The Dark Side of Showbiz</h3>
+      <p>Oshi no Ko Season 2 continues to expose the brutal reality behind Japan's idol industry. Aqua's revenge plot takes a shocking turn.</p>
+      <div class="highlight">⭐ Oshi no Ko Season 1 was the most talked-about anime of Spring 2023 with over 1 billion views.</div>
+      <h3>What to Expect</h3>
+      <p><strong>The 2.5D Stage Play Arc:</strong> A fascinating look at theater production and the pressures performers face.</p>
+      <p><strong>Aqua's Plan:</strong> His manipulation and schemes become increasingly dangerous as he gets closer to the truth.</p>`
+  },
+  {
+    id:'anime-frieren-review', cat:'review', tagCls:'tr', tag:'Review', emoji:'🧝',
+    title:'Frieren: Beyond Journey\'s End — A Masterpiece of Melancholy',
+    excerpt:'Why Frieren is the best anime of the decade so far. A deep dive into its themes of time, memory, and connection.',
+    date:'2d ago', views:'33.1k', author:'NexZone Anime Team', readTime:'7 min read',
+    coverImage:'https://images.unsplash.com/photo-1614583224978-f05ce51ef5fa?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/52991/',
+    content:`
+      <h3>A Story About Time</h3>
+      <p>Frieren isn't just another fantasy anime. It's a meditation on mortality, memory, and what it means to truly live.</p>
+      <div class="highlight">🧝 Frieren holds a 9.2/10 on MAL — the highest-rated currently airing anime in history.</div>
+      <h3>What Makes It Special</h3>
+      <p><strong>The pacing is deliberate and beautiful.</strong> Every moment feels earned. The quiet scenes are just as powerful as the battles.</p>
+      <p><strong>Madhouse's animation is stunning.</strong> The magic battles are fluid and creative, but it's the character moments that truly shine.</p>
+      <h3>Final Verdict</h3>
+      <p>10/10 — A once-in-a-generation anime that will be remembered alongside the greatest series ever made.</p>`
+  },
+  {
+    id:'manga-bleach-tybw', cat:'manga', tagCls:'ta', tag:'Manga', emoji:'⚔️',
+    title:'Bleach: Thousand-Year Blood War — The Final Arc Breakdown',
+    excerpt:'The anime adaptation of Bleach\'s final arc is here. How does it compare to the manga?',
+    date:'4d ago', views:'15.6k', author:'NexZone Manga Desk', readTime:'6 min read',
+    coverImage:'https://images.unsplash.com/photo-1535016120720-40c646be5580?w=900&q=85',
+    externalReadUrl:'https://myanimelist.net/anime/41467/',
+    content:`
+      <h3>The Return of a Legend</h3>
+      <p>After a decade-long wait, Bleach is back with the Thousand-Year Blood War arc. Studio Pierrot has delivered an adaptation that exceeds all expectations.</p>
+      <div class="highlight">⚔️ Bleach TYBW Part 1 scored 9.0/10 on MAL — the highest-rated Bleach arc by far.</div>
+      <h3>Manga vs Anime</h3>
+      <p><strong>Expanded Scenes:</strong> The anime adds crucial context and character moments that were missing from the manga.</p>
+      <p><strong>Animation Quality:</strong> Pierrot has outdone themselves. The Bankai reveals are absolutely breathtaking.</p>`
   }
 ];
